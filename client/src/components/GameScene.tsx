@@ -20,6 +20,7 @@ import { CharacterCardsSlider } from "./CharacterCardsSlider";
 import { CharacterEvidence } from "@/lib/stores/useDetectiveGame";
 import { CaseClosedModal } from "./CaseClosedModal";
 import { TypingIndicator } from "./TypingIndicator";
+import { TutorialOverlay } from "./TutorialOverlay";
 
 export function GameScene() {
   const {
@@ -55,7 +56,20 @@ export function GameScene() {
   const [handledCelebrationId, setHandledCelebrationId] = useState<string | null>(null);
   const [showTypingIndicator, setShowTypingIndicator] = useState(false);
   const [typingSpeaker, setTypingSpeaker] = useState<string | undefined>(undefined);
+  const [showTutorial, setShowTutorial] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem("kastor_tutorial_completed");
+    if (!hasSeenTutorial && currentCase === 1 && currentNode === "intro") {
+      setShowTutorial(true);
+    }
+  }, [currentCase, currentNode]);
+
+  const handleTutorialComplete = () => {
+    localStorage.setItem("kastor_tutorial_completed", "true");
+    setShowTutorial(false);
+  };
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -438,6 +452,8 @@ export function GameScene() {
           caseTitle={celebrationData.caseTitle}
         />
       )}
+      
+      {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
     </div>
   );
 }
