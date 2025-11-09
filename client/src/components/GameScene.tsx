@@ -120,7 +120,7 @@ export function GameScene() {
     }
 
     if (choice.evidenceAwarded) {
-      unlockEvidence(choice.evidenceAwarded);
+      unlockEvidence(choice.evidenceAwarded, false);
       playSuccess();
     }
 

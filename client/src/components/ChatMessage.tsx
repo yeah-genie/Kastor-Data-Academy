@@ -39,6 +39,8 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
   
   const getSpeakerAvatar = () => {
     switch (message.speaker) {
+      case "detective":
+        return "/detective.jpg";
       case "maya":
         return "/characters/maya.jpg";
       case "chris":
@@ -125,7 +127,7 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
           <img 
             src={avatarUrl} 
             alt={getSpeakerName()} 
-            className="w-8 h-8 rounded-full object-cover"
+            className={`w-8 h-8 rounded-full object-cover ${isDetective ? 'object-top' : 'object-center'}`}
           />
         ) : (
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold ${

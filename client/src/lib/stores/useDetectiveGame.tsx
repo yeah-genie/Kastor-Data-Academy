@@ -93,7 +93,7 @@ interface DetectiveGameState {
   setPhase: (phase: GamePhase) => void;
   setCurrentNode: (node: StoryNode) => void;
   addClue: (clue: Clue) => void;
-  unlockEvidence: (evidence: Evidence) => void;
+  unlockEvidence: (evidence: Evidence, showModal?: boolean) => void;
   setEvidenceModalOpen: (isOpen: boolean) => void;
   getEvidenceByType: (type: EvidenceType) => Evidence[];
   addScore: (points: number) => void;
@@ -151,13 +151,13 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       get().saveCurrentProgress();
     },
     
-    unlockEvidence: (evidence) => {
+    unlockEvidence: (evidence, showModal = true) => {
       const evidenceArray = Array.isArray(evidence) ? evidence : [evidence];
       evidenceArray.forEach((ev) => {
         set((state) => ({
           evidenceCollected: [...state.evidenceCollected, ev],
           recentEvidenceId: ev.id,
-          isEvidenceModalOpen: true,
+          isEvidenceModalOpen: showModal,
         }));
       });
       get().saveCurrentProgress();
