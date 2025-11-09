@@ -7,6 +7,8 @@ import { useState } from "react";
 const case1Image = "/attached_assets/stock_images/ancient_scroll_parch_fd3ce574.jpg";
 const case2Image = "/attached_assets/stock_images/dark_forest_trees_my_45f390b2.jpg";
 const case3Image = "/attached_assets/stock_images/antique_clock_time_m_285541ce.jpg";
+const case4Image = "/attached_assets/stock_images/digital_currency_mon_2033854b.jpg";
+const case5Image = "/attached_assets/stock_images/server_room_technolo_fe5cae95.jpg";
 
 export function StartMenu() {
   const { startCase, unlockedCases, achievements, getProgress, getCurrentXP, getCurrentLevel } = useDetectiveGame();
@@ -58,7 +60,8 @@ export function StartMenu() {
             <div>
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Available Missions</h2>
               <div className="space-y-4">
-                {[1, 2, 3].map((caseId) => {
+                {Object.keys(caseMetadata).map((key) => {
+                  const caseId = parseInt(key);
                   const metadata = caseMetadata[caseId];
                   const isUnlocked = isCaseUnlocked(caseId);
                   const progress = getCaseProgress(caseId);
@@ -75,7 +78,13 @@ export function StartMenu() {
                       {/* Mission Image */}
                       <div className="relative h-40 bg-gradient-to-br from-gray-800 to-gray-600 overflow-hidden">
                         <img 
-                          src={caseId === 1 ? case1Image : caseId === 2 ? case2Image : case3Image} 
+                          src={
+                            caseId === 1 ? case1Image : 
+                            caseId === 2 ? case2Image : 
+                            caseId === 3 ? case3Image :
+                            caseId === 4 ? case4Image :
+                            case5Image
+                          } 
                           alt={metadata.title}
                           className="w-full h-full object-cover"
                         />
