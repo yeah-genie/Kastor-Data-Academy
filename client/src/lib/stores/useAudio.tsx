@@ -15,6 +15,7 @@ interface AudioState {
   toggleMute: () => void;
   playHit: () => void;
   playSuccess: () => void;
+  playMessageSound: () => void;
 }
 
 export const useAudio = create<AudioState>((set, get) => ({
@@ -69,6 +70,15 @@ export const useAudio = create<AudioState>((set, get) => ({
       successSound.play().catch(error => {
         console.log("Success sound play prevented:", error);
       });
+    }
+  },
+  
+  playMessageSound: () => {
+    const { hitSound, isMuted } = get();
+    if (hitSound && !isMuted) {
+      const soundClone = hitSound.cloneNode() as HTMLAudioElement;
+      soundClone.volume = 0.1;
+      soundClone.play().catch(() => {});
     }
   }
 }));

@@ -3,18 +3,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, Volume2, VolumeX } from "lucide-react";
 import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { useAudio } from "@/lib/stores/useAudio";
-import { case1Story, StoryNode } from "@/data/case1-story";
+import { type StoryNode } from "@/data/case1-story";
+import { getStory, getCaseMetadata } from "@/data/stories";
 import { ChatMessage } from "./ChatMessage";
 import { DataVisualization } from "./DataVisualization";
 import { ChoiceButtons } from "./ChoiceButtons";
 import { DetectiveNotebook } from "./DetectiveNotebook";
 import { ClueAnimation } from "./ClueAnimation";
 import { ResolutionScene } from "./ResolutionScene";
+import { HintDialog } from "./HintDialog";
+import { getHint } from "@/data/hints";
 
 export function GameScene() {
   const {
     phase,
     currentNode,
+    currentCase,
     setCurrentNode,
     setPhase,
     addClue,
@@ -24,13 +28,16 @@ export function GameScene() {
 
   const { isMuted, toggleMute, playSuccess } = useAudio();
 
-  const [currentStoryNode, setCurrentStoryNode] = useState<StoryNode>(case1Story.start);
+  const [currentStoryNode, setCurrentStoryNode] = useState<StoryNode | null>(null);
   const [visibleMessages, setVisibleMessages] = useState<number>(0);
   const [showNotebook, setShowNotebook] = useState(false);
   const [pendingClue, setPendingClue] = useState<any>(null);
+  const [showHint, setShowHint] = useState(false);
+  const [currentHint, setCurrentHint] = useState<string>("");
 
   useEffect(() => {
-    const node = case1Story[currentNode];
+    const story = getStory(currentCase);
+    const node = story[currentNode];
     if (node) {
       setCurrentStoryNode(node);
       setPhase(node.phase);
@@ -54,7 +61,7 @@ export function GameScene() {
 
       return () => clearInterval(timer);
     }
-  }, [currentNode]);
+  }, [currentNode, currentCase]);
 
   const handleChoiceSelected = (choice: any) => {
     if (choice.clueAwarded) {
@@ -81,11 +88,31 @@ export function GameScene() {
   };
 
   const handleResolutionContinue = () => {
-    alert("Part 2와 Part 3는 곧 출시됩니다! 감사합니다.");
+    setPhase("menu");
+  };
+  
+  const handleShowHint = () => {
+    const hint = getHint(currentCase, currentNode);
+    if (hint) {
+      setCurrentHint(hint);
+      setShowHint(true);
+    }
+  };
+  
+  const isHintAvailable = () => {
+    return getHint(currentCase, currentNode) !== null;
   };
 
   if (phase === "resolution" && currentNode === "end") {
     return <ResolutionScene onContinue={handleResolutionContinue} />;
+  }
+
+  if (!currentStoryNode) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-white">로딩 중...</div>
+      </div>
+    );
   }
 
   return (
@@ -149,11 +176,22 @@ export function GameScene() {
         </div>
       </div>
 
-      <DetectiveNotebook isOpen={showNotebook} onClose={() => setShowNotebook(false)} />
+      <DetectiveNotebook 
+        isOpen={showNotebook} 
+        onClose={() => setShowNotebook(false)}
+        onShowHint={handleShowHint}
+        hintAvailable={isHintAvailable()}
+      />
       
       {pendingClue && (
         <ClueAnimation clue={pendingClue} onComplete={handleClueAnimationComplete} />
       )}
+      
+      <HintDialog 
+        isOpen={showHint} 
+        onClose={() => setShowHint(false)} 
+        hint={currentHint}
+      />
     </div>
   );
 }

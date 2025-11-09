@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
 import { Star, Trophy, ArrowRight } from "lucide-react";
 import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
+import { useState, useEffect } from "react";
 
 interface ResolutionSceneProps {
   onContinue: () => void;
 }
 
 export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
-  const { score, cluesCollected } = useDetectiveGame();
+  const { score, cluesCollected, completeCase } = useDetectiveGame();
 
   const calculateStars = () => {
     if (score >= 40) return 3;
@@ -16,6 +17,15 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
   };
 
   const stars = calculateStars();
+  
+  const [caseCompleted, setCaseCompleted] = useState(false);
+
+  useEffect(() => {
+    if (!caseCompleted) {
+      completeCase(stars);
+      setCaseCompleted(true);
+    }
+  }, [stars, completeCase, caseCompleted]);
 
   const getPerformanceMessage = () => {
     if (stars === 3) return "완벽한 추리입니다! 당신은 진정한 데이터 탐정입니다!";

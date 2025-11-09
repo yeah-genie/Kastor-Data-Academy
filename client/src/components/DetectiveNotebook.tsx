@@ -5,9 +5,11 @@ import { useDetectiveGame, Clue } from "@/lib/stores/useDetectiveGame";
 interface DetectiveNotebookProps {
   isOpen: boolean;
   onClose: () => void;
+  onShowHint?: () => void;
+  hintAvailable?: boolean;
 }
 
-export function DetectiveNotebook({ isOpen, onClose }: DetectiveNotebookProps) {
+export function DetectiveNotebook({ isOpen, onClose, onShowHint, hintAvailable }: DetectiveNotebookProps) {
   const { cluesCollected, score, hintsUsed, maxHints, useHint } = useDetectiveGame();
 
   return (
@@ -97,7 +99,26 @@ export function DetectiveNotebook({ isOpen, onClose }: DetectiveNotebookProps) {
               </div>
             </div>
 
-            <div className="bg-slate-900/70 border-t border-slate-700 px-6 py-4">
+            <div className="bg-slate-900/70 border-t border-slate-700 px-6 py-4 space-y-3">
+              {onShowHint && hintsUsed < maxHints && hintAvailable && (
+                <button
+                  onClick={() => {
+                    useHint();
+                    onShowHint();
+                  }}
+                  className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <Lightbulb className="w-5 h-5" />
+                  힌트 보기 ({maxHints - hintsUsed}개 남음)
+                </button>
+              )}
+              
+              {onShowHint && hintsUsed < maxHints && !hintAvailable && (
+                <div className="w-full bg-slate-700/50 text-slate-400 font-semibold py-3 rounded-lg text-center border border-slate-600">
+                  이 단계에는 힌트가 없습니다
+                </div>
+              )}
+              
               <button
                 onClick={onClose}
                 className="w-full bg-amber-700 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors"

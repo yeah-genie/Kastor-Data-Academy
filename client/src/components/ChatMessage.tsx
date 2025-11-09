@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { User, Users, FileText, Eye } from "lucide-react";
 import { Message } from "@/data/case1-story";
+import { useEffect } from "react";
+import { useAudio } from "@/lib/stores/useAudio";
 
 interface ChatMessageProps {
   message: Message;
@@ -8,6 +10,12 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ message, index }: ChatMessageProps) {
+  const { playMessageSound } = useAudio();
+  
+  useEffect(() => {
+    playMessageSound();
+  }, []);
+  
   const getAvatar = () => {
     switch (message.speaker) {
       case "detective":
