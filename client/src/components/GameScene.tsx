@@ -15,6 +15,8 @@ import { ClueAnimation } from "./ClueAnimation";
 import { ResolutionScene } from "./ResolutionScene";
 import { HintDialog } from "./HintDialog";
 import { getHint } from "@/data/hints";
+import { CharacterCardsSlider } from "./CharacterCardsSlider";
+import { CharacterEvidence } from "@/lib/stores/useDetectiveGame";
 
 export function GameScene() {
   const {
@@ -29,6 +31,7 @@ export function GameScene() {
     setStarsEarned,
     recordNodeVisited,
     visitedCharacters,
+    evidenceCollected,
   } = useDetectiveGame();
 
   const { isMuted, toggleMute, playSuccess } = useAudio();
@@ -213,6 +216,14 @@ export function GameScene() {
             {currentStoryNode.dataVisualizations?.map((viz, index) => (
               <DataVisualization key={index} visualization={viz} />
             ))}
+
+            {currentStoryNode.showCharacterCards && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <CharacterCardsSlider 
+                  characters={evidenceCollected.filter(e => e.type === "CHARACTER") as CharacterEvidence[]}
+                />
+              </div>
+            )}
 
             {currentStoryNode.question && (
               <div onClick={(e) => e.stopPropagation()}>

@@ -19,6 +19,7 @@ export interface StoryNode {
   phase: "stage1" | "stage2" | "stage3" | "stage4" | "stage5";
   messages: Message[];
   dataVisualizations?: DataVisualization[];
+  showCharacterCards?: boolean;
   question?: {
     id: string;
     text: string;
@@ -77,8 +78,8 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m14b", speaker: "chris", text: "Good morning! 👋", timestamp: "8:06 AM" },
       { id: "m15", speaker: "maya", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access.", timestamp: "8:06 AM" },
       { id: "m15b", speaker: "ryan", text: "Hello, Detective. 🖐️", timestamp: "8:06 AM" },
-      { id: "m16", speaker: "narrator", text: "I've added their basic profiles to your notebook. Time to interview them one by one." },
     ],
+    showCharacterCards: true,
     question: {
       id: "q2",
       text: "🔍 Who should we interview first?",

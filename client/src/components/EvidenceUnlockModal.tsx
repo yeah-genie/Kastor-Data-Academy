@@ -16,11 +16,11 @@ export function EvidenceUnlockModal() {
         return (
           <div className="flex items-center gap-4">
             {charEvidence.photo && (
-              <img src={charEvidence.photo} alt={charEvidence.name} className="w-20 h-20 rounded-full object-cover border-2 border-blue-400" />
+              <img src={charEvidence.photo} alt={charEvidence.name} className="w-20 h-20 rounded-2xl object-cover border-2 border-blue-400" />
             )}
             <div>
-              <div className="font-bold text-lg text-white">{charEvidence.name}</div>
-              <div className="text-sm text-blue-200">{charEvidence.role}</div>
+              <div className="font-bold text-lg text-gray-900">{charEvidence.name}</div>
+              <div className="text-sm text-blue-700 font-medium">{charEvidence.role}</div>
             </div>
           </div>
         );
