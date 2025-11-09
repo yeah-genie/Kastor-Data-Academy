@@ -45,7 +45,17 @@ export function GameScene() {
     if (node) {
       setCurrentStoryNode(node);
       setPhase(node.phase);
-      setVisibleMessages(0);
+      
+      let autoVisibleCount = 0;
+      for (const message of node.messages) {
+        if (message.speaker === "system" || message.speaker === "narrator") {
+          autoVisibleCount++;
+        } else {
+          break;
+        }
+      }
+      
+      setVisibleMessages(autoVisibleCount);
       recordNodeVisited(currentNode);
     }
   }, [currentNode, currentCase]);
@@ -54,7 +64,17 @@ export function GameScene() {
     if (!currentStoryNode) return;
     
     if (visibleMessages < currentStoryNode.messages.length) {
-      setVisibleMessages((prev) => prev + 1);
+      let nextVisible = visibleMessages + 1;
+      
+      while (
+        nextVisible < currentStoryNode.messages.length &&
+        (currentStoryNode.messages[nextVisible].speaker === "system" ||
+         currentStoryNode.messages[nextVisible].speaker === "narrator")
+      ) {
+        nextVisible++;
+      }
+      
+      setVisibleMessages(nextVisible);
     } else if (currentStoryNode.autoAdvance && !currentStoryNode.question) {
       setCurrentNode(currentStoryNode.autoAdvance.nextNode);
     }
