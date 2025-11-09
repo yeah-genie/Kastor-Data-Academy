@@ -151,11 +151,11 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
               </button>
             </div>
 
-            <div className="bg-gray-50 px-4 py-2 md:px-6 md:py-3 border-b border-gray-200">
+            <div className="bg-white px-4 py-2 md:px-6 md:py-3 border-b border-gray-200">
               <div className="flex items-center justify-between text-sm md:text-base">
                 <div className="flex items-center gap-3 md:gap-4 flex-wrap">
                   <span className="text-gray-600">Score: <span className="text-blue-600 font-bold">{score}</span></span>
-                  <span className="text-gray-600">Evidence: <span className="text-purple-600 font-bold">{evidenceCollected.length}</span></span>
+                  <span className="text-gray-600">Evidence: <span className="text-gray-800 font-bold">{evidenceCollected.length}</span></span>
                   <span className="text-gray-600">Hints: <span className="text-amber-600 font-bold">{hintsUsed}/{maxHints}</span></span>
                 </div>
               </div>
@@ -351,15 +351,6 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                   </TabsContent>
                 </div>
               </Tabs>
-            </div>
-
-            <div className="bg-white border-t border-gray-200 px-6 py-4">
-              <button
-                onClick={onClose}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all"
-              >
-                Close Notebook
-              </button>
             </div>
           </motion.div>
         </>

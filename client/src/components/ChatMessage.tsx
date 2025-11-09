@@ -69,7 +69,7 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
           transition={{ delay: index * 0.2, duration: 0.3 }}
           className="flex justify-center my-2"
         >
-          <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-xs font-semibold text-center">
+          <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-xs font-semibold text-center whitespace-pre-wrap">
             {message.text}
           </div>
         </motion.div>
@@ -84,7 +84,7 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             <img 
               src={message.photo} 
               alt="Scene" 
-              className="max-w-[85%] rounded-2xl shadow-lg border-2 border-gray-200"
+              className="max-w-[85%] rounded-3xl shadow-lg border-2 border-gray-200"
             />
           </motion.div>
         )}
