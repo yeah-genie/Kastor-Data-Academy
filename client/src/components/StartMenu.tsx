@@ -105,26 +105,19 @@ export function StartMenu() {
                       key={caseId}
                       whileTap={isUnlocked ? { scale: 0.98 } : {}}
                       onClick={() => isUnlocked && handleCaseClick(caseId)}
-                      className={`bg-white rounded-xl overflow-hidden shadow-sm ${
+                      className={`bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 ${
                         isUnlocked ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
                       }`}
                     >
                       {/* Mission Image */}
-                      <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-600">
+                      <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-600 overflow-hidden">
                         <img 
                           src={caseId === 1 ? case1Image : caseId === 2 ? case2Image : case3Image} 
                           alt={metadata.title}
                           className="w-full h-full object-cover"
                         />
-                        
-                        {/* Gradient overlay at bottom of image */}
-                        <div 
-                          className="absolute left-0 right-0 bottom-0 pointer-events-none"
-                          style={{ 
-                            height: '80px',
-                            background: 'linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%)'
-                          }}
-                        />
+                        {/* Blur gradient overlay at bottom */}
+                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/40 to-transparent backdrop-blur-[2px]" />
                         
                         {!isUnlocked && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -136,30 +129,30 @@ export function StartMenu() {
                       </div>
 
                       {/* Mission Info */}
-                      <div className="p-4 bg-white">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            {metadata.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-3">
-                            {isUnlocked ? metadata.subtitle : "Complete previous missions to unlock"}
-                          </p>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          {metadata.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-3">
+                          {isUnlocked ? metadata.subtitle : "Complete previous missions to unlock"}
+                        </p>
 
-                          {/* Progress Bar */}
-                          {isUnlocked && (
-                            <div>
-                              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                                <span>Progress</span>
-                                <span className="font-semibold text-blue-600">{Math.round(progress)}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                                  style={{ width: `${progress}%` }}
-                                />
-                              </div>
+                        {/* Progress Bar */}
+                        {isUnlocked && (
+                          <div>
+                            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                              <span>Progress</span>
+                              <span className="font-semibold text-blue-600">{Math.round(progress)}%</span>
                             </div>
-                          )}
-                        </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </motion.div>
                   );
                 })}
