@@ -49,6 +49,19 @@ export function GameScene() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [visibleMessages, showCharacterCardsSlider, showQuestion]);
+  
+  useEffect(() => {
+    if (!currentStoryNode) return;
+    
+    if (visibleMessages === currentStoryNode.messages.length && 
+        currentStoryNode.showCharacterCards && 
+        !showCharacterCardsSlider) {
+      const timer = setTimeout(() => {
+        setShowCharacterCardsSlider(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [visibleMessages, currentStoryNode, showCharacterCardsSlider]);
 
   useEffect(() => {
     const story = getStory(currentCase);
