@@ -94,9 +94,9 @@ export function DataVisualization({ visualization }: DataVisualizationProps) {
               <span className="text-blue-600 font-medium">{entry.user}</span>
               <span className="text-gray-700">{entry.action}</span>
               <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                entry.status === "success" || entry.status.includes("성공") || entry.status.includes("성공") || entry.status === "noted" || entry.status === "normal"
+                entry.status === "success" || (entry.status && entry.status.includes("성공")) || entry.status === "noted" || entry.status === "normal"
                   ? "bg-green-100 text-green-700" 
-                  : entry.status === "failed" || entry.status.includes("실패") || entry.status === "attacked" || entry.status === "emergency" || entry.status === "critical"
+                  : entry.status === "failed" || (entry.status && entry.status.includes("실패")) || entry.status === "attacked" || entry.status === "emergency" || entry.status === "critical"
                   ? "bg-red-100 text-red-700"
                   : "bg-yellow-100 text-yellow-700"
               }`}>

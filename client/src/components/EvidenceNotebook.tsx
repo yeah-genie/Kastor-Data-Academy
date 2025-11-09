@@ -24,49 +24,49 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.1 }}
-      className="bg-slate-700/50 rounded-xl p-4 border border-slate-600 shadow-sm"
+      className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
     >
       <div className="flex items-center gap-2 mb-3">
-        <BarChart3 className="w-5 h-5 text-green-400" />
-        <h4 className="font-semibold text-base md:text-lg text-white">{data.title}</h4>
+        <BarChart3 className="w-5 h-5 text-green-600" />
+        <h4 className="font-semibold text-base md:text-lg text-gray-900">{data.title}</h4>
       </div>
       
       {data.dataType === "log" && data.data?.entries && (
         <div className="space-y-2">
-          <div className="text-xs md:text-sm text-slate-400 mb-2 flex items-center gap-2">
+          <div className="text-xs md:text-sm text-gray-600 mb-2 flex items-center gap-2">
             <Bookmark className="w-3 h-3" />
             <span>Click on log entries to highlight important ones</span>
           </div>
-          <div className="bg-slate-950 rounded-lg p-3 font-mono text-xs md:text-sm overflow-x-auto">
+          <div className="bg-gray-50 rounded-lg p-3 font-mono text-xs md:text-sm overflow-x-auto border border-gray-200">
             {data.data.entries.map((entry: any, entryIdx: number) => (
               <div
                 key={entryIdx}
                 onClick={() => toggleHighlight(entryIdx)}
                 className={`py-1 px-2 rounded cursor-pointer transition-colors ${
                   highlightedIndices.includes(entryIdx)
-                    ? "bg-yellow-500/30 text-yellow-100 border-l-2 border-yellow-400"
-                    : "text-gray-300 hover:bg-slate-800"
+                    ? "bg-yellow-100 text-yellow-900 border-l-2 border-yellow-500"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                <span className="text-blue-400">{entry.time}</span>
+                <span className="text-blue-600">{entry.time}</span>
                 {" | "}
-                <span className="text-green-400">{entry.user}</span>
+                <span className="text-green-600">{entry.user}</span>
                 {" | "}
-                <span className="text-purple-400">{entry.action}</span>
+                <span className="text-purple-600">{entry.action}</span>
                 {entry.ip && (
                   <>
                     {" | "}
-                    <span className="text-orange-400">{entry.ip}</span>
+                    <span className="text-orange-600">{entry.ip}</span>
                   </>
                 )}
                 {highlightedIndices.includes(entryIdx) && (
-                  <span className="ml-2 text-yellow-400">★</span>
+                  <span className="ml-2 text-yellow-600">★</span>
                 )}
               </div>
             ))}
           </div>
           {highlightedIndices.length > 0 && (
-            <div className="mt-2 text-xs text-green-300 bg-green-900/30 border border-green-700 p-2 rounded">
+            <div className="mt-2 text-xs text-green-700 bg-green-50 border border-green-200 p-2 rounded">
               ✓ {highlightedIndices.length} important {highlightedIndices.length === 1 ? "entry" : "entries"} highlighted
             </div>
           )}
@@ -77,9 +77,9 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr className="bg-green-900/30">
+              <tr className="bg-green-50">
                 {data.data.headers.map((header: string, i: number) => (
-                  <th key={i} className="border border-slate-600 px-3 py-2 text-left font-semibold text-green-300">
+                  <th key={i} className="border border-gray-200 px-3 py-2 text-left font-semibold text-green-700">
                     {header}
                   </th>
                 ))}
@@ -87,9 +87,9 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
             </thead>
             <tbody>
               {data.data.rows.map((row: string[], i: number) => (
-                <tr key={i} className="hover:bg-slate-800/50">
+                <tr key={i} className="hover:bg-gray-50">
                   {row.map((cell, j) => (
-                    <td key={j} className="border border-slate-600 px-3 py-2 text-slate-200">
+                    <td key={j} className="border border-gray-200 px-3 py-2 text-gray-700">
                       {cell}
                     </td>
                   ))}
@@ -101,11 +101,11 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
       )}
 
       {data.dataType === "chart" && (
-        <p className="text-sm text-slate-400">Chart visualization (view in chat for interactive display)</p>
+        <p className="text-sm text-gray-600">Chart visualization (view in chat for interactive display)</p>
       )}
 
       {!["log", "table", "chart"].includes(data.dataType || "") && (
-        <p className="text-sm text-slate-400">Type: {data.dataType}</p>
+        <p className="text-sm text-gray-600">Type: {data.dataType}</p>
       )}
     </motion.div>
   );
@@ -136,34 +136,34 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-3 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[85vw] md:h-[85vh] md:max-w-5xl bg-slate-800 border-2 border-slate-600 rounded-2xl z-50 overflow-hidden flex flex-col shadow-2xl"
+            className="fixed inset-3 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[85vw] md:h-[85vh] md:max-w-5xl bg-white border-2 border-gray-200 rounded-2xl z-50 overflow-hidden flex flex-col shadow-2xl"
           >
-            <div className="bg-slate-900 px-4 py-3 md:px-6 md:py-4 flex items-center justify-between border-b border-slate-700">
+            <div className="bg-white px-4 py-3 md:px-6 md:py-4 flex items-center justify-between border-b border-gray-200">
               <div className="flex items-center gap-2 md:gap-3">
-                <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-blue-400" />
-                <h2 className="text-lg md:text-xl font-bold text-white">Evidence Notebook</h2>
+                <BookOpen className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Evidence Notebook</h2>
               </div>
               <button
                 onClick={onClose}
-                className="text-slate-400 hover:text-white text-3xl md:text-2xl font-bold min-w-[44px] min-h-[44px] flex items-center justify-center"
+                className="text-gray-400 hover:text-gray-900 text-3xl md:text-2xl font-bold min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 ×
               </button>
             </div>
 
-            <div className="bg-slate-900/50 px-4 py-2 md:px-6 md:py-3 border-b border-slate-700">
+            <div className="bg-gray-50 px-4 py-2 md:px-6 md:py-3 border-b border-gray-200">
               <div className="flex items-center justify-between text-sm md:text-base">
                 <div className="flex items-center gap-3 md:gap-4 flex-wrap">
-                  <span className="text-slate-300">Score: <span className="text-blue-400 font-bold">{score}</span></span>
-                  <span className="text-slate-300">Evidence: <span className="text-purple-400 font-bold">{evidenceCollected.length}</span></span>
-                  <span className="text-slate-300">Hints: <span className="text-amber-400 font-bold">{hintsUsed}/{maxHints}</span></span>
+                  <span className="text-gray-600">Score: <span className="text-blue-600 font-bold">{score}</span></span>
+                  <span className="text-gray-600">Evidence: <span className="text-purple-600 font-bold">{evidenceCollected.length}</span></span>
+                  <span className="text-gray-600">Hints: <span className="text-amber-600 font-bold">{hintsUsed}/{maxHints}</span></span>
                 </div>
               </div>
             </div>
 
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden bg-gray-50">
               <Tabs defaultValue="characters" className="h-full flex flex-col">
-                <div className="bg-slate-900 border-b border-slate-700 overflow-x-auto">
+                <div className="bg-white border-b border-gray-200 overflow-x-auto">
                   <TabsList className="w-full flex md:grid md:grid-cols-5 bg-transparent p-2 gap-1 min-w-max md:min-w-0">
                     <TabsTrigger value="characters" className="flex items-center gap-1.5 md:gap-2 px-3 py-2.5 text-sm whitespace-nowrap">
                       <Users className="w-4 h-4" />
@@ -198,7 +198,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                     <ScrollArea className="h-full">
                       <div className="p-4 md:p-6 space-y-4">
                         {characters.length === 0 ? (
-                          <div className="text-center text-slate-500 py-12 text-base">No character profiles yet</div>
+                          <div className="text-center text-gray-500 py-12 text-base">No character profiles yet</div>
                         ) : (
                           characters.map((char, idx) => (
                             <motion.div
@@ -206,7 +206,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: idx * 0.1 }}
-                              className="bg-slate-700/50 rounded-xl p-4 border border-slate-600"
+                              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
                             >
                               <div className="flex flex-col">
                                 <div className="flex gap-3 md:gap-4 mb-3">
@@ -214,14 +214,14 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                                     <img src={char.photo} alt={char.name} className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover object-center border-2 border-blue-400 shadow-lg" />
                                   )}
                                   <div className="flex-1">
-                                    <h4 className="font-bold text-lg md:text-xl text-white mb-1">{char.name}</h4>
-                                    <p className="text-sm md:text-base text-blue-300 font-semibold mb-2">{char.role}</p>
+                                    <h4 className="font-bold text-lg md:text-xl text-gray-900 mb-1">{char.name}</h4>
+                                    <p className="text-sm md:text-base text-blue-600 font-semibold mb-2">{char.role}</p>
                                     {char.suspicionLevel !== undefined && (
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs md:text-sm text-slate-300 font-medium">Suspicion Level:</span>
+                                        <span className="text-xs md:text-sm text-gray-600 font-medium">Suspicion Level:</span>
                                         <div className="flex gap-1">
                                           {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`w-4 h-4 ${i < (char.suspicionLevel || 0) ? 'fill-red-400 text-red-400' : 'text-slate-600'}`} />
+                                            <Star key={i} className={`w-4 h-4 ${i < (char.suspicionLevel || 0) ? 'fill-red-400 text-red-400' : 'text-gray-300'}`} />
                                           ))}
                                         </div>
                                       </div>
@@ -230,15 +230,15 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                                 </div>
                                 
                                 <div className="space-y-2">
-                                  <div className="bg-slate-800/70 rounded-lg p-3 border border-slate-600 shadow-sm">
-                                    <p className="text-xs md:text-sm font-bold text-blue-300 mb-1.5">PROFILE</p>
-                                    <p className="text-sm md:text-base text-slate-200 leading-relaxed">{char.description}</p>
+                                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 shadow-sm">
+                                    <p className="text-xs md:text-sm font-bold text-blue-600 mb-1.5">PROFILE</p>
+                                    <p className="text-sm md:text-base text-gray-700 leading-relaxed">{char.description}</p>
                                   </div>
                                   
                                   {char.personality && (
-                                    <div className="bg-slate-800/70 rounded-lg p-3 border border-slate-600 shadow-sm">
-                                      <p className="text-xs md:text-sm font-bold text-purple-300 mb-1.5">PERSONALITY</p>
-                                      <p className="text-sm md:text-base text-slate-200 leading-relaxed">{char.personality}</p>
+                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 shadow-sm">
+                                      <p className="text-xs md:text-sm font-bold text-purple-600 mb-1.5">PERSONALITY</p>
+                                      <p className="text-sm md:text-base text-gray-700 leading-relaxed">{char.personality}</p>
                                     </div>
                                   )}
                                 </div>
@@ -254,7 +254,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                     <ScrollArea className="h-full">
                       <div className="p-4 md:p-6 space-y-4">
                         {dataViz.length === 0 ? (
-                          <div className="text-center text-slate-500 py-12 text-base">No data evidence yet</div>
+                          <div className="text-center text-gray-500 py-12 text-base">No data evidence yet</div>
                         ) : (
                           dataViz.map((data, idx) => (
                             <DataEvidenceCard key={data.id} data={data} idx={idx} />
@@ -268,7 +268,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                     <ScrollArea className="h-full">
                       <div className="p-4 md:p-6 space-y-4">
                         {dialogues.length === 0 ? (
-                          <div className="text-center text-slate-500 py-12 text-base">No conversations yet</div>
+                          <div className="text-center text-gray-500 py-12 text-base">No conversations yet</div>
                         ) : (
                           dialogues.map((dialogue, idx) => (
                             <motion.div
@@ -276,17 +276,17 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: idx * 0.1 }}
-                              className="bg-slate-700/50 rounded-xl p-4 border border-slate-600"
+                              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
                             >
                               <div className="flex items-center gap-2 mb-3">
-                                <MessageSquare className="w-5 h-5 text-purple-400" />
-                                <h4 className="font-semibold text-base md:text-lg text-white">{dialogue.title}</h4>
+                                <MessageSquare className="w-5 h-5 text-purple-600" />
+                                <h4 className="font-semibold text-base md:text-lg text-gray-900">{dialogue.title}</h4>
                               </div>
-                              <p className="text-sm md:text-base font-medium text-purple-300 mb-3">With: {dialogue.character}</p>
-                              <ul className="text-sm md:text-base text-slate-200 space-y-2">
+                              <p className="text-sm md:text-base font-medium text-purple-600 mb-3">With: {dialogue.character}</p>
+                              <ul className="text-sm md:text-base text-gray-700 space-y-2">
                                 {dialogue.keyPoints.map((point, i) => (
                                   <li key={i} className="flex gap-2">
-                                    <span className="text-purple-400 font-bold">•</span>
+                                    <span className="text-purple-600 font-bold">•</span>
                                     <span>{point}</span>
                                   </li>
                                 ))}
@@ -302,7 +302,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                     <ScrollArea className="h-full">
                       <div className="p-6 space-y-4">
                         {photos.length === 0 ? (
-                          <div className="text-center text-slate-500 py-12">No photos yet</div>
+                          <div className="text-center text-gray-500 py-12">No photos yet</div>
                         ) : (
                           photos.map((photo, idx) => (
                             <motion.div
@@ -328,7 +328,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                     <ScrollArea className="h-full">
                       <div className="p-6 space-y-4">
                         {documents.length === 0 ? (
-                          <div className="text-center text-slate-500 py-12">No documents yet</div>
+                          <div className="text-center text-gray-500 py-12">No documents yet</div>
                         ) : (
                           documents.map((doc, idx) => (
                             <motion.div
@@ -353,7 +353,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
               </Tabs>
             </div>
 
-            <div className="bg-slate-900 border-t border-slate-700 px-6 py-4">
+            <div className="bg-white border-t border-gray-200 px-6 py-4">
               <button
                 onClick={onClose}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all"

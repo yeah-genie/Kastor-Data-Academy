@@ -79,6 +79,7 @@ interface DetectiveGameState {
   evidenceCollected: Evidence[];
   recentEvidenceId: string | null;
   isEvidenceModalOpen: boolean;
+  hasNewEvidence: boolean;
   score: number;
   starsEarned: number;
   currentCase: number;
@@ -95,6 +96,7 @@ interface DetectiveGameState {
   addClue: (clue: Clue) => void;
   unlockEvidence: (evidence: Evidence, showModal?: boolean) => void;
   setEvidenceModalOpen: (isOpen: boolean) => void;
+  clearNewEvidenceFlag: () => void;
   getEvidenceByType: (type: EvidenceType) => Evidence[];
   addScore: (points: number) => void;
   setStarsEarned: (stars: number) => void;
@@ -123,6 +125,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     evidenceCollected: [],
     recentEvidenceId: null,
     isEvidenceModalOpen: false,
+    hasNewEvidence: false,
     score: 0,
     starsEarned: 0,
     currentCase: initialProgress.currentCase,
@@ -169,6 +172,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
             evidenceCollected: newEvidenceCollected,
             recentEvidenceId: ev.id,
             isEvidenceModalOpen: showModal,
+            hasNewEvidence: true,
           };
         });
       });
@@ -177,6 +181,10 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     
     setEvidenceModalOpen: (isOpen) => {
       set({ isEvidenceModalOpen: isOpen });
+    },
+
+    clearNewEvidenceFlag: () => {
+      set({ hasNewEvidence: false });
     },
     
     getEvidenceByType: (type) => {
@@ -210,6 +218,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
         evidenceCollected: [],
         recentEvidenceId: null,
         isEvidenceModalOpen: false,
+        hasNewEvidence: false,
         score: 0,
         starsEarned: 0,
         hintsUsed: 0,
@@ -230,6 +239,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           currentNode: savedCaseProgress.currentNode,
           cluesCollected: savedCaseProgress.cluesCollected,
           evidenceCollected: savedCaseProgress.evidenceCollected || [],
+          hasNewEvidence: false,
           score: savedCaseProgress.score,
           starsEarned: savedCaseProgress.starsEarned,
           hintsUsed: savedCaseProgress.hintsUsed,
@@ -243,6 +253,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           currentNode: "start",
           cluesCollected: [],
           evidenceCollected: [],
+          hasNewEvidence: false,
           score: 0,
           starsEarned: 0,
           hintsUsed: 0,

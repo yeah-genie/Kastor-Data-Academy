@@ -4,9 +4,10 @@ import { useState } from "react";
 
 interface CharacterCardsSliderProps {
   characters: CharacterEvidence[];
+  showNotification?: boolean;
 }
 
-export function CharacterCardsSlider({ characters }: CharacterCardsSliderProps) {
+export function CharacterCardsSlider({ characters, showNotification = false }: CharacterCardsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleDotClick = (index: number) => {
@@ -15,12 +16,14 @@ export function CharacterCardsSlider({ characters }: CharacterCardsSliderProps) 
 
   return (
     <div className="my-4">
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-3">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-2xl md:text-xl">📋</span>
-          <p className="text-base md:text-sm font-semibold text-amber-900">Team profiles have been updated in your notebook!</p>
+      {showNotification && (
+        <div className="bg-gray-100 border border-gray-300 rounded-xl p-4 mb-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-2xl md:text-xl">📋</span>
+            <p className="text-base md:text-sm font-semibold text-gray-700">Team profiles have been updated in your notebook!</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="relative">
         <div className="overflow-hidden rounded-2xl">

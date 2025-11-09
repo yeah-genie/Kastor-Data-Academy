@@ -32,6 +32,8 @@ export function GameScene() {
     recordNodeVisited,
     visitedCharacters,
     evidenceCollected,
+    hasNewEvidence,
+    clearNewEvidenceFlag,
   } = useDetectiveGame();
 
   const { isMuted, toggleMute, playSuccess } = useAudio();
@@ -207,10 +209,16 @@ export function GameScene() {
           </button>
           
           <button
-            onClick={() => setShowNotebook(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
+            onClick={() => {
+              setShowNotebook(true);
+              clearNewEvidenceFlag();
+            }}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 relative"
           >
             <BookOpen className="w-5 h-5" />
+            {hasNewEvidence && (
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
           </button>
         </div>
       </div>
@@ -242,6 +250,7 @@ export function GameScene() {
                   characters={evidenceCollected
                     .filter(e => e.type === "CHARACTER")
                     .sort((a, b) => a.timestamp - b.timestamp) as CharacterEvidence[]}
+                  showNotification={!showQuestion}
                 />
               </div>
             )}
