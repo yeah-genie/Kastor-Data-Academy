@@ -74,7 +74,9 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m11", speaker: "system", text: "☀️ 8:00 AM - You arrive at the Game Studio headquarters. Large monitors display live game statistics.", photo: "/office-scene.jpg" },
       { id: "m12", speaker: "maya", text: "Good morning, Detective. Let me introduce you to the team.", timestamp: "8:05 AM" },
       { id: "m14", speaker: "maya", text: "This is Chris Park, our Data Analyst. He monitors game stats and player behavior patterns.", timestamp: "8:06 AM" },
+      { id: "m14b", speaker: "chris", text: "Good morning! 👋", timestamp: "8:06 AM" },
       { id: "m15", speaker: "maya", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access.", timestamp: "8:06 AM" },
+      { id: "m15b", speaker: "ryan", text: "Hello, Detective. 🖐️", timestamp: "8:06 AM" },
       { id: "m16", speaker: "narrator", text: "I've added their basic profiles to your notebook. Time to interview them one by one." },
     ],
     question: {
