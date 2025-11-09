@@ -4,9 +4,9 @@ import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { caseMetadata } from "@/data/stories";
 import { useState } from "react";
 
-const case1Image = "/attached_assets/stock_images/ancient_scroll_parch_fd3ce574.jpg";
-const case2Image = "/attached_assets/stock_images/dark_forest_trees_my_45f390b2.jpg";
-const case3Image = "/attached_assets/stock_images/antique_clock_time_m_285541ce.jpg";
+const case1Image = "/cases/case1.jpg";
+const case2Image = "/cases/case2.jpg";
+const case3Image = "/cases/case3.jpg";
 
 export function StartMenu() {
   const { startCase, unlockedCases, achievements, getProgress, getCurrentXP, getCurrentLevel } = useDetectiveGame();
