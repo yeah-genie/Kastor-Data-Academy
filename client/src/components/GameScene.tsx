@@ -143,6 +143,13 @@ export function GameScene() {
   };
 
   const handleChoiceSelected = (choice: any) => {
+    const recordDecision = useDetectiveGame.getState().recordDecision;
+    const currentQuestion = currentStoryNode?.question;
+    
+    if (currentQuestion) {
+      recordDecision(currentQuestion.id, choice.id, choice.isCorrect);
+    }
+    
     if (choice.clueAwarded) {
       const clue = {
         ...choice.clueAwarded,

@@ -72,6 +72,20 @@ export interface Question {
   choices: Choice[];
 }
 
+export interface SessionMetrics {
+  startTime: number;
+  endTime: number | null;
+  decisions: Array<{
+    questionId: string;
+    choiceId: string;
+    isCorrect: boolean;
+    timestamp: number;
+  }>;
+  totalEvidenceInCase: number;
+}
+
+export type Grade = 'S' | 'A' | 'B' | 'C';
+
 interface DetectiveGameState {
   phase: GamePhase;
   currentNode: StoryNode;
@@ -90,6 +104,7 @@ interface DetectiveGameState {
   totalScore: number;
   visitedNodeIds: string[];
   visitedCharacters: string[];
+  sessionMetrics: SessionMetrics;
 
   setPhase: (phase: GamePhase) => void;
   setCurrentNode: (node: StoryNode) => void;
@@ -113,6 +128,9 @@ interface DetectiveGameState {
   resetCaseFor: (caseId: number) => void;
   getCurrentXP: () => number;
   getCurrentLevel: () => number;
+  recordDecision: (questionId: string, choiceId: string, isCorrect: boolean) => void;
+  calculateGrade: () => Grade;
+  initSessionMetrics: (totalEvidenceCount: number) => void;
 }
 
 const initialProgress = loadProgress() || getInitialProgress();
@@ -136,6 +154,72 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     totalScore: initialProgress.totalScore,
     visitedNodeIds: [],
     visitedCharacters: [],
+    sessionMetrics: {
+      startTime: Date.now(),
+      endTime: null,
+      decisions: [],
+      totalEvidenceInCase: 0,
+    },
+
+    initSessionMetrics: (totalEvidenceCount) => {
+      set({
+        sessionMetrics: {
+          startTime: Date.now(),
+          endTime: null,
+          decisions: [],
+          totalEvidenceInCase: totalEvidenceCount,
+        },
+      });
+    },
+
+    recordDecision: (questionId, choiceId, isCorrect) => {
+      set((state) => ({
+        sessionMetrics: {
+          ...state.sessionMetrics,
+          decisions: [
+            ...state.sessionMetrics.decisions,
+            {
+              questionId,
+              choiceId,
+              isCorrect,
+              timestamp: Date.now(),
+            },
+          ],
+        },
+      }));
+    },
+
+    calculateGrade: (): Grade => {
+      const state = get();
+      const metrics = state.sessionMetrics;
+      
+      const correctDecisions = metrics.decisions.filter(d => d.isCorrect).length;
+      const totalDecisions = metrics.decisions.length;
+      const decisionRate = totalDecisions > 0 ? correctDecisions / totalDecisions : 1;
+      
+      const evidenceRate = metrics.totalEvidenceInCase > 0 
+        ? state.evidenceCollected.length / metrics.totalEvidenceInCase 
+        : 1;
+      
+      const hintPenalty = state.hintsUsed * 0.1;
+      
+      const durationMinutes = metrics.endTime 
+        ? (metrics.endTime - metrics.startTime) / 60000 
+        : 0;
+      
+      const timeScore = durationMinutes < 15 ? 1.0 : durationMinutes < 25 ? 0.5 : 0;
+      
+      const finalScore = (
+        decisionRate * 0.4 +
+        evidenceRate * 0.4 +
+        timeScore * 0.2
+      ) - hintPenalty;
+      
+      if (finalScore >= 0.9) return 'S';
+      if (finalScore >= 0.75) return 'A';
+      if (finalScore >= 0.6) return 'B';
+      return 'C';
+    },
 
     setPhase: (phase) => {
       set({ phase });
@@ -224,6 +308,12 @@ export const useDetectiveGame = create<DetectiveGameState>()(
         hintsUsed: 0,
         visitedNodeIds: [],
         visitedCharacters: [],
+        sessionMetrics: {
+          startTime: Date.now(),
+          endTime: null,
+          decisions: [],
+          totalEvidenceInCase: 0,
+        },
       });
       get().saveCurrentProgress();
     },
@@ -231,6 +321,8 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     startCase: (caseNumber, resumeMode = false) => {
       const state = get();
       const savedCaseProgress = loadProgress()?.caseProgress[caseNumber];
+      
+      const totalEvidenceCount = 15;
       
       if (resumeMode && savedCaseProgress && !savedCaseProgress.completed) {
         set({
@@ -260,6 +352,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           visitedNodeIds: [],
           visitedCharacters: [],
         });
+        get().initSessionMetrics(totalEvidenceCount);
       }
       
       get().saveCurrentProgress();
@@ -267,7 +360,14 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     
     completeCase: (stars) => {
       const state = get();
-      set({ starsEarned: stars });
+      
+      set({ 
+        starsEarned: stars,
+        sessionMetrics: {
+          ...state.sessionMetrics,
+          endTime: Date.now(),
+        },
+      });
       
       const nextCase = state.currentCase + 1;
       const newUnlockedCases = [...state.unlockedCases];
