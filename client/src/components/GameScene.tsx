@@ -79,16 +79,25 @@ export function GameScene() {
   useEffect(() => {
     if (!currentStoryNode) return;
     
-    const celebrationMessage = currentStoryNode.messages
-      .slice(0, visibleMessages)
-      .find(msg => msg.celebration);
+    const visibleMessagesList = currentStoryNode.messages.slice(0, visibleMessages);
     
+    const celebrationMessage = visibleMessagesList.find(msg => msg.celebration);
     if (celebrationMessage && celebrationMessage.celebration && celebrationMessage.id !== handledCelebrationId) {
       setCelebrationData(celebrationMessage.celebration);
       setShowCelebration(true);
       setHandledCelebrationId(celebrationMessage.id);
     }
-  }, [visibleMessages, currentStoryNode, handledCelebrationId]);
+    
+    const hasQuestion = visibleMessagesList.some(msg => msg.isQuestion);
+    if (hasQuestion && !showQuestion) {
+      setShowQuestion(true);
+    }
+    
+    const hasCharacterCards = visibleMessagesList.some(msg => msg.isCharacterCards);
+    if (hasCharacterCards && !showCharacterCardsSlider) {
+      setShowCharacterCardsSlider(true);
+    }
+  }, [visibleMessages, currentStoryNode, handledCelebrationId, showQuestion, showCharacterCardsSlider]);
 
   useEffect(() => {
     const story = getStory(currentCase);
@@ -99,7 +108,7 @@ export function GameScene() {
       
       let autoVisibleCount = 0;
       for (const message of node.messages) {
-        if (message.speaker === "system") {
+        if (message.speaker === "system" || message.speaker === "narrator") {
           autoVisibleCount++;
         } else {
           break;
@@ -171,16 +180,6 @@ export function GameScene() {
       }
     } else if (currentStoryNode.showCharacterCards && !showCharacterCardsSlider) {
       setShowCharacterCardsSlider(true);
-    } else if (currentStoryNode.showCharacterCards && showCharacterCardsSlider && !showQuestion && !showEvidencePresentation) {
-      if (currentStoryNode.question) {
-        setShowQuestion(true);
-      } else if (currentStoryNode.evidencePresentation) {
-        setShowEvidencePresentation(true);
-      }
-    } else if (!currentStoryNode.showCharacterCards && currentStoryNode.question && !showQuestion && !showEvidencePresentation) {
-      setShowQuestion(true);
-    } else if (!currentStoryNode.showCharacterCards && !currentStoryNode.question && currentStoryNode.evidencePresentation && !showEvidencePresentation) {
-      setShowEvidencePresentation(true);
     } else if (currentStoryNode.autoAdvance && !currentStoryNode.question && !currentStoryNode.evidencePresentation) {
       setCurrentNode(currentStoryNode.autoAdvance.nextNode);
     }
@@ -344,41 +343,63 @@ export function GameScene() {
       >
         {currentStoryNode.messages.slice(0, visibleMessages)
           .filter(message => !message.celebration)
-          .map((message, index) => (
-            <ChatMessage key={message.id} message={message} index={index} />
-          ))}
+          .map((message, index) => {
+            if (message.dataVisualization) {
+              return (
+                <DataVisualization 
+                  key={message.id} 
+                  visualization={message.dataVisualization} 
+                />
+              );
+            }
+            
+            if (message.isCharacterCards && currentStoryNode.showCharacterCards && showCharacterCardsSlider) {
+              return (
+                <div key={message.id} onClick={(e) => e.stopPropagation()}>
+                  <CharacterCardsSlider 
+                    characters={evidenceCollected
+                      .filter(e => e.type === "CHARACTER")
+                      .sort((a, b) => a.timestamp - b.timestamp) as CharacterEvidence[]}
+                    showNotification={!showQuestion}
+                  />
+                </div>
+              );
+            }
+            
+            if (message.isQuestion && currentStoryNode.question && showQuestion) {
+              return (
+                <div key={message.id} onClick={(e) => e.stopPropagation()}>
+                  <ChoiceButtons
+                    question={currentStoryNode.question.text}
+                    choices={currentStoryNode.question.choices}
+                    onChoiceSelected={handleChoiceSelected}
+                  />
+                </div>
+              );
+            }
+            
+            if (message.isEvidencePresentation && currentStoryNode.evidencePresentation && !showEvidencePresentation) {
+              return (
+                <div key={message.id} className="my-4" onClick={(e) => e.stopPropagation()}>
+                  <button
+                    onClick={() => setShowEvidencePresentation(true)}
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-3 px-6 rounded-lg font-semibold shadow-lg hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>🔍 Present Evidence</span>
+                  </button>
+                </div>
+              );
+            }
+            
+            if (message.text) {
+              return <ChatMessage key={message.id} message={message} index={index} />;
+            }
+            
+            return null;
+          })}
         
         {showTypingIndicator && (
           <TypingIndicator speaker={typingSpeaker} />
-        )}
-
-        {visibleMessages === currentStoryNode.messages.length && (
-          <>
-            {currentStoryNode.dataVisualizations?.map((viz, index) => (
-              <DataVisualization key={index} visualization={viz} />
-            ))}
-
-            {currentStoryNode.showCharacterCards && showCharacterCardsSlider && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <CharacterCardsSlider 
-                  characters={evidenceCollected
-                    .filter(e => e.type === "CHARACTER")
-                    .sort((a, b) => a.timestamp - b.timestamp) as CharacterEvidence[]}
-                  showNotification={!showQuestion}
-                />
-              </div>
-            )}
-
-            {currentStoryNode.question && showQuestion && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <ChoiceButtons
-                  question={currentStoryNode.question.text}
-                  choices={currentStoryNode.question.choices}
-                  onChoiceSelected={handleChoiceSelected}
-                />
-              </div>
-            )}
-          </>
         )}
         
         <div ref={chatEndRef} />

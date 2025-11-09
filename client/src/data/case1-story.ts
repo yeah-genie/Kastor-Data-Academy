@@ -1,7 +1,7 @@
 export interface Message {
   id: string;
   speaker: "detective" | "client" | "system" | "narrator" | "maya" | "chris" | "ryan";
-  text: string;
+  text?: string;
   avatar?: string;
   characterName?: string;
   timestamp?: string;
@@ -10,6 +10,10 @@ export interface Message {
     caseNumber: number;
     caseTitle: string;
   };
+  dataVisualization?: DataVisualization;
+  isQuestion?: boolean;
+  isCharacterCards?: boolean;
+  isEvidencePresentation?: boolean;
 }
 
 export interface DataVisualization {
@@ -78,6 +82,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m2", speaker: "system", text: "🕐 11:47 PM - Your detective office.\nAn email notification chimes.", photo: "/detective-office.jpg" },
       { id: "m3", speaker: "maya", text: "Detective, we have a major problem. After last night's game update, the character 'Shadow Reaper' became incredibly overpowered - the win rate jumped abnormally and the community thinks someone deliberately manipulated the balance. Many players have stopped playing and I have a meeting tomorrow morning. I need to know what happened.", timestamp: "11:47 PM" },
       { id: "m5", speaker: "narrator", text: "Interesting case! A sudden win rate spike usually means something changed in the game data. What's your theory?" },
+      { id: "q1", speaker: "system", isQuestion: true },
     ],
     question: {
       id: "q1",
@@ -100,19 +105,24 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m12b", speaker: "detective", text: "Let me see who was in the office last night. Can you show me the office hour logs?", timestamp: "8:05 AM" },
       { id: "m12c", speaker: "maya", text: "Of course! Here's the data from our access card system for November 8th.", timestamp: "8:05 AM" },
       { id: "m12d", speaker: "narrator", text: "Look at the overtime hours for each team member. Who stayed late on November 8th?" },
-    ],
-    dataVisualizations: [{
-      type: "bar",
-      title: "Team Overtime Hours - November 8",
-      data: {
-        labels: ["Maya", "Chris", "Ryan"],
-        datasets: [{
-          label: "Hours Worked",
-          data: [12, 14, 9],
-          color: "#3b82f6",
-        }],
+      { 
+        id: "viz1", 
+        speaker: "system", 
+        dataVisualization: {
+          type: "bar",
+          title: "Team Overtime Hours - November 8",
+          data: {
+            labels: ["Maya", "Chris", "Ryan"],
+            datasets: [{
+              label: "Hours Worked",
+              data: [12, 14, 9],
+              color: "#3b82f6",
+            }],
+          },
+        }
       },
-    }],
+      { id: "q1b", speaker: "system", isQuestion: true },
+    ],
     question: {
       id: "q1b",
       text: "🎯 What does this overtime data tell us?",
@@ -134,6 +144,8 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m15", speaker: "maya", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access.", timestamp: "8:06 AM" },
       { id: "m15b", speaker: "ryan", text: "Hello, Detective. 🖐️", timestamp: "8:06 AM" },
       { id: "m15c", speaker: "system", text: "📋 Team profiles have been updated in your notebook!" },
+      { id: "cards1", speaker: "system", isCharacterCards: true },
+      { id: "q2", speaker: "system", isQuestion: true },
     ],
     showCharacterCards: true,
     question: {
@@ -390,6 +402,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m53", speaker: "detective", text: "So you weren't in the office after 9 PM?", timestamp: "9:36 AM" },
       { id: "m54", speaker: "chris", text: "Absolutely not. I was at home watching Netflix. You can check my viewing history if you want! 📺", timestamp: "9:37 AM" },
       { id: "m55", speaker: "narrator", text: "He's lying. You have evidence that proves he was in the office. Which evidence should you present?" },
+      { id: "ep1", speaker: "system", isEvidencePresentation: true },
     ],
     evidencePresentation: {
       id: "ep1",
@@ -412,6 +425,7 @@ export const case1Story: Record<string, StoryNode> = {
     messages: [
       { id: "m56", speaker: "narrator", text: "Wait, that evidence doesn't directly prove Chris was in the office. Look for evidence that shows his computer was used at 11:15 PM." },
       { id: "m57", speaker: "detective", text: "Let me review the evidence again...", timestamp: "9:38 AM" },
+      { id: "ep1_retry", speaker: "system", isEvidencePresentation: true },
     ],
     evidencePresentation: {
       id: "ep1_retry",
@@ -449,42 +463,47 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m65", speaker: "chris", text: "I knew Maya's password because I saw her type it once. I planned to revert the changes after collecting enough data.", timestamp: "9:43 AM" },
       { id: "m66", speaker: "chris", text: "But when I checked the next morning, the whole community had erupted. I panicked and couldn't figure out how to fix it without revealing what I'd done. 😰", timestamp: "9:44 AM" },
       { id: "m67", speaker: "narrator", text: "So Chris manipulated the game balance for his personal AI project, using Maya's credentials to cover his tracks." },
-    ],
-    dataVisualizations: [{
-      type: "chart",
-      title: "Shadow Reaper Win Rate Timeline",
-      interactive: true,
-      data: {
-        labels: ["Nov 7", "Nov 8 (Before)", "Nov 8 (After)", "Nov 9"],
-        datasets: [{
-          label: "Win Rate %",
-          data: [48.5, 49.2, 73.8, 75.1],
-          color: "#ef4444",
-        }],
-      },
-      pointDetails: [
-        {
-          label: "Nov 7",
-          event: "Normal Gameplay",
-          description: "Shadow Reaper performing normally with 48.5% win rate. Character is balanced according to game design specifications."
-        },
-        {
-          label: "Nov 8 (Before)",
-          event: "Pre-Patch Status",
-          description: "Win rate at 49.2%, slightly above average but still within normal range. Maya reviews balance data and everything looks fine."
-        },
-        {
-          label: "Nov 8 (After)",
-          event: "🚨 Suspicious Spike",
-          description: "Win rate jumps to 73.8%! Attack power was changed from 100 → 150 at 11:15 PM using admin01 account from IP 192.168.1.47 (Chris's computer)."
-        },
-        {
-          label: "Nov 9",
-          event: "Crisis Continues",
-          description: "Win rate remains at 75.1%. Players are frustrated and leaving the game. Community outcry intensifies."
+      {
+        id: "viz2",
+        speaker: "system",
+        dataVisualization: {
+          type: "chart",
+          title: "Shadow Reaper Win Rate Timeline",
+          interactive: true,
+          data: {
+            labels: ["Nov 7", "Nov 8 (Before)", "Nov 8 (After)", "Nov 9"],
+            datasets: [{
+              label: "Win Rate %",
+              data: [48.5, 49.2, 73.8, 75.1],
+              color: "#ef4444",
+            }],
+          },
+          pointDetails: [
+            {
+              label: "Nov 7",
+              event: "Normal Gameplay",
+              description: "Shadow Reaper performing normally with 48.5% win rate. Character is balanced according to game design specifications."
+            },
+            {
+              label: "Nov 8 (Before)",
+              event: "Pre-Patch Status",
+              description: "Win rate at 49.2%, slightly above average but still within normal range. Maya reviews balance data and everything looks fine."
+            },
+            {
+              label: "Nov 8 (After)",
+              event: "🚨 Suspicious Spike",
+              description: "Win rate jumps to 73.8%! Attack power was changed from 100 → 150 at 11:15 PM using admin01 account from IP 192.168.1.47 (Chris's computer)."
+            },
+            {
+              label: "Nov 9",
+              event: "Crisis Continues",
+              description: "Win rate remains at 75.1%. Players are frustrated and leaving the game. Community outcry intensifies."
+            }
+          ],
         }
-      ],
-    }],
+      },
+      { id: "q8", speaker: "system", isQuestion: true },
+    ],
     question: {
       id: "q8",
       text: "🎯 Why would Chris do this?",
