@@ -240,6 +240,9 @@ export const case1Story: Record<string, StoryNode> = {
         }],
       },
     }],
+    messages: [
+      { id: "m38", speaker: "detective", text: "1. Shadow Reaper's attack power changed from 100 to 150\n2. Win rate jumped from 49% to 74% overnight\n3. Maya's admin01 account was used\n4. But Chris's computer (IP 192.168.1.47) made the change at 11:15 PM\n5. Maya had already left the office at 10:47 PM\n6. Chris mentioned needing data for 'research'" },
+    ],
     question: {
       id: "q7",
       text: "🎯 EVIDENCE SYNTHESIS: What's the complete picture?",

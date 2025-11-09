@@ -1,7 +1,8 @@
 import { Evidence } from "@/lib/stores/useDetectiveGame";
-import mayaImage from "@assets/stock_images/professional_woman_g_075426e4.jpg";
-import chrisImage from "@assets/stock_images/male_data_analyst_wi_e9db42d6.jpg";
-import ryanImage from "@assets/stock_images/young_male_server_en_0abfcbd2.jpg";
+
+const mayaImage = "/characters/maya.jpg";
+const chrisImage = "/characters/chris.jpg";
+const ryanImage = "/characters/ryan.jpg";
 
 export const case1Evidence: Record<string, Evidence> = {
   maya_profile: {
