@@ -1,8 +1,9 @@
 export interface Message {
   id: string;
-  speaker: "detective" | "client" | "system" | "narrator";
+  speaker: "detective" | "client" | "system" | "narrator" | "maya" | "chris" | "ryan";
   text: string;
   avatar?: string;
+  characterName?: string;
 }
 
 export interface DataVisualization {
@@ -49,8 +50,8 @@ export const case1Story: Record<string, StoryNode> = {
     messages: [
       { id: "m1", speaker: "system", text: "📁 CASE FILE #001: THE MISSING BALANCE PATCH" },
       { id: "m2", speaker: "system", text: "🕐 11:47 PM - Your detective office. An email notification chimes." },
-      { id: "m3", speaker: "client", text: "Detective, we have a major problem. After last night's game update, the character 'Shadow Reaper' became incredibly overpowered - the win rate jumped abnormally and the community thinks someone deliberately manipulated the balance. Many players have stopped playing and I have a meeting tomorrow morning. I need to know what happened." },
-      { id: "m4", speaker: "client", text: "- Maya, Game Director" },
+      { id: "m3", speaker: "maya", text: "Detective, we have a major problem. After last night's game update, the character 'Shadow Reaper' became incredibly overpowered - the win rate jumped abnormally and the community thinks someone deliberately manipulated the balance. Many players have stopped playing and I have a meeting tomorrow morning. I need to know what happened." },
+      { id: "m4", speaker: "maya", text: "- Maya, Game Director" },
       { id: "m5", speaker: "narrator", text: "💬 Kastor: 'Interesting case! A sudden win rate spike usually means something changed in the game data. What's your theory?'" },
     ],
     question: {
@@ -70,10 +71,10 @@ export const case1Story: Record<string, StoryNode> = {
     messages: [
       { id: "m10", speaker: "system", text: "📊 STAGE 2: DATA COLLECTION" },
       { id: "m11", speaker: "system", text: "☀️ 8:00 AM - You arrive at the Game Studio headquarters. Large monitors display live game statistics." },
-      { id: "m12", speaker: "client", text: "Good morning, Detective. Let me introduce you to the team." },
-      { id: "m13", speaker: "client", text: "I'm Maya, the Game Director - I'm responsible for all balance decisions and approving updates." },
-      { id: "m14", speaker: "client", text: "This is Chris Park, our Data Analyst. He monitors game stats and player behavior patterns." },
-      { id: "m15", speaker: "client", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access." },
+      { id: "m12", speaker: "maya", text: "Good morning, Detective. Let me introduce you to the team." },
+      { id: "m13", speaker: "maya", text: "I'm Maya, the Game Director - I'm responsible for all balance decisions and approving updates." },
+      { id: "m14", speaker: "maya", text: "This is Chris Park, our Data Analyst. He monitors game stats and player behavior patterns." },
+      { id: "m15", speaker: "maya", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access." },
       { id: "m16", speaker: "narrator", text: "💬 Kastor: 'Got it. I've added their profiles to your notebook. Who should we talk to first?'" },
     ],
     question: {
@@ -92,10 +93,10 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m17", speaker: "detective", text: "Maya, can you walk me through what happened last night?" },
-      { id: "m18", speaker: "client", text: "I stayed late checking all the balance values before the update. I triple-checked everything using my admin01 account..." },
-      { id: "m19", speaker: "client", text: "[looks exhausted] But honestly, I've been under so much pressure lately. Maybe I made a mistake?" },
+      { id: "m18", speaker: "maya", text: "I stayed late checking all the balance values before the update. I triple-checked everything using my admin01 account..." },
+      { id: "m19", speaker: "maya", text: "But honestly... I've been under so much pressure lately. Maybe I made a mistake?" },
       { id: "m20", speaker: "detective", text: "What time did you access the system?" },
-      { id: "m21", speaker: "client", text: "I logged in at 10:47 PM, reviewed the balance data, then left before midnight." },
+      { id: "m21", speaker: "maya", text: "I logged in at 10:47 PM, reviewed the balance data, then left before midnight." },
       { id: "m22", speaker: "narrator", text: "💬 Kastor: 'Maya admits being stressed. Could that lead to errors? I've saved this conversation.'" },
     ],
     question: {
@@ -113,10 +114,10 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m23", speaker: "detective", text: "Chris, did you notice anything unusual about the game data?" },
-      { id: "m24", speaker: "client", text: "Actually, yes. I saw some weird win rate patterns a few days before the update, but I was too busy to investigate." },
+      { id: "m24", speaker: "chris", text: "Actually, yes. I saw some weird win rate patterns a few days before the update, but I was too busy to investigate." },
       { id: "m25", speaker: "detective", text: "Too busy with what?" },
-      { id: "m26", speaker: "client", text: "[hesitates] I'm working on a personal research project... using AI for better matchmaking." },
-      { id: "m27", speaker: "client", text: "It's completely separate from company work, but... I've been using some game data to test my algorithms." },
+      { id: "m26", speaker: "chris", text: "Um... I'm working on a personal research project... using AI for better matchmaking." },
+      { id: "m27", speaker: "chris", text: "It's completely separate from company work, but... I've been using some game data to test my algorithms." },
       { id: "m28", speaker: "narrator", text: "💬 Kastor: 'He seems nervous. Why would he need game data for a 'personal' project?'" },
     ],
     question: {
@@ -134,10 +135,10 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m29", speaker: "detective", text: "Ryan, I understand you manage the server logs. Can you help us?" },
-      { id: "m30", speaker: "client", text: "[nervously] Actually... I need to confess something. I was the one who anonymously posted about this issue to the gaming community." },
+      { id: "m30", speaker: "ryan", text: "Actually... I need to confess something. I was the one who anonymously posted about this issue to the gaming community." },
       { id: "m31", speaker: "detective", text: "Why did you do that?" },
-      { id: "m32", speaker: "client", text: "I'm frustrated with the overtime culture here. I felt like reporting internally wouldn't change anything, so..." },
-      { id: "m33", speaker: "client", text: "But I can provide you the server access logs. The data doesn't lie." },
+      { id: "m32", speaker: "ryan", text: "I'm frustrated with the overtime culture here. I felt like reporting internally wouldn't change anything, so..." },
+      { id: "m33", speaker: "ryan", text: "But I can provide you the server access logs. The data doesn't lie." },
       { id: "m34", speaker: "narrator", text: "💬 Kastor: 'Interesting motive, but he's offering to help. Let's check those logs.'" },
     ],
     question: {
@@ -273,7 +274,7 @@ export const case1Story: Record<string, StoryNode> = {
     messages: [
       { id: "m50", speaker: "system", text: "⚖️ STAGE 5: INSIGHT & RESOLUTION" },
       { id: "m51", speaker: "system", text: "🎯 Conference room - Time to confront the suspect" },
-      { id: "m52", speaker: "client", text: "[Maya] I've called Chris to the conference room as you requested." },
+      { id: "m52", speaker: "maya", text: "I've called Chris to the conference room as you requested." },
     ],
     autoAdvance: { nextNode: "confront_chris", delay: 1000 },
   },
@@ -283,14 +284,15 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage5",
     messages: [
       { id: "m53", speaker: "detective", text: "Chris, we know you used Maya's account on November 8th at 11:15 PM to change Shadow Reaper's attack power from 100 to 150." },
-      { id: "m54", speaker: "client", text: "[Chris, shocked] I... how did you..." },
+      { id: "m54", speaker: "chris", text: "I... how did you..." },
       { id: "m55", speaker: "detective", text: "Your computer's IP address, 192.168.1.47, is in the server logs. You accessed the database after Maya had already left the office." },
-      { id: "m56", speaker: "client", text: "[Chris, sighs] Okay. You're right. I did it." },
-      { id: "m57", speaker: "client", text: "I'm working on an AI matchmaking algorithm. I needed diverse, extreme data to train my model properly." },
-      { id: "m58", speaker: "client", text: "I thought if I just temporarily made one character overpowered, I could collect unique player behavior data and then revert it." },
-      { id: "m59", speaker: "client", text: "I didn't think it would blow up this badly. I'm sorry." },
-      { id: "m60", speaker: "client", text: "[Maya, angry] Chris! You compromised the entire game for your personal project? How did you even get my password?" },
-      { id: "m61", speaker: "client", text: "[Chris] I... saw you type it in once when we were working late together. I know it was wrong. I'm really sorry." },
+      { id: "m56", speaker: "chris", text: "..." },
+      { id: "m57", speaker: "chris", text: "Okay. You're right. I did it." },
+      { id: "m58", speaker: "chris", text: "I'm working on an AI matchmaking algorithm. I needed diverse, extreme data to train my model properly." },
+      { id: "m59", speaker: "chris", text: "I thought if I just temporarily made one character overpowered, I could collect unique player behavior data and then revert it." },
+      { id: "m60", speaker: "chris", text: "I didn't think it would blow up this badly. I'm sorry." },
+      { id: "m61", speaker: "maya", text: "Chris! You compromised the entire game for your personal project? How did you even get my password?" },
+      { id: "m62", speaker: "chris", text: "I... saw you type it in once when we were working late together. I know it was wrong. I'm really sorry." },
     ],
     question: {
       id: "q9",
@@ -311,8 +313,8 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m63", speaker: "narrator", text: "💬 Kastor: 'Excellent work, Detective! Here's what happened...'" },
       { id: "m64", speaker: "detective", text: "Chris Park obtained Maya's admin credentials and deliberately modified Shadow Reaper's attack power to generate extreme gameplay data for his personal AI research project." },
       { id: "m65", speaker: "detective", text: "He didn't intend to cause permanent damage, but his unauthorized access violated security protocols and damaged player trust." },
-      { id: "m66", speaker: "client", text: "[Maya] Thank you, Detective. We'll revert the changes immediately and implement mandatory password security training." },
-      { id: "m67", speaker: "client", text: "Chris will face disciplinary action, but we'll also improve our access control systems so this can't happen again." },
+      { id: "m66", speaker: "maya", text: "Thank you, Detective. We'll revert the changes immediately and implement mandatory password security training." },
+      { id: "m67", speaker: "maya", text: "Chris will face disciplinary action, but we'll also improve our access control systems so this can't happen again." },
       { id: "m68", speaker: "narrator", text: "🎉 CASE CLOSED!" },
       { id: "m69", speaker: "narrator", text: "🎓 You learned: How to analyze server logs, cross-reference IP addresses, identify unauthorized access patterns, and use data preprocessing to uncover the truth!" },
     ],

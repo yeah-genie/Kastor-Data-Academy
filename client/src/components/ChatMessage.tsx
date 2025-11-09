@@ -17,21 +17,44 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
   }, []);
   
   const getSpeakerName = () => {
+    if (message.characterName) return message.characterName;
+    
     switch (message.speaker) {
       case "detective":
-        return "Detective Miles";
+        return "Detective";
+      case "maya":
+        return "Maya";
+      case "chris":
+        return "Chris";
+      case "ryan":
+        return "Ryan";
       case "client":
         return "Client";
       case "narrator":
-        return "Forensic Analyst";
+        return "Kastor";
       case "system":
         return "System";
+    }
+  };
+  
+  const getSpeakerAvatar = () => {
+    switch (message.speaker) {
+      case "maya":
+        return "/characters/maya.jpg";
+      case "chris":
+        return "/characters/chris.jpg";
+      case "ryan":
+        return "/characters/ryan.jpg";
+      default:
+        return null;
     }
   };
 
   const isDetective = message.speaker === "detective";
   const isSystem = message.speaker === "system";
   const isNarrator = message.speaker === "narrator";
+  const isCharacter = ["maya", "chris", "ryan"].includes(message.speaker);
+  const avatarUrl = getSpeakerAvatar();
 
   // System messages (centered notifications)
   if (isSystem) {
@@ -59,11 +82,19 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
     >
       {/* Avatar */}
       <div className="flex-shrink-0">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold ${
-          isDetective ? "bg-blue-500" : isNarrator ? "bg-purple-500" : "bg-gray-500"
-        }`}>
-          {isDetective ? "👮" : isNarrator ? <FileText className="w-4 h-4" /> : <User className="w-4 h-4" />}
-        </div>
+        {avatarUrl ? (
+          <img 
+            src={avatarUrl} 
+            alt={getSpeakerName()} 
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        ) : (
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold ${
+            isDetective ? "bg-blue-500" : isNarrator ? "bg-purple-500" : "bg-gray-500"
+          }`}>
+            {isDetective ? "👮" : isNarrator ? <FileText className="w-4 h-4" /> : <User className="w-4 h-4" />}
+          </div>
+        )}
       </div>
 
       {/* Message bubble */}
