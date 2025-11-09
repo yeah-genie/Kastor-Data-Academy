@@ -1,358 +1,180 @@
-import { StoryNode, Message, DataVisualization } from "./case1-story";
+import { StoryNode } from "./case1-story";
 
 export const case2Story: Record<string, StoryNode> = {
   start: {
     id: "start",
-    phase: "briefing",
+    phase: "stage1",
     messages: [
-      {
-        id: "m1",
-        speaker: "system",
-        text: "📁 CASE FILE #002",
-      },
-      {
-        id: "m2",
-        speaker: "system",
-        text: "THE GHOST USER'S RANKING MANIPULATION",
-      },
-      {
-        id: "m3",
-        speaker: "narrator",
-        text: "당신의 명성을 듣고 또 다른 의뢰인이 찾아왔습니다...",
-      },
-      {
-        id: "m4",
-        speaker: "client",
-        text: "탐정님! 우리 게임 랭킹 시스템에 이상한 일이 벌어졌어요!",
-      },
-      {
-        id: "m5",
-        speaker: "detective",
-        text: "차분히 설명해주세요. 어떤 문제가 있나요?",
-      },
-      {
-        id: "m6",
-        speaker: "client",
-        text: "어제 아침, 랭킹 1위에 'PhantomKing'이라는 유저가 나타났어요. 하지만 우리 데이터베이스에 그런 계정이 없습니다!",
-      },
-      {
-        id: "m7",
-        speaker: "client",
-        text: "더 이상한 건, 이 유저의 점수가 비정상적으로 높다는 겁니다. 여기 랭킹 데이터를 보세요.",
-      },
+      { id: "m1", speaker: "system", text: "📁 CASE FILE #002" },
+      { id: "m2", speaker: "system", text: "THE GHOST USER'S RANKING MANIPULATION" },
+      { id: "m3", speaker: "narrator", text: "Another client arrives after hearing of your reputation..." },
+      { id: "m4", speaker: "client", text: "Detective! Something strange happened in our game ranking system!" },
+      { id: "m5", speaker: "detective", text: "Please explain calmly. What's the problem?" },
+      { id: "m6", speaker: "client", text: "Yesterday morning, a user named 'PhantomKing' appeared at rank #1. But this account doesn't exist in our database!" },
+      { id: "m7", speaker: "client", text: "Even stranger, this user's score is abnormally high. Look at the ranking data." },
     ],
-    autoAdvance: {
-      nextNode: "briefing_data",
-      delay: 1000,
-    },
+    autoAdvance: { nextNode: "stage1_data", delay: 1000 },
   },
-
-  briefing_data: {
-    id: "briefing_data",
-    phase: "briefing",
+  stage1_data: {
+    id: "stage1_data",
+    phase: "stage1",
     messages: [
-      {
-        id: "m8",
-        speaker: "client",
-        text: "최근 일주일간의 상위 랭킹 데이터입니다.",
-      },
+      { id: "m8", speaker: "client", text: "Here's the top ranking data from the past week." },
     ],
-    dataVisualizations: [
-      {
-        type: "table",
-        title: "게임 랭킹 Top 10",
-        data: {
-          headers: ["순위", "유저명", "점수", "가입일"],
-          rows: [
-            ["1", "PhantomKing", "9,999,999", "데이터 없음"],
-            ["2", "ProGamer123", "125,430", "2024-01-15"],
-            ["3", "SkillMaster", "118,920", "2023-11-03"],
-            ["4", "TopPlayer99", "112,850", "2024-02-20"],
-            ["5", "EliteRank", "108,200", "2023-12-10"],
-          ],
-        },
+    dataVisualizations: [{
+      type: "table",
+      title: "Game Ranking Top 10",
+      data: {
+        headers: ["Rank", "Username", "Score", "Join Date"],
+        rows: [
+          ["1", "PhantomKing", "9,999,999", "No data"],
+          ["2", "ProGamer123", "125,430", "2024-01-15"],
+          ["3", "SkillMaster", "118,920", "2023-11-03"],
+          ["4", "TopPlayer99", "112,850", "2024-02-20"],
+          ["5", "EliteRank", "108,200", "2023-12-10"],
+        ],
       },
-    ],
+    }],
     question: {
       id: "q1",
-      text: "첫 번째 단서: 랭킹 데이터에서 의심스러운 점은?",
+      text: "🎯 HYPOTHESIS: What's suspicious in the ranking data?",
       choices: [
         {
           id: "c1",
-          text: "2위와 3위의 점수 차이가 크다",
+          text: "The score gap between rank 2 and 3",
           isCorrect: false,
-          nextNode: "wrong_answer_1",
-          feedback: "2위와 3위는 정상적인 경쟁 범위입니다. 더 극단적인 이상치를 찾아보세요.",
+          nextNode: "start",
+          feedback: "Ranks 2 and 3 are within normal competition range.",
           pointsAwarded: 0,
         },
         {
           id: "c2",
-          text: "PhantomKing의 점수가 2위보다 약 80배 높고, 가입 기록이 없다",
+          text: "PhantomKing's score is 80x higher than rank 2 and has no registration data",
           isCorrect: true,
-          nextNode: "investigation_start",
-          feedback: "정확합니다! PhantomKing의 점수는 비현실적으로 높고, 가입 기록조차 없습니다!",
-          clueAwarded: {
-            id: "clue1",
-            title: "유령 계정 발견",
-            description: "PhantomKing 계정은 DB에 존재하지 않지만 랭킹에 표시됨",
-          },
+          nextNode: "stage2_start",
+          feedback: "Correct! PhantomKing's score is unrealistically high and has no join record!",
+          clueAwarded: { id: "clue1", title: "Ghost Account Detected", description: "PhantomKing doesn't exist in DB but shows in rankings" },
           pointsAwarded: 10,
         },
         {
           id: "c3",
-          text: "상위 랭커들의 가입일이 다양하다",
+          text: "Top rankers have varied join dates",
           isCorrect: false,
-          nextNode: "wrong_answer_1",
-          feedback: "다양한 가입일은 정상입니다. 더 명백한 이상을 찾아보세요.",
+          nextNode: "start",
+          feedback: "Varied join dates are normal.",
           pointsAwarded: 0,
         },
       ],
     },
   },
-
-  wrong_answer_1: {
-    id: "wrong_answer_1",
-    phase: "briefing",
+  stage2_start: {
+    id: "stage2_start",
+    phase: "stage2",
     messages: [
-      {
-        id: "m9",
-        speaker: "detective",
-        text: "PhantomKing의 데이터를 다시 살펴봅시다.",
-      },
+      { id: "m9", speaker: "system", text: "📊 STAGE 2: DATA COLLECTION" },
+      { id: "m10", speaker: "detective", text: "Let's investigate the database and access logs. I need to interview your database administrator." },
+      { id: "m11", speaker: "narrator", text: "You speak with the DB admin..." },
+      { id: "m12", speaker: "client", text: "The admin confirms: 'PhantomKing absolutely does not exist in our user table. This is impossible!'" },
+      { id: "m13", speaker: "detective", text: "Then how did it appear in the rankings? Let's check the connection logs." },
     ],
-    autoAdvance: {
-      nextNode: "briefing_data",
-      delay: 1500,
-    },
+    autoAdvance: { nextNode: "stage2_logs", delay: 1000 },
   },
-
-  investigation_start: {
-    id: "investigation_start",
-    phase: "investigation",
-    messages: [
-      {
-        id: "m10",
-        speaker: "client",
-        text: "맞아요! 데이터베이스를 아무리 뒤져도 이 계정이 없어요!",
+  stage2_logs: {
+    id: "stage2_logs",
+    phase: "stage2",
+    messages: [{ id: "m14", speaker: "client", text: "Here are the database connection logs from yesterday." }],
+    dataVisualizations: [{
+      type: "log",
+      title: "Database Access Logs",
+      data: {
+        entries: [
+          { time: "06:15:23", user: "web_user", action: "SELECT rankings", status: "success" },
+          { time: "06:15:24", user: "bot_185.220.101.5", action: "INSERT ranking (PhantomKing, 9999999)", status: "success" },
+          { time: "06:15:24", user: "bot_185.220.101.5", action: "INSERT ranking (PhantomKing, 9999999)", status: "success" },
+          { time: "06:15:25", user: "bot_185.220.101.5", action: "INSERT ranking (PhantomKing, 9999999)", status: "success" },
+          { time: "06:15:26", user: "web_user", action: "SELECT rankings", status: "success" },
+        ],
       },
-      {
-        id: "m11",
-        speaker: "detective",
-        text: "접속 로그를 확인해봅시다. 이 유저가 실제로 게임에 접속한 기록이 있나요?",
-      },
-    ],
-    dataVisualizations: [
-      {
-        type: "log",
-        title: "서버 접속 로그 (최근 7일)",
-        data: {
-          entries: [
-            { time: "2025-11-08 14:23", user: "ProGamer123", action: "로그인", status: "성공" },
-            { time: "2025-11-08 14:25", user: "PhantomKing", action: "점수 갱신", status: "성공" },
-            { time: "2025-11-08 14:25", user: "PhantomKing", action: "로그인", status: "실패 - 계정 없음" },
-            { time: "2025-11-08 14:30", user: "SkillMaster", action: "로그인", status: "성공" },
-            { time: "2025-11-08 15:00", user: "PhantomKing", action: "점수 갱신", status: "성공" },
-          ],
-        },
-      },
-    ],
+    }],
     question: {
       id: "q2",
-      text: "두 번째 단서: 접속 로그에서 이상한 점은?",
+      text: "🔍 DATA COLLECTION: What pattern do you see?",
       choices: [
-        {
-          id: "c4",
-          text: "PhantomKing이 너무 자주 접속했다",
-          isCorrect: false,
-          nextNode: "wrong_answer_2",
-          feedback: "빈도가 문제가 아닙니다. 로그인과 점수 갱신의 관계를 보세요.",
-          pointsAwarded: 0,
-        },
-        {
-          id: "c5",
-          text: "PhantomKing은 로그인 실패했지만 점수 갱신은 성공했다",
-          isCorrect: true,
-          nextNode: "investigation_deep",
-          feedback: "정확합니다! 로그인도 하지 못한 유저가 어떻게 점수를 갱신할 수 있을까요?",
-          clueAwarded: {
-            id: "clue2",
-            title: "불가능한 점수 갱신",
-            description: "로그인 없이 점수 갱신이 이루어짐 - 직접 DB 조작 의심",
-          },
-          pointsAwarded: 15,
-        },
-        {
-          id: "c6",
-          text: "다른 유저들의 접속 시간이 정상적이다",
-          isCorrect: false,
-          nextNode: "wrong_answer_2",
-          feedback: "다른 유저들은 정상입니다. PhantomKing에 집중하세요.",
-          pointsAwarded: 0,
-        },
+        { id: "c4", text: "Normal user activity", isCorrect: false, nextNode: "stage2_start", feedback: "Look at the bot user pattern.", pointsAwarded: 0 },
+        { id: "c5", text: "Automated rapid INSERT requests from a single bot IP (185.220.101.5)", isCorrect: true, nextNode: "stage3_start", feedback: "Exactly! Multiple automated insertions from one IP in rapid succession!", clueAwarded: { id: "clue2", title: "Bot Activity Pattern", description: "Rapid automated insertions from single IP" }, pointsAwarded: 15 },
+        { id: "c6", text: "Too many web users", isCorrect: false, nextNode: "stage2_start", feedback: "web_user activity is normal.", pointsAwarded: 0 },
       ],
     },
   },
-
-  wrong_answer_2: {
-    id: "wrong_answer_2",
-    phase: "investigation",
+  stage3_start: {
+    id: "stage3_start",
+    phase: "stage3",
     messages: [
-      {
-        id: "m12",
-        speaker: "detective",
-        text: "로그인 상태와 점수 갱신의 관계를 다시 살펴보세요.",
-      },
+      { id: "m15", speaker: "system", text: "🔬 STAGE 3: DATA PREPROCESSING" },
+      { id: "m16", speaker: "detective", text: "Now let's analyze the IP address geolocation and identify anomalies." },
     ],
-    autoAdvance: {
-      nextNode: "investigation_start",
-      delay: 1500,
-    },
-  },
-
-  investigation_deep: {
-    id: "investigation_deep",
-    phase: "investigation",
-    messages: [
-      {
-        id: "m13",
-        speaker: "client",
-        text: "맞아요! 이건 말이 안 돼요. 로그인도 못한 유저가 점수를 갱신할 수는 없잖아요!",
+    dataVisualizations: [{
+      type: "table",
+      title: "IP Geolocation Analysis",
+      data: {
+        headers: ["IP Address", "Requests", "Location", "Type"],
+        rows: [
+          ["185.220.101.5", "347", "Single Datacenter (Eastern Europe)", "Bot Farm"],
+          ["Normal Users", "45,230", "Global (Distributed)", "Legitimate"],
+        ],
       },
-      {
-        id: "m14",
-        speaker: "detective",
-        text: "데이터베이스 직접 접근 로그를 확인해봅시다. 누군가 수동으로 점수를 조작했을 가능성이 있습니다.",
-      },
-    ],
-    dataVisualizations: [
-      {
-        type: "table",
-        title: "데이터베이스 직접 쿼리 로그",
-        data: {
-          headers: ["시간", "사용자", "쿼리 유형", "대상 테이블"],
-          rows: [
-            ["2025-11-08 14:20", "admin_system", "SELECT", "users"],
-            ["2025-11-08 14:25", "bot_script_01", "INSERT", "rankings"],
-            ["2025-11-08 14:26", "admin_system", "SELECT", "rankings"],
-            ["2025-11-08 15:00", "bot_script_01", "UPDATE", "rankings"],
-            ["2025-11-08 15:05", "dev_sarah", "SELECT", "logs"],
-          ],
-        },
-      },
-    ],
+    }],
     question: {
       id: "q3",
-      text: "결정적 증거: 범인을 찾아내세요!",
+      text: "🔍 ANOMALY DETECTION: What's unusual?",
       choices: [
-        {
-          id: "c7",
-          text: "admin_system이 랭킹을 자주 조회했다",
-          isCorrect: false,
-          nextNode: "wrong_answer_3",
-          feedback: "조회(SELECT)는 데이터를 읽기만 합니다. 데이터를 변경한 것을 찾아야 합니다.",
-          pointsAwarded: 0,
-        },
-        {
-          id: "c8",
-          text: "bot_script_01이 PhantomKing 계정을 생성하지 않고 랭킹 테이블에 직접 INSERT/UPDATE했다",
-          isCorrect: true,
-          nextNode: "resolution_start",
-          feedback: "완벽합니다! bot_script_01이 정상적인 가입 절차 없이 랭킹만 조작했습니다!",
-          clueAwarded: {
-            id: "clue3",
-            title: "봇 스크립트 조작 발견",
-            description: "bot_script_01이 users 테이블 없이 rankings만 조작",
-          },
-          pointsAwarded: 20,
-        },
-        {
-          id: "c9",
-          text: "dev_sarah이 로그를 삭제하려 했다",
-          isCorrect: false,
-          nextNode: "wrong_answer_3",
-          feedback: "dev_sarah는 로그를 조회만 했습니다. 랭킹 조작과 무관합니다.",
-          pointsAwarded: 0,
-        },
+        { id: "c7", text: "Users are distributed globally", isCorrect: false, nextNode: "stage3_start", feedback: "Global distribution is normal for real users.", pointsAwarded: 0 },
+        { id: "c8", text: "All PhantomKing activity originates from a single bot farm datacenter", isCorrect: true, nextNode: "stage4_start", feedback: "Perfect! Concentrated activity from a bot farm, not real players!", clueAwarded: { id: "clue3", title: "Bot Farm Source", description: "All fake activity from single bot farm location" }, pointsAwarded: 20 },
+        { id: "c9", text: "Too few requests", isCorrect: false, nextNode: "stage3_start", feedback: "347 automated requests is actually high for a bot.", pointsAwarded: 0 },
       ],
     },
   },
-
-  wrong_answer_3: {
-    id: "wrong_answer_3",
-    phase: "investigation",
+  stage4_start: {
+    id: "stage4_start",
+    phase: "stage4",
     messages: [
-      {
-        id: "m15",
-        speaker: "detective",
-        text: "INSERT와 UPDATE는 데이터를 생성하거나 수정합니다. 누가 랭킹 테이블을 건드렸나요?",
-      },
+      { id: "m17", speaker: "system", text: "🧩 STAGE 4: EVIDENCE ANALYSIS" },
+      { id: "m18", speaker: "detective", text: "Let's combine all evidence:" },
+      { id: "m19", speaker: "detective", text: "1. PhantomKing has impossible score (9,999,999)\n2. No account exists in database\n3. Bot-pattern automated insertions\n4. All from single bot farm IP" },
     ],
-    autoAdvance: {
-      nextNode: "investigation_deep",
-      delay: 1500,
+    dataVisualizations: [{
+      type: "table",
+      title: "Timeline Analysis",
+      data: {
+        headers: ["Event", "Time", "Evidence", "Conclusion"],
+        rows: [
+          ["Normal rankings", "Before 06:15", "Legitimate users only", "System working"],
+          ["Bot injection", "06:15:24-25", "347 INSERT from bot IP", "Attack detected"],
+          ["Ghost user appears", "06:15:26", "PhantomKing at rank #1", "Manipulation confirmed"],
+        ],
+      },
+    }],
+    question: {
+      id: "q4",
+      text: "🎯 EVIDENCE SYNTHESIS: What's the complete picture?",
+      choices: [
+        { id: "c10", text: "A legitimate player", isCorrect: false, nextNode: "stage4_start", feedback: "Bots aren't legitimate players.", pointsAwarded: 0 },
+        { id: "c11", text: "Automated bot account injected fake ranking data directly into database, bypassing validation", isCorrect: true, nextNode: "stage5_resolution", feedback: "Excellent! Complete picture of bot manipulation!", clueAwarded: { id: "clue4", title: "Complete Evidence", description: "Bot bypassed validation to inject fake rankings" }, pointsAwarded: 25 },
+        { id: "c12", text: "Database error", isCorrect: false, nextNode: "stage4_start", feedback: "This is intentional manipulation, not an error.", pointsAwarded: 0 },
+      ],
     },
   },
-
-  resolution_start: {
-    id: "resolution_start",
-    phase: "resolution",
+  stage5_resolution: {
+    id: "stage5_resolution",
+    phase: "stage5",
     messages: [
-      {
-        id: "m16",
-        speaker: "detective",
-        text: "사건을 정리하겠습니다.",
-      },
-      {
-        id: "m17",
-        speaker: "detective",
-        text: "1. PhantomKing 계정은 users 테이블에 존재하지 않습니다.",
-      },
-      {
-        id: "m18",
-        speaker: "detective",
-        text: "2. 하지만 rankings 테이블에는 이상한 점수로 1위를 차지하고 있습니다.",
-      },
-      {
-        id: "m19",
-        speaker: "detective",
-        text: "3. bot_script_01이 정상적인 가입 절차 없이 rankings 테이블에 직접 데이터를 삽입했습니다.",
-      },
-      {
-        id: "m20",
-        speaker: "detective",
-        text: "4. 이후에도 계속 UPDATE 쿼리로 점수를 조작했습니다.",
-      },
-      {
-        id: "m21",
-        speaker: "client",
-        text: "bot_script_01... 그건 우리가 테스트용으로 쓰는 자동화 스크립트인데, 누군가 악용한 거군요!",
-      },
-      {
-        id: "m22",
-        speaker: "detective",
-        text: "봇 스크립트의 접근 권한을 즉시 제한하고, 랭킹 시스템에 유효성 검증을 추가하세요.",
-      },
-      {
-        id: "m23",
-        speaker: "system",
-        text: "🎉 사건 해결 완료!",
-      },
-    ],
-    autoAdvance: {
-      nextNode: "end",
-      delay: 1000,
-    },
-  },
-
-  end: {
-    id: "end",
-    phase: "resolution",
-    messages: [
-      {
-        id: "m24",
-        speaker: "system",
-        text: "당신은 봇 스크립트의 악용을 밝혀냈습니다!",
-      },
+      { id: "m20", speaker: "system", text: "✅ STAGE 5: INSIGHT & RESOLUTION" },
+      { id: "m21", speaker: "detective", text: "The case is clear. A bot farm directly inserted fake ranking data into your database." },
+      { id: "m22", speaker: "detective", text: "The bot bypassed user registration entirely, exploiting weak input validation." },
+      { id: "m23", speaker: "client", text: "How do we prevent this?" },
+      { id: "m24", speaker: "detective", text: "Immediate actions: 1) Remove PhantomKing entries, 2) Add validation requiring valid user_id for rankings, 3) Rate-limit database insertions, 4) Block bot farm IP ranges." },
+      { id: "m25", speaker: "narrator", text: "✅ CASE CLOSED: The Ghost User's Ranking Manipulation" },
+      { id: "m26", speaker: "system", text: "💡 KEY INSIGHT: Data integrity requires validation at insertion time. Check foreign key relationships - rankings should only accept valid user IDs. Without proper validation, bad data will corrupt your system." },
     ],
   },
 };
