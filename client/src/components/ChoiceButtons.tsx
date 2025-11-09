@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { useState } from "react";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 interface Choice {
   id: string;
@@ -17,8 +18,20 @@ interface ChoiceButtonsProps {
 }
 
 export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceButtonsProps) {
+  const { visitedCharacters } = useDetectiveGame();
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+
+  const filteredChoices = choices.filter(choice => {
+    if (choice.text.includes("Talk to")) {
+      const characterMatch = choice.text.match(/Talk to (\w+)/);
+      if (characterMatch) {
+        const character = characterMatch[1].toLowerCase();
+        return !visitedCharacters.includes(character);
+      }
+    }
+    return true;
+  });
 
   const handleChoice = (choice: Choice) => {
     setSelectedChoice(choice);
@@ -45,7 +58,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
       </div>
 
       <div className="space-y-3">
-        {choices.map((choice, index) => (
+        {filteredChoices.map((choice, index) => (
           <motion.button
             key={choice.id}
             initial={{ opacity: 0, x: -20 }}
@@ -77,7 +90,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
         ))}
       </div>
 
-      {showFeedback && selectedChoice && (
+      {showFeedback && selectedChoice && selectedChoice.feedback && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -87,9 +100,6 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
               : "bg-red-900/40 border-red-600/50 text-red-100"
           }`}
         >
-          <p className="font-semibold mb-1">
-            {selectedChoice.isCorrect ? "✓ 정답입니다!" : "✗ 틀렸습니다"}
-          </p>
           <p className="text-sm">{selectedChoice.feedback}</p>
         </motion.div>
       )}

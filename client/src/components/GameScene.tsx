@@ -28,6 +28,7 @@ export function GameScene() {
     addScore,
     setStarsEarned,
     recordNodeVisited,
+    visitedCharacters,
   } = useDetectiveGame();
 
   const { isMuted, toggleMute, playSuccess } = useAudio();
@@ -57,6 +58,16 @@ export function GameScene() {
       
       setVisibleMessages(autoVisibleCount);
       recordNodeVisited(currentNode);
+      
+      if (currentNode.includes('_interview')) {
+        const character = currentNode.split('_')[0];
+        const state = useDetectiveGame.getState();
+        if (!state.visitedCharacters.includes(character)) {
+          useDetectiveGame.setState({
+            visitedCharacters: [...state.visitedCharacters, character]
+          });
+        }
+      }
     }
   }, [currentNode, currentCase]);
   

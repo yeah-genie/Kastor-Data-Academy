@@ -87,6 +87,7 @@ interface DetectiveGameState {
   achievements: string[];
   totalScore: number;
   visitedNodeIds: string[];
+  visitedCharacters: string[];
 
   setPhase: (phase: GamePhase) => void;
   setCurrentNode: (node: StoryNode) => void;
@@ -130,6 +131,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     achievements: initialProgress.achievements,
     totalScore: initialProgress.totalScore,
     visitedNodeIds: [],
+    visitedCharacters: [],
 
     setPhase: (phase) => {
       set({ phase });
@@ -199,6 +201,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
         starsEarned: 0,
         hintsUsed: 0,
         visitedNodeIds: [],
+        visitedCharacters: [],
       });
       get().saveCurrentProgress();
     },
@@ -218,6 +221,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           starsEarned: savedCaseProgress.starsEarned,
           hintsUsed: savedCaseProgress.hintsUsed,
           visitedNodeIds: savedCaseProgress.visitedNodeIds || [],
+          visitedCharacters: [],
         });
       } else {
         set({
@@ -230,6 +234,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           starsEarned: 0,
           hintsUsed: 0,
           visitedNodeIds: [],
+          visitedCharacters: [],
         });
       }
       
