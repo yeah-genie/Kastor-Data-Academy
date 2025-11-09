@@ -1,12 +1,114 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, Users, BarChart3, MessageSquare, Image as ImageIcon, FileText, Star } from "lucide-react";
+import { BookOpen, Users, BarChart3, MessageSquare, Image as ImageIcon, FileText, Star, Bookmark } from "lucide-react";
 import { useDetectiveGame, CharacterEvidence, DataEvidence, DialogueEvidence, PhotoEvidence, DocumentEvidence } from "@/lib/stores/useDetectiveGame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useState } from "react";
 
 interface EvidenceNotebookProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
+  const [highlightedIndices, setHighlightedIndices] = useState<number[]>([]);
+
+  const toggleHighlight = (index: number) => {
+    setHighlightedIndices(prev => 
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
+    );
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.1 }}
+      className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <BarChart3 className="w-5 h-5 text-green-600" />
+        <h4 className="font-semibold text-gray-800">{data.title}</h4>
+      </div>
+      
+      {data.dataType === "log" && data.data?.entries && (
+        <div className="space-y-2">
+          <div className="text-xs text-gray-500 mb-2 flex items-center gap-2">
+            <Bookmark className="w-3 h-3" />
+            <span>Click on log entries to highlight important ones</span>
+          </div>
+          <div className="bg-slate-900 rounded-lg p-3 font-mono text-xs overflow-x-auto">
+            {data.data.entries.map((entry: any, entryIdx: number) => (
+              <div
+                key={entryIdx}
+                onClick={() => toggleHighlight(entryIdx)}
+                className={`py-1 px-2 rounded cursor-pointer transition-colors ${
+                  highlightedIndices.includes(entryIdx)
+                    ? "bg-yellow-500/30 text-yellow-100 border-l-2 border-yellow-400"
+                    : "text-gray-300 hover:bg-slate-800"
+                }`}
+              >
+                <span className="text-blue-400">{entry.time}</span>
+                {" | "}
+                <span className="text-green-400">{entry.user}</span>
+                {" | "}
+                <span className="text-purple-400">{entry.action}</span>
+                {entry.ip && (
+                  <>
+                    {" | "}
+                    <span className="text-orange-400">{entry.ip}</span>
+                  </>
+                )}
+                {highlightedIndices.includes(entryIdx) && (
+                  <span className="ml-2 text-yellow-400">★</span>
+                )}
+              </div>
+            ))}
+          </div>
+          {highlightedIndices.length > 0 && (
+            <div className="mt-2 text-xs text-green-600 bg-green-50 p-2 rounded">
+              ✓ {highlightedIndices.length} important {highlightedIndices.length === 1 ? "entry" : "entries"} highlighted
+            </div>
+          )}
+        </div>
+      )}
+
+      {data.dataType === "table" && data.data?.headers && data.data?.rows && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-green-50">
+                {data.data.headers.map((header: string, i: number) => (
+                  <th key={i} className="border border-green-200 px-3 py-2 text-left font-semibold text-green-800">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.data.rows.map((row: string[], i: number) => (
+                <tr key={i} className="hover:bg-gray-50">
+                  {row.map((cell, j) => (
+                    <td key={j} className="border border-gray-200 px-3 py-2 text-gray-700">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {data.dataType === "chart" && (
+        <p className="text-sm text-gray-500">Chart visualization (view in chat for interactive display)</p>
+      )}
+
+      {!["log", "table", "chart"].includes(data.dataType || "") && (
+        <p className="text-sm text-gray-500">Type: {data.dataType}</p>
+      )}
+    </motion.div>
+  );
 }
 
 export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
@@ -140,19 +242,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                           <div className="text-center text-gray-400 py-12">No data evidence yet</div>
                         ) : (
                           dataViz.map((data, idx) => (
-                            <motion.div
-                              key={data.id}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: idx * 0.1 }}
-                              className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
-                            >
-                              <div className="flex items-center gap-2 mb-2">
-                                <BarChart3 className="w-5 h-5 text-green-600" />
-                                <h4 className="font-semibold text-gray-800">{data.title}</h4>
-                              </div>
-                              <p className="text-sm text-gray-500 mb-2">Type: {data.dataType}</p>
-                            </motion.div>
+                            <DataEvidenceCard key={data.id} data={data} idx={idx} />
                           ))
                         )}
                       </div>
