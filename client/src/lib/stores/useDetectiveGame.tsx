@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { loadProgress, saveProgress, getInitialProgress, type GameProgress } from "../persistence";
 
-export type GamePhase = "menu" | "briefing" | "investigation" | "resolution";
+export type GamePhase = "menu" | "stage1" | "stage2" | "stage3" | "stage4" | "stage5";
 export type StoryNode = string;
 
 export interface Clue {
@@ -127,7 +127,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       if (savedCaseProgress && !savedCaseProgress.completed) {
         set({
           currentCase: caseNumber,
-          phase: "briefing",
+          phase: "stage1",
           currentNode: savedCaseProgress.currentNode,
           cluesCollected: savedCaseProgress.cluesCollected,
           score: savedCaseProgress.score,
@@ -137,7 +137,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       } else {
         set({
           currentCase: caseNumber,
-          phase: "briefing",
+          phase: "stage1",
           currentNode: "start",
           cluesCollected: [],
           score: 0,
@@ -155,7 +155,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       
       const nextCase = state.currentCase + 1;
       const newUnlockedCases = [...state.unlockedCases];
-      if (nextCase <= 5 && !newUnlockedCases.includes(nextCase)) {
+      if (nextCase <= 3 && !newUnlockedCases.includes(nextCase)) {
         newUnlockedCases.push(nextCase);
       }
       
@@ -207,7 +207,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
             cluesCollected: state.cluesCollected,
             score: state.score,
             starsEarned: state.starsEarned,
-            completed: state.phase === "resolution" && state.currentNode === "end",
+            completed: state.phase === "stage5" && state.currentNode.includes("resolution"),
             hintsUsed: state.hintsUsed,
           },
         },

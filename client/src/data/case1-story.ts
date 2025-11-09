@@ -13,7 +13,7 @@ export interface DataVisualization {
 
 export interface StoryNode {
   id: string;
-  phase: "briefing" | "investigation" | "resolution";
+  phase: "stage1" | "stage2" | "stage3" | "stage4" | "stage5";
   messages: Message[];
   dataVisualizations?: DataVisualization[];
   question?: {
@@ -42,7 +42,7 @@ export interface StoryNode {
 export const case1Story: Record<string, StoryNode> = {
   start: {
     id: "start",
-    phase: "briefing",
+    phase: "stage1",
     messages: [
       {
         id: "m1",
@@ -57,76 +57,71 @@ export const case1Story: Record<string, StoryNode> = {
       {
         id: "m3",
         speaker: "narrator",
-        text: "늦은 밤, 당신의 사무실 문이 급하게 열립니다...",
+        text: "Late at night, your office door bursts open...",
       },
       {
         id: "m4",
         speaker: "client",
-        text: "탐정님! 큰일났어요! 우리 게임에 심각한 문제가 생겼습니다!",
+        text: "Detective! We have a serious problem with our game!",
       },
       {
         id: "m5",
         speaker: "detective",
-        text: "진정하세요. 천천히 무슨 일인지 설명해주시겠습니까?",
+        text: "Please calm down. Tell me what happened.",
       },
       {
         id: "m6",
         speaker: "client",
-        text: "저는 '레전드 배틀'이라는 온라인 게임의 게임 디자이너입니다. 며칠 전부터 특정 캐릭터의 승률이 비정상적으로 급증했어요!",
+        text: "I'm a game designer for 'Legend Battle', an online game. A few days ago, a specific character's win rate surged abnormally!",
       },
       {
         id: "m7",
         speaker: "client",
-        text: "아무도 변경사항을 만들지 않았는데... 뭔가 이상한 일이 벌어지고 있어요. 혹시 내부자가 데이터를 조작한 건 아닐까요?",
+        text: "Nobody made any changes... Something strange is happening. Could an insider have manipulated the data?",
       },
       {
         id: "m8",
         speaker: "detective",
-        text: "흥미롭군요. 게임 데이터와 패치 로그를 보여주시겠습니까?",
+        text: "Interesting. Can you show me the game data and patch logs?",
       },
     ],
     autoAdvance: {
-      nextNode: "briefing_data",
+      nextNode: "stage1_initial_data",
       delay: 1000,
     },
   },
 
-  briefing_data: {
-    id: "briefing_data",
-    phase: "briefing",
+  stage1_initial_data: {
+    id: "stage1_initial_data",
+    phase: "stage1",
     messages: [
       {
         id: "m9",
         speaker: "client",
-        text: "여기 최근 3주간의 캐릭터별 승률 데이터입니다.",
+        text: "Here's the win rate data for each character over the past 3 weeks.",
       },
     ],
     dataVisualizations: [
       {
         type: "chart",
-        title: "캐릭터별 승률 추이 (3주)",
+        title: "Character Win Rate Trend (3 Weeks)",
         data: {
           labels: ["Week 1", "Week 2", "Week 3"],
           datasets: [
             {
-              label: "드래곤나이트",
+              label: "Dragon Knight",
               data: [52, 53, 78],
               color: "#ef4444",
             },
             {
-              label: "섀도우 어쌔신",
+              label: "Shadow Assassin",
               data: [48, 49, 47],
               color: "#8b5cf6",
             },
             {
-              label: "미스틱 메이지",
+              label: "Mystic Mage",
               data: [50, 51, 50],
               color: "#3b82f6",
-            },
-            {
-              label: "홀리 팔라딘",
-              data: [49, 48, 49],
-              color: "#f59e0b",
             },
           ],
         },
@@ -134,35 +129,35 @@ export const case1Story: Record<string, StoryNode> = {
     ],
     question: {
       id: "q1",
-      text: "첫 번째 단서: 데이터에서 어떤 이상한 점을 발견하셨나요?",
+      text: "🎯 HYPOTHESIS: Which character shows abnormal behavior?",
       choices: [
         {
           id: "c1",
-          text: "모든 캐릭터의 승률이 동시에 상승했다",
+          text: "Shadow Assassin is slightly decreasing",
           isCorrect: false,
           nextNode: "wrong_answer_1",
-          feedback: "아닙니다. 그래프를 자세히 보세요. 한 캐릭터만 급격히 상승했습니다.",
+          feedback: "That's a normal minor fluctuation.",
           pointsAwarded: 0,
         },
         {
           id: "c2",
-          text: "드래곤나이트의 승률이 3주차에 급격히 상승했다",
+          text: "Dragon Knight jumped from 53% to 78% in Week 3",
           isCorrect: true,
-          nextNode: "investigation_start",
-          feedback: "정확합니다! 드래곤나이트의 승률이 Week 3에 갑자기 52%에서 78%로 26%p나 급증했습니다.",
+          nextNode: "stage2_start",
+          feedback: "Correct! Dragon Knight's win rate increased by 25% - highly abnormal!",
           clueAwarded: {
             id: "clue1",
-            title: "비정상적 승률 급증",
-            description: "드래곤나이트 캐릭터의 승률이 3주차에 26%p 급증",
+            title: "Abnormal Win Rate Spike",
+            description: "Dragon Knight's win rate surged 25% in Week 3",
           },
           pointsAwarded: 10,
         },
         {
           id: "c3",
-          text: "섀도우 어쌔신의 승률이 하락하고 있다",
+          text: "All characters are balanced",
           isCorrect: false,
           nextNode: "wrong_answer_1",
-          feedback: "섀도우 어쌔신의 변화는 정상 범위 내입니다. 더 극적인 변화를 찾아보세요.",
+          feedback: "Look at the data more carefully.",
           pointsAwarded: 0,
         },
       ],
@@ -171,86 +166,117 @@ export const case1Story: Record<string, StoryNode> = {
 
   wrong_answer_1: {
     id: "wrong_answer_1",
-    phase: "briefing",
+    phase: "stage1",
     messages: [
       {
         id: "m10",
         speaker: "detective",
-        text: "다시 한 번 데이터를 살펴봅시다. 어떤 캐릭터가 갑자기 변했나요?",
+        text: "Look at the data again. Which character changed suddenly?",
       },
     ],
     autoAdvance: {
-      nextNode: "briefing_data",
+      nextNode: "stage1_initial_data",
       delay: 1500,
     },
   },
 
-  investigation_start: {
-    id: "investigation_start",
-    phase: "investigation",
+  stage2_start: {
+    id: "stage2_start",
+    phase: "stage2",
     messages: [
       {
         id: "m11",
-        speaker: "client",
-        text: "맞아요! 정확히 3주차부터 이상해졌어요. 우리는 아무것도 건드리지 않았는데...",
+        speaker: "system",
+        text: "📊 STAGE 2: DATA COLLECTION",
       },
       {
         id: "m12",
-        speaker: "detective",
-        text: "패치 로그를 확인해봅시다. 3주차 전후로 어떤 변경사항이 있었는지 조사가 필요합니다.",
+        speaker: "client",
+        text: "Exactly! It became strange starting in Week 3. We didn't touch anything...",
       },
       {
         id: "m13",
+        speaker: "detective",
+        text: "Let's check the patch logs. I need to interview the development team to see what changes were made around Week 3.",
+      },
+      {
+        id: "m14",
+        speaker: "narrator",
+        text: "You speak with Jenny, the lead developer...",
+      },
+      {
+        id: "m15",
         speaker: "client",
-        text: "여기 시스템 패치 로그가 있습니다.",
+        text: "Jenny says: 'I only worked on UI bugs and chat system. I didn't touch character balance at all.'",
+      },
+      {
+        id: "m16",
+        speaker: "detective",
+        text: "Okay. Now let's look at the system patch logs.",
+      },
+    ],
+    autoAdvance: {
+      nextNode: "stage2_patch_logs",
+      delay: 1000,
+    },
+  },
+
+  stage2_patch_logs: {
+    id: "stage2_patch_logs",
+    phase: "stage2",
+    messages: [
+      {
+        id: "m17",
+        speaker: "client",
+        text: "Here are the system patch logs.",
       },
     ],
     dataVisualizations: [
       {
         type: "table",
-        title: "게임 패치 로그",
+        title: "Game Patch Logs",
         data: {
-          headers: ["날짜", "버전", "수정자", "변경 내용"],
+          headers: ["Date", "Version", "Modified By", "Changes"],
           rows: [
-            ["2025-10-15", "v2.3.1", "dev_jenny", "UI 버그 수정"],
-            ["2025-10-22", "v2.3.2", "dev_mark", "서버 최적화"],
-            ["2025-10-29", "v2.4.0", "admin01", "드래곤나이트 공격력 +15%, 방어력 +20%"],
-            ["2025-11-02", "v2.4.1", "dev_jenny", "채팅 시스템 개선"],
+            ["2025-10-15", "v2.3.1", "dev_jenny", "UI bug fixes"],
+            ["2025-10-22", "v2.3.2", "dev_mark", "Server optimization"],
+            ["2025-10-29", "v2.4.0", "admin01", "Dragon Knight ATK +15%, DEF +20%"],
+            ["2025-11-02", "v2.4.1", "dev_jenny", "Chat system improvements"],
           ],
         },
       },
     ],
     question: {
       id: "q2",
-      text: "두 번째 단서: 패치 로그에서 의심스러운 부분은 무엇인가요?",
+      text: "🔍 DATA COLLECTION: What suspicious activity do you find in the patch logs?",
       choices: [
         {
           id: "c4",
-          text: "dev_jenny가 너무 자주 수정했다",
+          text: "dev_jenny modified too frequently",
           isCorrect: false,
           nextNode: "wrong_answer_2",
-          feedback: "dev_jenny의 작업은 정상적인 개발 업무입니다.",
+          feedback: "dev_jenny's work is normal development activity.",
           pointsAwarded: 0,
         },
         {
           id: "c5",
-          text: "10월 29일에 admin01이 드래곤나이트를 대폭 강화했다",
+          text: "On Oct 29, admin01 significantly buffed Dragon Knight",
           isCorrect: true,
-          nextNode: "investigation_deep",
-          feedback: "정확합니다! admin01이 드래곤나이트의 공격력과 방어력을 크게 상승시켰습니다. 이것이 승률 급증의 원인입니다!",
+          nextNode: "stage3_start",
+          feedback: "Correct! admin01 greatly increased Dragon Knight's attack and defense. This is the cause of the win rate spike!",
           clueAwarded: {
             id: "clue2",
-            title: "무단 밸런스 패치",
-            description: "admin01이 승인 없이 드래곤나이트를 대폭 강화함",
+            title: "Unauthorized Balance Patch",
+            description: "admin01 buffed Dragon Knight without approval",
           },
           pointsAwarded: 15,
         },
         {
           id: "c6",
-          text: "서버 최적화가 문제다",
+          text: "Server optimization is the problem",
           isCorrect: false,
           nextNode: "wrong_answer_2",
-          feedback: "서버 최적화는 캐릭터 밸런스와 관련이 없습니다.",
+          feedback: "Server optimization doesn't affect character balance.",
           pointsAwarded: 0,
         },
       ],
@@ -259,80 +285,85 @@ export const case1Story: Record<string, StoryNode> = {
 
   wrong_answer_2: {
     id: "wrong_answer_2",
-    phase: "investigation",
+    phase: "stage2",
     messages: [
       {
-        id: "m14",
+        id: "m18",
         speaker: "detective",
-        text: "그건 아닌 것 같습니다. 드래곤나이트와 직접 관련된 변경사항을 찾아보세요.",
+        text: "That's not it. Look for changes directly related to Dragon Knight.",
       },
     ],
     autoAdvance: {
-      nextNode: "investigation_start",
+      nextNode: "stage2_patch_logs",
       delay: 1500,
     },
   },
 
-  investigation_deep: {
-    id: "investigation_deep",
-    phase: "investigation",
+  stage3_start: {
+    id: "stage3_start",
+    phase: "stage3",
     messages: [
       {
-        id: "m15",
-        speaker: "client",
-        text: "admin01...? 그 사람은 서버 관리자인데, 게임 밸런스를 건드릴 권한이 없어요!",
+        id: "m19",
+        speaker: "system",
+        text: "🔬 STAGE 3: DATA PREPROCESSING",
       },
       {
-        id: "m16",
+        id: "m20",
+        speaker: "client",
+        text: "admin01...? That person is a server administrator. They don't have permission to modify game balance!",
+      },
+      {
+        id: "m21",
         speaker: "detective",
-        text: "흥미롭군요. 권한 로그를 확인해봅시다.",
+        text: "Interesting. Let's check the permission logs to identify anomalies.",
       },
     ],
     dataVisualizations: [
       {
         type: "log",
-        title: "관리자 권한 접근 로그",
+        title: "Admin Permission Access Logs",
         data: {
           entries: [
-            { time: "2025-10-28 23:47", user: "admin01", action: "권한 상승 요청", status: "거부됨" },
-            { time: "2025-10-29 02:15", user: "admin01", action: "데이터베이스 직접 접근", status: "성공" },
-            { time: "2025-10-29 02:18", user: "admin01", action: "캐릭터 스탯 수정", status: "성공" },
-            { time: "2025-10-29 02:20", user: "admin01", action: "로그 삭제 시도", status: "실패" },
+            { time: "2025-10-28 23:47", user: "admin01", action: "Permission elevation request", status: "denied" },
+            { time: "2025-10-29 02:15", user: "admin01", action: "Direct database access", status: "success" },
+            { time: "2025-10-29 02:18", user: "admin01", action: "Character stats modification", status: "success" },
+            { time: "2025-10-29 02:20", user: "admin01", action: "Log deletion attempt", status: "failed" },
           ],
         },
       },
     ],
     question: {
       id: "q3",
-      text: "결정적 증거: admin01의 행동에서 무엇을 알 수 있나요?",
+      text: "🔍 ANOMALY DETECTION: What pattern do you see in admin01's activities?",
       choices: [
         {
           id: "c7",
-          text: "실수로 잘못 건드린 것 같다",
+          text: "Just a normal workflow",
           isCorrect: false,
           nextNode: "wrong_answer_3",
-          feedback: "로그 삭제 시도는 실수가 아닙니다. 의도적인 행동입니다.",
+          feedback: "Log deletion attempts are not normal behavior.",
           pointsAwarded: 0,
         },
         {
           id: "c8",
-          text: "정상적인 권한 요청이 거부되자, 새벽에 불법적으로 데이터베이스에 접근해 스탯을 조작하고 증거 인멸을 시도했다",
+          text: "Permission request denied → Late night unauthorized DB access → Stats manipulation → Attempted cover-up",
           isCorrect: true,
-          nextNode: "resolution_start",
-          feedback: "완벽합니다! 모든 증거가 일치합니다. admin01은 의도적으로 게임 밸런스를 조작했습니다!",
+          nextNode: "stage4_start",
+          feedback: "Perfect! This sequence clearly shows intentional unauthorized manipulation and evidence destruction attempts!",
           clueAwarded: {
             id: "clue3",
-            title: "의도적 조작 증거",
-            description: "admin01의 불법 접근과 증거 인멸 시도 확인",
+            title: "Unauthorized Access Pattern",
+            description: "admin01 bypassed denied permissions and attempted to hide evidence",
           },
           pointsAwarded: 20,
         },
         {
           id: "c9",
-          text: "admin01은 무죄다",
+          text: "Server maintenance activity",
           isCorrect: false,
           nextNode: "wrong_answer_3",
-          feedback: "로그를 다시 보세요. 명백한 불법 행위의 증거가 있습니다.",
+          feedback: "Server admins don't modify game balance during maintenance.",
           pointsAwarded: 0,
         },
       ],
@@ -341,84 +372,157 @@ export const case1Story: Record<string, StoryNode> = {
 
   wrong_answer_3: {
     id: "wrong_answer_3",
-    phase: "investigation",
+    phase: "stage3",
     messages: [
       {
-        id: "m17",
+        id: "m22",
         speaker: "detective",
-        text: "로그를 시간 순서대로 다시 살펴보세요. 특히 새벽 시간대의 활동에 주목하세요.",
+        text: "Think about the sequence of events. What story do they tell?",
       },
     ],
     autoAdvance: {
-      nextNode: "investigation_deep",
+      nextNode: "stage3_start",
       delay: 1500,
     },
   },
 
-  resolution_start: {
-    id: "resolution_start",
-    phase: "resolution",
+  stage4_start: {
+    id: "stage4_start",
+    phase: "stage4",
     messages: [
       {
-        id: "m18",
-        speaker: "detective",
-        text: "사건을 정리하겠습니다.",
-      },
-      {
-        id: "m19",
-        speaker: "detective",
-        text: "1. 10월 29일, admin01은 정상적인 권한 요청이 거부되었습니다.",
-      },
-      {
-        id: "m20",
-        speaker: "detective",
-        text: "2. 새벽 2시 15분, admin01은 데이터베이스에 불법적으로 직접 접근했습니다.",
-      },
-      {
-        id: "m21",
-        speaker: "detective",
-        text: "3. 드래곤나이트의 공격력과 방어력을 대폭 상승시켰습니다.",
-      },
-      {
-        id: "m22",
-        speaker: "detective",
-        text: "4. 증거를 인멸하기 위해 로그 삭제를 시도했으나 실패했습니다.",
-      },
-      {
         id: "m23",
-        speaker: "detective",
-        text: "5. 결과적으로 드래곤나이트의 승률이 26%p 급증했습니다.",
+        speaker: "system",
+        text: "🧩 STAGE 4: EVIDENCE ANALYSIS",
       },
       {
         id: "m24",
-        speaker: "client",
-        text: "믿을 수 없어요... admin01이 왜 이런 짓을...?",
+        speaker: "detective",
+        text: "Now let's combine all the evidence. We have three key pieces:",
       },
       {
         id: "m25",
         speaker: "detective",
-        text: "추가 조사가 필요하지만, 데이터는 거짓말하지 않습니다. 이 증거들을 보안팀에 전달하세요.",
+        text: "1. Dragon Knight's win rate increased 25% in Week 3\n2. admin01 made unauthorized balance changes on Oct 29\n3. admin01 attempted to delete access logs",
       },
       {
         id: "m26",
-        speaker: "system",
-        text: "🎉 사건 해결 완료!",
+        speaker: "detective",
+        text: "Let's verify the timeline alignment.",
       },
     ],
-    autoAdvance: {
-      nextNode: "end",
-      delay: 1000,
+    dataVisualizations: [
+      {
+        type: "table",
+        title: "Timeline Analysis",
+        data: {
+          headers: ["Event", "Date/Period", "Impact", "Evidence"],
+          rows: [
+            ["Normal gameplay", "Week 1-2", "Win rate 52-53%", "Game data"],
+            ["Permission denied", "Oct 28 11:47PM", "Legitimate access blocked", "Permission log"],
+            ["Unauthorized patch", "Oct 29 2:15AM", "+15% ATK, +20% DEF", "Patch log + DB log"],
+            ["Win rate spike", "Week 3", "Win rate jumped to 78%", "Game data"],
+            ["Cover-up attempt", "Oct 29 2:20AM", "Log deletion failed", "Security log"],
+          ],
+        },
+      },
+    ],
+    question: {
+      id: "q4",
+      text: "🎯 EVIDENCE SYNTHESIS: What is the complete picture?",
+      choices: [
+        {
+          id: "c10",
+          text: "A simple mistake by admin01",
+          isCorrect: false,
+          nextNode: "wrong_answer_4",
+          feedback: "The cover-up attempt proves intent, not a mistake.",
+          pointsAwarded: 0,
+        },
+        {
+          id: "c11",
+          text: "admin01 deliberately manipulated game balance through unauthorized access and attempted to hide the evidence, causing competitive imbalance",
+          isCorrect: true,
+          nextNode: "stage5_resolution",
+          feedback: "Excellent analysis! All evidence points to intentional insider manipulation!",
+          clueAwarded: {
+            id: "clue4",
+            title: "Complete Case Evidence",
+            description: "Full timeline of insider manipulation and cover-up",
+          },
+          pointsAwarded: 25,
+        },
+        {
+          id: "c12",
+          text: "A bug in the game system",
+          isCorrect: false,
+          nextNode: "wrong_answer_4",
+          feedback: "Bugs don't show up in admin access logs and patch records.",
+          pointsAwarded: 0,
+        },
+      ],
     },
   },
 
-  end: {
-    id: "end",
-    phase: "resolution",
+  wrong_answer_4: {
+    id: "wrong_answer_4",
+    phase: "stage4",
     messages: [
       {
         id: "m27",
+        speaker: "detective",
+        text: "Look at all the evidence together. What's the only explanation that fits all the facts?",
+      },
+    ],
+    autoAdvance: {
+      nextNode: "stage4_start",
+      delay: 1500,
+    },
+  },
+
+  stage5_resolution: {
+    id: "stage5_resolution",
+    phase: "stage5",
+    messages: [
+      {
+        id: "m28",
         speaker: "system",
-        text: "탐정으로서의 당신의 추리력이 빛을 발했습니다!",
+        text: "✅ STAGE 5: INSIGHT & RESOLUTION",
+      },
+      {
+        id: "m29",
+        speaker: "detective",
+        text: "The case is clear. admin01, a server administrator, intentionally manipulated Dragon Knight's stats without authorization.",
+      },
+      {
+        id: "m30",
+        speaker: "detective",
+        text: "When legitimate permission requests were denied, they used direct database access in the middle of the night to bypass security.",
+      },
+      {
+        id: "m31",
+        speaker: "detective",
+        text: "The attempted log deletion proves this was premeditated, not an accident.",
+      },
+      {
+        id: "m32",
+        speaker: "client",
+        text: "Unbelievable... What should we do?",
+      },
+      {
+        id: "m33",
+        speaker: "detective",
+        text: "Immediate actions: 1) Revert the unauthorized patch, 2) Investigate admin01's motives and other activities, 3) Strengthen permission controls to prevent future incidents.",
+      },
+      {
+        id: "m34",
+        speaker: "narrator",
+        text: "✅ CASE CLOSED: The Missing Balance Patch",
+      },
+      {
+        id: "m35",
+        speaker: "system",
+        text: "💡 KEY INSIGHT: Sudden changes in data always have a cause. By checking system logs and permission records, you can uncover hidden manipulations. Always verify: What changed? When? Who made the change? Did they have proper authorization?",
       },
     ],
   },

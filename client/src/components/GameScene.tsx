@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, Volume2, VolumeX } from "lucide-react";
+import { BookOpen, Volume2, VolumeX, Plus, Mic, Send } from "lucide-react";
 import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { useAudio } from "@/lib/stores/useAudio";
 import { type StoryNode } from "@/data/case1-story";
@@ -121,9 +121,11 @@ export function GameScene() {
               {caseMetadata[currentCase]?.title || "Case Investigation"}
             </h1>
             <p className="text-xs text-gray-500">
-              {phase === "briefing" && "Briefing"} 
-              {phase === "investigation" && "Investigation"}
-              {phase === "resolution" && "Resolution"}
+              {phase === "stage1" && "Stage 1: Testimony & Hypothesis"}
+              {phase === "stage2" && "Stage 2: Data Collection"}
+              {phase === "stage3" && "Stage 3: Data Preprocessing"}
+              {phase === "stage4" && "Stage 4: Evidence Analysis"}
+              {phase === "stage5" && "Stage 5: Insight & Resolution"}
             </p>
           </div>
         </div>
@@ -179,15 +181,21 @@ export function GameScene() {
         )}
       </div>
 
-      {/* Bottom Input Area (placeholder for future) */}
-      <div className="bg-white border-t border-gray-200 px-4 py-3">
+      {/* Bottom Input Area */}
+      <div className="bg-white border-t border-gray-200 px-3 py-2 safe-area-bottom">
         <div className="flex items-center gap-2">
-          <button className="p-2 text-gray-400">+</button>
-          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2">
-            <span className="text-gray-400 text-sm">Continue investigating...</span>
+          <button className="p-2 rounded-full hover:bg-gray-100 transition-colors text-blue-500">
+            <Plus className="w-6 h-6" />
+          </button>
+          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2.5">
+            <span className="text-gray-500 text-sm">Tap anywhere to continue...</span>
           </div>
-          <button className="p-2 text-gray-400">🎤</button>
-          <button className="p-2 text-blue-500">📤</button>
+          <button className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600">
+            <Mic className="w-5 h-5" />
+          </button>
+          <button className="p-2 rounded-full hover:bg-gray-100 transition-colors text-blue-500">
+            <Send className="w-5 h-5" />
+          </button>
         </div>
       </div>
 

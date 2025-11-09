@@ -1,8 +1,6 @@
 import { case1Story } from "./case1-story";
 import { case2Story } from "./case2-story";
 import { case3Story } from "./case3-story";
-import { case4Story } from "./case4-story";
-import { case5Story } from "./case5-story";
 import type { StoryNode } from "./case1-story";
 
 export interface CaseMetadata {
@@ -44,32 +42,12 @@ export const caseMetadata: Record<number, CaseMetadata> = {
     tags: ["Algorithm Analysis", "Pattern Recognition", "Fairness Verification"],
     keyLearning: "Algorithm fairness must be verified not only by code but also by execution results. Unusual patterns are evidence of hidden bias.",
   },
-  4: {
-    id: 4,
-    title: "The DLC Revenue Mystery",
-    subtitle: "Uncover the pay-to-win crisis",
-    description: "DLC sales revenue has doubled, but player satisfaction is plummeting. Analyze revenue data and player reviews to discover why short-term profits are killing the game!",
-    difficulty: "Intermediate",
-    tags: ["Business Analytics", "Player Retention", "Monetization Strategy"],
-    keyLearning: "Revenue growth doesn't equal success. Always analyze player satisfaction, retention, and long-term sustainability alongside financial metrics. Pay-to-win models may boost short-term revenue but often destroy the player base.",
-  },
-  5: {
-    id: 5,
-    title: "The Server Crash Pattern",
-    subtitle: "Identify the DDoS attack",
-    description: "Game servers crash every day at the same time. Analyze server logs and traffic patterns to uncover a coordinated DDoS attack timed with a competitor's launch!",
-    difficulty: "Advanced",
-    tags: ["Network Security", "Log Analysis", "Cyber Attack Detection"],
-    keyLearning: "When investigating technical issues, always look for patterns in timing, sources, and context. Correlation analysis can reveal malicious intent. Proper monitoring and data analysis are essential for identifying cyber threats.",
-  },
 };
 
 export const stories: Record<number, Record<string, StoryNode>> = {
   1: case1Story,
   2: case2Story,
   3: case3Story,
-  4: case4Story,
-  5: case5Story,
 };
 
 export function getStory(caseId: number): Record<string, StoryNode> {
