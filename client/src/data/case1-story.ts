@@ -86,14 +86,6 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m12", speaker: "maya", text: "Good morning, Detective. Sorry, things have been really hectic since the problem started. 😰", timestamp: "8:05 AM" },
       { id: "m12b", speaker: "detective", text: "Let me see who was in the office last night. Can you show me the office hour logs?", timestamp: "8:05 AM" },
       { id: "m12c", speaker: "maya", text: "Of course! Here's the data from our access card system for November 8th.", timestamp: "8:05 AM" },
-    ],
-    autoAdvance: { nextNode: "view_overtime_data", delay: 1000 },
-  },
-
-  view_overtime_data: {
-    id: "view_overtime_data",
-    phase: "stage2",
-    messages: [
       { id: "m12d", speaker: "narrator", text: "Look at the overtime hours for each team member. Who stayed late on November 8th?" },
     ],
     dataVisualizations: [{
@@ -214,14 +206,6 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m35", speaker: "system", text: "🔬 STAGE 3: DATA PREPROCESSING" },
       { id: "m36", speaker: "system", text: "📊 Your office\nTime to organize and clean the collected data" },
       { id: "m37", speaker: "narrator", text: "Let me process these server logs. There's a lot of entries here..." },
-    ],
-    autoAdvance: { nextNode: "analyze_logs", delay: 500 },
-  },
-
-  analyze_logs: {
-    id: "analyze_logs",
-    phase: "stage3",
-    messages: [
       { id: "m37b", speaker: "narrator", text: "Before we dive into the logs, let's test your data analysis skills. Based on what you know so far..." },
     ],
     dataVisualizations: [{
@@ -371,14 +355,6 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m40", speaker: "system", text: "🧩 STAGE 4: EVIDENCE ANALYSIS" },
       { id: "m41", speaker: "system", text: "📊 Combining all the evidence pieces together" },
       { id: "m42", speaker: "narrator", text: "Let's review what we know before we confront Chris..." },
-    ],
-    autoAdvance: { nextNode: "analyze_evidence", delay: 1000 },
-  },
-
-  analyze_evidence: {
-    id: "analyze_evidence",
-    phase: "stage4",
-    messages: [
       { id: "m43", speaker: "detective", text: "Here's what we've discovered:", timestamp: "9:30 AM" },
       { id: "m44", speaker: "detective", text: "1. Shadow Reaper's attack power was changed from 100 to 150 at 11:15 PM", timestamp: "9:31 AM" },
       { id: "m45", speaker: "detective", text: "2. The change was made using Maya's admin01 account", timestamp: "9:31 AM" },
@@ -440,14 +416,6 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m50", speaker: "system", text: "⚖️ STAGE 5: INSIGHT & RESOLUTION" },
       { id: "m51", speaker: "system", text: "🎯 Conference room\nTime to confront the suspect", photo: "/conference-room.jpg" },
       { id: "m52", speaker: "maya", text: "I've called Chris to the conference room as you requested.", timestamp: "10:00 AM" },
-    ],
-    autoAdvance: { nextNode: "confront_chris", delay: 1000 },
-  },
-
-  confront_chris: {
-    id: "confront_chris",
-    phase: "stage5",
-    messages: [
       { id: "m53", speaker: "detective", text: "Chris, we know you used Maya's account on November 8th at 11:15 PM to change Shadow Reaper's attack power from 100 to 150.", timestamp: "10:05 AM" },
       { id: "m54", speaker: "chris", text: "I... how did you...", timestamp: "10:05 AM" },
       { id: "m55", speaker: "detective", text: "Your computer's IP address, 192.168.1.47, is in the server logs. You accessed the database after Maya had already left the office.", timestamp: "10:06 AM" },
