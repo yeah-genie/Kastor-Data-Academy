@@ -154,11 +154,23 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     unlockEvidence: (evidence, showModal = true) => {
       const evidenceArray = Array.isArray(evidence) ? evidence : [evidence];
       evidenceArray.forEach((ev) => {
-        set((state) => ({
-          evidenceCollected: [...state.evidenceCollected, ev],
-          recentEvidenceId: ev.id,
-          isEvidenceModalOpen: showModal,
-        }));
+        set((state) => {
+          const existingIndex = state.evidenceCollected.findIndex(e => e.id === ev.id);
+          let newEvidenceCollected;
+          
+          if (existingIndex !== -1) {
+            newEvidenceCollected = [...state.evidenceCollected];
+            newEvidenceCollected[existingIndex] = ev;
+          } else {
+            newEvidenceCollected = [...state.evidenceCollected, ev];
+          }
+          
+          return {
+            evidenceCollected: newEvidenceCollected,
+            recentEvidenceId: ev.id,
+            isEvidenceModalOpen: showModal,
+          };
+        });
       });
       get().saveCurrentProgress();
     },

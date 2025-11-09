@@ -32,8 +32,8 @@ export const case1Evidence: Record<string, Evidence> = {
   chris_profile: {
     id: "chris_profile",
     type: "CHARACTER",
-    title: "Chris Park",
-    name: "Chris Park",
+    title: "Chris Anderson",
+    name: "Chris Anderson",
     role: "Data Analyst, Player Behavior Specialist",
     photo: chrisImage,
     description: "Analyzes player behavior and monitors matchmaking algorithms.",
@@ -72,8 +72,8 @@ export const case1Evidence: Record<string, Evidence> = {
   chris_profile_updated: {
     id: "chris_profile",
     type: "CHARACTER",
-    title: "Chris Park",
-    name: "Chris Park",
+    title: "Chris Anderson",
+    name: "Chris Anderson",
     role: "Data Analyst, Player Behavior Specialist",
     photo: chrisImage,
     description: "Analyzes player behavior and monitors matchmaking algorithms. Working on a personal AI matchmaking project using game data.",
@@ -117,7 +117,7 @@ export const case1Evidence: Record<string, Evidence> = {
     id: "chris_dialogue",
     type: "DIALOGUE",
     title: "Interview with Chris",
-    character: "Chris Park",
+    character: "Chris Anderson",
     summary: "Chris noticed unusual win rate changes days before but was too busy with his 'research project.' When pressed, he mentioned working on an AI matchmaking experiment unrelated to the company. He seemed nervous when discussing it.",
     keyPoints: [
       "Noticed strange win rate patterns earlier",
@@ -172,7 +172,7 @@ export const case1Evidence: Record<string, Evidence> = {
       rows: [
         ["10:47 PM", "Maya leaves office (CCTV)", "N/A", "Maya Chen"],
         ["11:12 PM", "admin01 login", "192.168.1.47", "Unknown"],
-        ["11:12 PM", "Chris computer active", "192.168.1.47", "Chris Park"],
+        ["11:12 PM", "Chris computer active", "192.168.1.47", "Chris Anderson"],
         ["11:58 PM", "admin01 logout", "192.168.1.47", "Unknown"],
       ],
     },

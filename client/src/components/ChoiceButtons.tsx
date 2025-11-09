@@ -22,6 +22,8 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
+  const hasEmoji = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u26FF]|[\u2700-\u27BF]/.test(question);
+
   const filteredChoices = choices.filter(choice => {
     if (choice.text.includes("Talk to")) {
       const characterMatch = choice.text.match(/Talk to (\w+)/);
@@ -52,7 +54,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
     >
       <div className="bg-slate-800/95 border-2 border-slate-600 rounded-xl p-4 mb-4 shadow-lg">
         <div className="flex items-start gap-3">
-          <span className="text-amber-400 text-2xl md:text-xl">🔍</span>
+          {!hasEmoji && <span className="text-amber-400 text-2xl md:text-xl">🔍</span>}
           <p className="text-slate-100 font-bold flex-1 text-lg md:text-base leading-relaxed">{question}</p>
         </div>
       </div>
