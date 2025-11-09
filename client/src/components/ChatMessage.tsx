@@ -3,6 +3,7 @@ import { User, FileText } from "lucide-react";
 import { Message } from "@/data/case1-story";
 import { useEffect } from "react";
 import { useAudio } from "@/lib/stores/useAudio";
+import { parseTextWithGlossary } from "./GlossaryTooltip";
 
 interface ChatMessageProps {
   message: Message;
@@ -105,7 +106,9 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             <div className="text-xl md:text-lg">💡</div>
             <div className="flex-1">
               <div className="text-sm md:text-xs font-semibold text-amber-700 mb-1">Kastor's Hint</div>
-              <p className="text-base md:text-sm leading-relaxed">{message.text}</p>
+              <p className="text-base md:text-sm leading-relaxed">
+                {parseTextWithGlossary(message.text)}
+              </p>
             </div>
           </div>
         </div>
@@ -148,7 +151,9 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             ? "bg-blue-500 text-white rounded-tr-sm" 
             : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
         }`}>
-          <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
+          <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">
+            {parseTextWithGlossary(message.text)}
+          </p>
         </div>
       </div>
     </motion.div>

@@ -72,8 +72,9 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m10", speaker: "system", text: "📊 STAGE 2: DATA COLLECTION" },
-      { id: "m11", speaker: "system", text: "☀️ 8:00 AM - You arrive at the Game Studio headquarters. Large monitors display live game statistics.", photo: "/office-scene.jpg" },
-      { id: "m12", speaker: "maya", text: "Good morning, Detective. Let me introduce you to the team.", timestamp: "8:05 AM" },
+      { id: "m11", speaker: "system", text: "☀️ 8:00 AM - You arrive at the Game Studio headquarters. Since yesterday's incident, everyone has been busy investigating.", photo: "/office-scene.jpg" },
+      { id: "m12", speaker: "maya", text: "Good morning, Detective. Sorry, things have been really hectic since the problem started. 😰", timestamp: "8:05 AM" },
+      { id: "m13", speaker: "maya", text: "Let me introduce you to the team.", timestamp: "8:05 AM" },
       { id: "m14", speaker: "maya", text: "This is Chris Park, our Data Analyst. He monitors game stats and player behavior patterns.", timestamp: "8:06 AM" },
       { id: "m14b", speaker: "chris", text: "Good morning! 👋", timestamp: "8:06 AM" },
       { id: "m15", speaker: "maya", text: "And Ryan Torres, our Junior Server Engineer. He manages our server logs and database access.", timestamp: "8:06 AM" },
