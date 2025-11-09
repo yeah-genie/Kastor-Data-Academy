@@ -93,7 +93,7 @@ export const case1Story: Record<string, StoryNode> = {
     messages: [
       { id: "m17", speaker: "detective", text: "Maya, can you walk me through what happened last night?", timestamp: "8:10 AM" },
       { id: "m18", speaker: "maya", text: "I stayed late checking all the balance values before the update. I triple-checked everything using my admin01 account... The data looked perfect.", timestamp: "8:11 AM" },
-      { id: "m19", speaker: "maya", text: "*sighs* But honestly... I've been so exhausted lately. Too many late nights. Maybe I missed something? I trust the data, but... my gut is telling me something's off.", timestamp: "8:12 AM" },
+      { id: "m19", speaker: "maya", text: "But honestly... I've been so exhausted lately. Too many late nights. Maybe I missed something? I trust the data, but... my gut is telling me something's off. 😔", timestamp: "8:12 AM" },
       { id: "m20", speaker: "detective", text: "What time did you access the system?", timestamp: "8:13 AM" },
       { id: "m21", speaker: "maya", text: "I logged in at 10:47 PM, reviewed the balance data, then left before midnight. Everything seemed fine when I left.", timestamp: "8:13 AM" },
       { id: "m22", speaker: "narrator", text: "Maya seems burned out - a perfectionist pushed to her limits. Her profile has been updated with personality insights." },
@@ -113,10 +113,10 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m23", speaker: "detective", text: "Chris, did you notice anything unusual about the game data?", timestamp: "8:20 AM" },
-      { id: "m24", speaker: "chris", text: "*smiles cheerfully* Actually, yes! The win rate patterns looked strange a few days before the patch. Pretty interesting stuff!", timestamp: "8:21 AM" },
+      { id: "m24", speaker: "chris", text: "Actually, yes! The win rate patterns looked strange a few days before the patch. Pretty interesting stuff! 😊", timestamp: "8:21 AM" },
       { id: "m25", speaker: "detective", text: "But you didn't report it?", timestamp: "8:22 AM" },
-      { id: "m26", speaker: "chris", text: "*scratches head* Ah, well... I was swamped with my own project. Um... I'm working on a personal AI matchmaking algorithm.", timestamp: "8:22 AM" },
-      { id: "m27", speaker: "chris", text: "It's separate from company work, but... *pauses nervously* I've been using some real game data to test it. You know, for accuracy.", timestamp: "8:23 AM" },
+      { id: "m26", speaker: "chris", text: "Ah, well... I was swamped with my own project. Um... I'm working on a personal AI matchmaking algorithm. 🤔", timestamp: "8:22 AM" },
+      { id: "m27", speaker: "chris", text: "It's separate from company work, but... I've been using some real game data to test it. You know, for accuracy. 😰", timestamp: "8:23 AM" },
       { id: "m28", speaker: "narrator", text: "Interesting - he's friendly and upbeat on the surface, but his eyes are carefully watching your reaction. His profile has been updated." },
     ],
     question: {
@@ -134,10 +134,10 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage2",
     messages: [
       { id: "m29", speaker: "detective", text: "Ryan, I understand you manage the server logs. Can you help us?", timestamp: "8:30 AM" },
-      { id: "m30", speaker: "ryan", text: "*speaks quietly but firmly* Actually... I need to confess something. I was the one who anonymously posted about this issue to the gaming community.", timestamp: "8:31 AM" },
+      { id: "m30", speaker: "ryan", text: "Actually... I need to confess something. I was the one who anonymously posted about this issue to the gaming community. 😐", timestamp: "8:31 AM" },
       { id: "m31", speaker: "detective", text: "Why did you do that?", timestamp: "8:32 AM" },
-      { id: "m32", speaker: "ryan", text: "I'm frustrated with the overtime culture here - the crunch, the pressure. I felt like reporting internally wouldn't change anything. Someone had to speak up.", timestamp: "8:32 AM" },
-      { id: "m33", speaker: "ryan", text: "*looks directly at you* But I can provide you the server access logs. The data doesn't lie. That's what I believe in.", timestamp: "8:33 AM" },
+      { id: "m32", speaker: "ryan", text: "I'm frustrated with the overtime culture here - the crunch, the pressure. I felt like reporting internally wouldn't change anything. Someone had to speak up. 😤", timestamp: "8:32 AM" },
+      { id: "m33", speaker: "ryan", text: "But I can provide you the server access logs. The data doesn't lie. That's what I believe in. 👁️", timestamp: "8:33 AM" },
       { id: "m34", speaker: "narrator", text: "He's principled and honest - willing to risk his job for what he believes is right. His profile has been updated." },
     ],
     question: {

@@ -211,14 +211,14 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                               <div className="flex flex-col">
                                 <div className="flex gap-4 mb-3">
                                   {char.photo && (
-                                    <img src={char.photo} alt={char.name} className="w-24 h-24 rounded-full object-cover object-center border-3 border-blue-400 shadow-md" />
+                                    <img src={char.photo} alt={char.name} className="w-24 h-24 rounded-2xl object-cover object-center border-2 border-blue-400 shadow-lg" />
                                   )}
                                   <div className="flex-1">
                                     <h4 className="font-bold text-xl text-gray-900 mb-1">{char.name}</h4>
-                                    <p className="text-sm text-blue-600 font-semibold mb-2">{char.role}</p>
+                                    <p className="text-sm text-blue-700 font-semibold mb-2">{char.role}</p>
                                     {char.suspicionLevel !== undefined && (
                                       <div className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-600 font-medium">Suspicion Level:</span>
+                                        <span className="text-xs text-gray-700 font-medium">Suspicion Level:</span>
                                         <div className="flex gap-1">
                                           {[...Array(5)].map((_, i) => (
                                             <Star key={i} className={`w-4 h-4 ${i < (char.suspicionLevel || 0) ? 'fill-red-500 text-red-500' : 'text-gray-300'}`} />
@@ -230,15 +230,15 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                                 </div>
                                 
                                 <div className="space-y-2">
-                                  <div className="bg-white/70 rounded-lg p-3 border border-blue-100">
-                                    <p className="text-xs font-semibold text-gray-600 mb-1">PROFILE</p>
-                                    <p className="text-sm text-gray-700 leading-relaxed">{char.description}</p>
+                                  <div className="bg-white rounded-lg p-3 border border-blue-200 shadow-sm">
+                                    <p className="text-xs font-bold text-gray-800 mb-1.5">PROFILE</p>
+                                    <p className="text-sm text-gray-800 leading-relaxed">{char.description}</p>
                                   </div>
                                   
                                   {char.personality && (
-                                    <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100">
-                                      <p className="text-xs font-semibold text-purple-600 mb-1">PERSONALITY</p>
-                                      <p className="text-sm text-gray-700 leading-relaxed">{char.personality}</p>
+                                    <div className="bg-purple-50 rounded-lg p-3 border border-purple-200 shadow-sm">
+                                      <p className="text-xs font-bold text-purple-700 mb-1.5">PERSONALITY</p>
+                                      <p className="text-sm text-gray-800 leading-relaxed">{char.personality}</p>
                                     </div>
                                   )}
                                 </div>

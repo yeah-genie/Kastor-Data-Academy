@@ -50,10 +50,10 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
       animate={{ opacity: 1, y: 0 }}
       className="my-6"
     >
-      <div className="bg-slate-800/90 border border-amber-600/50 rounded-lg p-4 mb-4">
-        <div className="flex items-start gap-2">
-          <span className="text-amber-400 text-xl">❓</span>
-          <p className="text-slate-100 font-semibold flex-1">{question}</p>
+      <div className="bg-slate-800/95 border-2 border-slate-600 rounded-xl p-4 mb-4 shadow-lg">
+        <div className="flex items-start gap-3">
+          <span className="text-amber-400 text-2xl">🔍</span>
+          <p className="text-slate-100 font-bold flex-1 text-base leading-relaxed">{question}</p>
         </div>
       </div>
 
@@ -66,12 +66,12 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
             transition={{ delay: index * 0.1 }}
             onClick={() => !showFeedback && handleChoice(choice)}
             disabled={showFeedback}
-            className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+            className={`w-full text-left p-4 rounded-xl border-2 transition-all shadow-md ${
               showFeedback && selectedChoice?.id === choice.id
                 ? choice.isCorrect
-                  ? "bg-green-900/40 border-green-500 text-green-100"
-                  : "bg-red-900/40 border-red-500 text-red-100"
-                : "bg-slate-700/60 border-slate-500/50 text-slate-100 hover:bg-slate-600/60 hover:border-slate-400/70"
+                  ? "bg-green-500/20 border-green-500 text-green-100"
+                  : "bg-red-500/20 border-red-500 text-red-100"
+                : "bg-slate-800/90 border-slate-600 text-slate-100 hover:bg-slate-700/90 hover:border-slate-500 hover:shadow-lg"
             } ${showFeedback ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             <div className="flex items-center gap-3">
@@ -84,7 +84,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
                   )}
                 </div>
               )}
-              <span className="flex-1">{choice.text}</span>
+              <span className="flex-1 font-medium">{choice.text}</span>
             </div>
           </motion.button>
         ))}
@@ -94,13 +94,13 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`mt-4 p-4 rounded-lg border ${
+          className={`mt-4 p-4 rounded-xl border-2 shadow-md ${
             selectedChoice.isCorrect
-              ? "bg-green-900/40 border-green-600/50 text-green-100"
-              : "bg-red-900/40 border-red-600/50 text-red-100"
+              ? "bg-green-500/20 border-green-500 text-green-100"
+              : "bg-red-500/20 border-red-500 text-red-100"
           }`}
         >
-          <p className="text-sm">{selectedChoice.feedback}</p>
+          <p className="text-sm font-medium">{selectedChoice.feedback}</p>
         </motion.div>
       )}
     </motion.div>
