@@ -52,7 +52,7 @@ export const case1Story: Record<string, StoryNode> = {
     phase: "stage1",
     messages: [
       { id: "m1", speaker: "system", text: "📁 CASE FILE #001: THE MISSING BALANCE PATCH" },
-      { id: "m2", speaker: "system", text: "🕐 11:47 PM - Your detective office. An email notification chimes." },
+      { id: "m2", speaker: "system", text: "🕐 11:47 PM - Your detective office. An email notification chimes.", photo: "/detective-office.jpg" },
       { id: "m3", speaker: "maya", text: "Detective, we have a major problem. After last night's game update, the character 'Shadow Reaper' became incredibly overpowered - the win rate jumped abnormally and the community thinks someone deliberately manipulated the balance. Many players have stopped playing and I have a meeting tomorrow morning. I need to know what happened.", timestamp: "11:47 PM" },
       { id: "m5", speaker: "narrator", text: "Interesting case! A sudden win rate spike usually means something changed in the game data. What's your theory?" },
     ],
