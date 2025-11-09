@@ -17,6 +17,7 @@ import { HintDialog } from "./HintDialog";
 import { getHint } from "@/data/hints";
 import { CharacterCardsSlider } from "./CharacterCardsSlider";
 import { CharacterEvidence } from "@/lib/stores/useDetectiveGame";
+import { CaseClosedModal } from "./CaseClosedModal";
 
 export function GameScene() {
   const {
@@ -46,6 +47,9 @@ export function GameScene() {
   const [currentHint, setCurrentHint] = useState<string>("");
   const [showCharacterCardsSlider, setShowCharacterCardsSlider] = useState(false);
   const [showQuestion, setShowQuestion] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationData, setCelebrationData] = useState<{ caseNumber: number; caseTitle: string } | null>(null);
+  const [handledCelebrationId, setHandledCelebrationId] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,6 +70,20 @@ export function GameScene() {
   }, [visibleMessages, currentStoryNode, showCharacterCardsSlider]);
 
   useEffect(() => {
+    if (!currentStoryNode) return;
+    
+    const celebrationMessage = currentStoryNode.messages
+      .slice(0, visibleMessages)
+      .find(msg => msg.celebration);
+    
+    if (celebrationMessage && celebrationMessage.celebration && celebrationMessage.id !== handledCelebrationId) {
+      setCelebrationData(celebrationMessage.celebration);
+      setShowCelebration(true);
+      setHandledCelebrationId(celebrationMessage.id);
+    }
+  }, [visibleMessages, currentStoryNode, handledCelebrationId]);
+
+  useEffect(() => {
     const story = getStory(currentCase);
     const node = story[currentNode];
     if (node) {
@@ -84,6 +102,7 @@ export function GameScene() {
       setVisibleMessages(autoVisibleCount);
       setShowCharacterCardsSlider(false);
       setShowQuestion(false);
+      setHandledCelebrationId(null);
       recordNodeVisited(currentNode);
       
       if (currentNode.includes('_interview')) {
@@ -228,9 +247,11 @@ export function GameScene() {
         className="flex-1 overflow-y-auto px-4 py-4 space-y-3 cursor-pointer"
         onClick={handleChatClick}
       >
-        {currentStoryNode.messages.slice(0, visibleMessages).map((message, index) => (
-          <ChatMessage key={message.id} message={message} index={index} />
-        ))}
+        {currentStoryNode.messages.slice(0, visibleMessages)
+          .filter(message => !message.celebration)
+          .map((message, index) => (
+            <ChatMessage key={message.id} message={message} index={index} />
+          ))}
         
         {visibleMessages < currentStoryNode.messages.length && (
           <div className="text-center py-2">
@@ -314,6 +335,15 @@ export function GameScene() {
         onClose={() => setShowHint(false)} 
         hint={currentHint}
       />
+      
+      {celebrationData && (
+        <CaseClosedModal 
+          isOpen={showCelebration} 
+          onClose={() => setShowCelebration(false)}
+          caseNumber={celebrationData.caseNumber}
+          caseTitle={celebrationData.caseTitle}
+        />
+      )}
     </div>
   );
 }

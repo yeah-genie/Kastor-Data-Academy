@@ -6,6 +6,10 @@ export interface Message {
   characterName?: string;
   timestamp?: string;
   photo?: string;
+  celebration?: {
+    caseNumber: number;
+    caseTitle: string;
+  };
 }
 
 export interface DataVisualization {
@@ -322,17 +326,15 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m65", speaker: "detective", text: "He didn't intend to cause permanent damage, but his unauthorized access violated security protocols and damaged player trust.", timestamp: "10:21 AM" },
       { id: "m66", speaker: "maya", text: "Thank you, Detective. We'll revert the changes immediately and implement mandatory password security training.", timestamp: "10:22 AM" },
       { id: "m67", speaker: "maya", text: "Chris will face disciplinary action, but we'll also improve our access control systems so this can't happen again.", timestamp: "10:23 AM" },
-      { id: "m68", speaker: "narrator", text: "🎉 CASE CLOSED!" },
+      { id: "m68", speaker: "narrator", text: "🎉 CASE CLOSED!", celebration: { caseNumber: 1, caseTitle: "The Missing Balance Patch" } },
       { id: "m69", speaker: "narrator", text: "🎓 You learned: How to analyze server logs, cross-reference IP addresses, identify unauthorized access patterns, and use data preprocessing to uncover the truth!" },
     ],
-    autoAdvance: { nextNode: "end", delay: 3000 },
+    autoAdvance: { nextNode: "end", delay: 2000 },
   },
 
   end: {
     id: "end",
     phase: "stage5",
-    messages: [
-      { id: "m70", speaker: "system", text: "✅ CASE #001 COMPLETE" },
-    ],
+    messages: [],
   },
 };

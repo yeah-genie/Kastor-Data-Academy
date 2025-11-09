@@ -106,7 +106,7 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             <div className="text-xl md:text-lg">💡</div>
             <div className="flex-1">
               <div className="text-sm md:text-xs font-semibold text-amber-700 mb-1">Kastor's Hint</div>
-              <p className="text-base md:text-sm leading-relaxed">
+              <p className="text-base md:text-sm leading-relaxed break-words whitespace-pre-wrap">
                 {parseTextWithGlossary(message.text)}
               </p>
             </div>
