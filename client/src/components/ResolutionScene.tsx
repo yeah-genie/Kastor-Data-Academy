@@ -28,9 +28,9 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
   }, [stars, completeCase, caseCompleted]);
 
   const getPerformanceMessage = () => {
-    if (stars === 3) return "완벽한 추리입니다! 당신은 진정한 데이터 탐정입니다!";
-    if (stars === 2) return "훌륭한 추리력을 보여주셨습니다!";
-    return "사건을 해결했습니다. 다음에는 더 잘할 수 있을 거예요!";
+    if (stars === 3) return "Perfect deduction! You are a true data detective!";
+    if (stars === 2) return "Excellent investigative skills!";
+    return "Case solved. You can do even better next time!";
   };
 
   return (
@@ -47,7 +47,7 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
           className="text-center mb-8"
         >
           <Trophy className="w-20 h-20 text-amber-400 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-amber-100 mb-2">사건 해결!</h1>
+          <h1 className="text-4xl font-bold text-amber-100 mb-2">Case Solved!</h1>
           <p className="text-slate-300">{getPerformanceMessage()}</p>
         </motion.div>
 
@@ -80,23 +80,23 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
           transition={{ delay: 1.2 }}
           className="bg-slate-900/50 rounded-lg p-6 mb-6"
         >
-          <h3 className="text-lg font-semibold text-amber-200 mb-4">사건 요약</h3>
+          <h3 className="text-lg font-semibold text-amber-200 mb-4">Case Summary</h3>
           
           <div className="space-y-3 text-sm">
             <div className="flex justify-between items-center border-b border-slate-700 pb-2">
-              <span className="text-slate-300">획득 점수</span>
-              <span className="text-amber-400 font-bold text-lg">{score} 점</span>
+              <span className="text-slate-300">Score Earned</span>
+              <span className="text-amber-400 font-bold text-lg">{score} pts</span>
             </div>
             
             <div className="flex justify-between items-center border-b border-slate-700 pb-2">
-              <span className="text-slate-300">수집한 단서</span>
-              <span className="text-blue-400 font-bold">{cluesCollected.length} 개</span>
+              <span className="text-slate-300">Clues Collected</span>
+              <span className="text-blue-400 font-bold">{cluesCollected.length}</span>
             </div>
             
             <div className="flex justify-between items-center border-b border-slate-700 pb-2">
-              <span className="text-slate-300">등급</span>
+              <span className="text-slate-300">Rating</span>
               <span className="text-amber-400 font-bold">
-                {stars === 3 ? "S급 탐정" : stars === 2 ? "A급 탐정" : "B급 탐정"}
+                {stars === 3 ? "S-Rank Detective" : stars === 2 ? "A-Rank Detective" : "B-Rank Detective"}
               </span>
             </div>
           </div>
@@ -108,10 +108,10 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
           transition={{ delay: 1.5 }}
           className="bg-amber-900/30 border border-amber-600/50 rounded-lg p-4 mb-6"
         >
-          <h4 className="text-amber-200 font-semibold mb-2">🎯 핵심 교훈</h4>
+          <h4 className="text-amber-200 font-semibold mb-2">🎯 Key Takeaway</h4>
           <p className="text-amber-100 text-sm">
-            데이터의 급격한 변화는 항상 원인이 있습니다. 시스템 로그와 권한 기록을 확인하면 
-            숨겨진 조작을 발견할 수 있습니다. 데이터 분석가는 숫자 뒤의 진실을 찾는 탐정입니다!
+            Sudden changes in data always have a cause. By checking system logs and permission records, 
+            you can discover hidden manipulations. Data analysts are detectives seeking truth behind the numbers!
           </p>
         </motion.div>
 
@@ -125,7 +125,7 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
             onClick={onContinue}
             className="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            다음 사건으로
+            Next Case
             <ArrowRight className="w-5 h-5" />
           </button>
           
@@ -133,7 +133,7 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
             onClick={() => window.location.reload()}
             className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg transition-colors"
           >
-            메인 메뉴로
+            Main Menu
           </button>
         </motion.div>
       </motion.div>

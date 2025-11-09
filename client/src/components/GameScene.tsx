@@ -42,26 +42,18 @@ export function GameScene() {
       setCurrentStoryNode(node);
       setPhase(node.phase);
       setVisibleMessages(0);
-
-      const timer = setInterval(() => {
-        setVisibleMessages((prev) => {
-          if (prev < node.messages.length) {
-            return prev + 1;
-          }
-          clearInterval(timer);
-          return prev;
-        });
-      }, 600);
-
-      if (node.autoAdvance) {
-        setTimeout(() => {
-          setCurrentNode(node.autoAdvance!.nextNode);
-        }, node.autoAdvance.delay + node.messages.length * 600);
-      }
-
-      return () => clearInterval(timer);
     }
   }, [currentNode, currentCase]);
+  
+  const handleChatClick = () => {
+    if (!currentStoryNode) return;
+    
+    if (visibleMessages < currentStoryNode.messages.length) {
+      setVisibleMessages((prev) => prev + 1);
+    } else if (currentStoryNode.autoAdvance && !currentStoryNode.question) {
+      setCurrentNode(currentStoryNode.autoAdvance.nextNode);
+    }
+  };
 
   const handleChoiceSelected = (choice: any) => {
     if (choice.clueAwarded) {
@@ -110,7 +102,7 @@ export function GameScene() {
   if (!currentStoryNode) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white">로딩 중...</div>
+        <div className="text-white">Loading...</div>
       </div>
     );
   }
@@ -122,7 +114,7 @@ export function GameScene() {
           <div className="text-2xl">🔍</div>
           <div>
             <h1 className="font-bold text-amber-300">KASTOR</h1>
-            <p className="text-xs text-slate-400">데이터 탐정</p>
+            <p className="text-xs text-slate-400">Data Detective</p>
           </div>
         </div>
 
@@ -139,7 +131,7 @@ export function GameScene() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 transition-colors"
           >
             <BookOpen className="w-4 h-4" />
-            <span className="text-sm font-semibold">노트</span>
+            <span className="text-sm font-semibold">Notes</span>
           </button>
         </div>
       </div>
@@ -147,16 +139,25 @@ export function GameScene() {
       <div className="pt-20 pb-6 px-4 max-w-4xl mx-auto">
         <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2 mb-4 text-center">
           <span className="text-amber-400 font-semibold text-sm">
-            {phase === "briefing" && "📋 사건 브리핑"}
-            {phase === "investigation" && "🔎 조사 중"}
-            {phase === "resolution" && "⚖️ 사건 해결"}
+            {phase === "briefing" && "📋 Briefing"}
+            {phase === "investigation" && "🔎 Investigation"}
+            {phase === "resolution" && "⚖️ Resolution"}
           </span>
         </div>
 
-        <div className="space-y-4">
+        <div 
+          className="space-y-4 cursor-pointer"
+          onClick={handleChatClick}
+        >
           {currentStoryNode.messages.slice(0, visibleMessages).map((message, index) => (
             <ChatMessage key={message.id} message={message} index={index} />
           ))}
+          
+          {visibleMessages < currentStoryNode.messages.length && (
+            <div className="text-center py-4">
+              <span className="text-slate-400 text-sm">Tap to continue...</span>
+            </div>
+          )}
 
           {visibleMessages === currentStoryNode.messages.length && (
             <>
@@ -165,11 +166,13 @@ export function GameScene() {
               ))}
 
               {currentStoryNode.question && (
-                <ChoiceButtons
-                  question={currentStoryNode.question.text}
-                  choices={currentStoryNode.question.choices}
-                  onChoiceSelected={handleChoiceSelected}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ChoiceButtons
+                    question={currentStoryNode.question.text}
+                    choices={currentStoryNode.question.choices}
+                    onChoiceSelected={handleChoiceSelected}
+                  />
+                </div>
               )}
             </>
           )}

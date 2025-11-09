@@ -33,7 +33,7 @@ export function DetectiveNotebook({ isOpen, onClose, onShowHint, hintAvailable }
             <div className="bg-amber-800/50 border-b border-amber-600/50 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <BookOpen className="w-6 h-6 text-amber-300" />
-                <h2 className="text-xl font-bold text-amber-100">탐정 노트</h2>
+                <h2 className="text-xl font-bold text-amber-100">Detective Notes</h2>
               </div>
               <button
                 onClick={onClose}
@@ -48,32 +48,32 @@ export function DetectiveNotebook({ isOpen, onClose, onShowHint, hintAvailable }
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold text-amber-200 flex items-center gap-2">
                     <Star className="w-5 h-5" />
-                    진행 상황
+                    Progress
                   </h3>
                 </div>
                 <div className="bg-slate-800/50 rounded-lg p-4 space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-300">획득 점수</span>
-                    <span className="text-amber-400 font-bold">{score} 점</span>
+                    <span className="text-slate-300">Score Earned</span>
+                    <span className="text-amber-400 font-bold">{score} pts</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-300">수집한 단서</span>
-                    <span className="text-blue-400 font-bold">{cluesCollected.length} 개</span>
+                    <span className="text-slate-300">Clues Collected</span>
+                    <span className="text-blue-400 font-bold">{cluesCollected.length}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-300">사용한 힌트</span>
+                    <span className="text-slate-300">Hints Used</span>
                     <span className="text-purple-400 font-bold">{hintsUsed} / {maxHints}</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-amber-200 mb-4">수집한 단서</h3>
+                <h3 className="text-lg font-semibold text-amber-200 mb-4">Collected Clues</h3>
                 {cluesCollected.length === 0 ? (
                   <div className="bg-slate-800/30 rounded-lg p-6 text-center text-slate-400">
-                    아직 수집한 단서가 없습니다.
+                    No clues collected yet.
                     <br />
-                    질문에 정답을 맞춰 단서를 수집하세요!
+                    Answer questions correctly to collect clues!
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -109,13 +109,13 @@ export function DetectiveNotebook({ isOpen, onClose, onShowHint, hintAvailable }
                   className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <Lightbulb className="w-5 h-5" />
-                  힌트 보기 ({maxHints - hintsUsed}개 남음)
+                  Show Hint ({maxHints - hintsUsed} remaining)
                 </button>
               )}
               
               {onShowHint && hintsUsed < maxHints && !hintAvailable && (
                 <div className="w-full bg-slate-700/50 text-slate-400 font-semibold py-3 rounded-lg text-center border border-slate-600">
-                  이 단계에는 힌트가 없습니다
+                  No hint available for this step
                 </div>
               )}
               
@@ -123,7 +123,7 @@ export function DetectiveNotebook({ isOpen, onClose, onShowHint, hintAvailable }
                 onClick={onClose}
                 className="w-full bg-amber-700 hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors"
               >
-                노트 닫기
+                Close Notes
               </button>
             </div>
           </motion.div>

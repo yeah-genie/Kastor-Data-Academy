@@ -29,7 +29,7 @@ export function HintDialog({ isOpen, onClose, hint }: HintDialogProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Lightbulb className="w-6 h-6 text-yellow-400" />
-                <h3 className="text-xl font-bold text-purple-200">힌트</h3>
+                <h3 className="text-xl font-bold text-purple-200">Hint</h3>
               </div>
               <button
                 onClick={onClose}
@@ -47,7 +47,7 @@ export function HintDialog({ isOpen, onClose, hint }: HintDialogProps) {
               onClick={onClose}
               className="w-full bg-purple-700 hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors"
             >
-              확인
+              OK
             </button>
           </motion.div>
         </>
