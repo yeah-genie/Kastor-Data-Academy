@@ -109,36 +109,34 @@ export function StartMenu() {
                         isUnlocked ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
                       }`}
                     >
-                      {/* Wrapper for image and info with shared gradient */}
-                      <div className="relative">
-                        {/* Mission Image */}
-                        <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-600">
-                          <img 
-                            src={caseId === 1 ? case1Image : caseId === 2 ? case2Image : case3Image} 
-                            alt={metadata.title}
-                            className="w-full h-full object-cover"
-                          />
-                          
-                          {!isUnlocked && (
-                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                              <div className="text-white text-sm font-semibold bg-black/70 px-4 py-2 rounded-lg">
-                                🔒 Locked
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Gradient overlay spanning image bottom to text top */}
+                      {/* Mission Image */}
+                      <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-600">
+                        <img 
+                          src={caseId === 1 ? case1Image : caseId === 2 ? case2Image : case3Image} 
+                          alt={metadata.title}
+                          className="w-full h-full object-cover"
+                        />
+                        
+                        {/* Gradient overlay at bottom of image */}
                         <div 
-                          className="absolute left-0 right-0 h-20 pointer-events-none"
+                          className="absolute left-0 right-0 bottom-0 pointer-events-none"
                           style={{ 
-                            bottom: '0px',
-                            background: 'linear-gradient(0deg, #FFFFFF 0%, transparent 100%)'
+                            height: '80px',
+                            background: 'linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%)'
                           }}
                         />
+                        
+                        {!isUnlocked && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <div className="text-white text-sm font-semibold bg-black/70 px-4 py-2 rounded-lg">
+                              🔒 Locked
+                            </div>
+                          </div>
+                        )}
+                      </div>
 
-                        {/* Mission Info */}
-                        <div className="p-4 relative bg-white">
+                      {/* Mission Info */}
+                      <div className="p-4 bg-white">
                           <h3 className="text-lg font-semibold text-gray-900 mb-2">
                             {metadata.title}
                           </h3>
@@ -162,7 +160,6 @@ export function StartMenu() {
                             </div>
                           )}
                         </div>
-                      </div>
                     </motion.div>
                   );
                 })}
