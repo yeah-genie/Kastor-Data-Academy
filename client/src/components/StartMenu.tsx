@@ -105,12 +105,15 @@ export function StartMenu() {
                       }`}
                     >
                       {/* Mission Image */}
-                      <div className="relative h-40 bg-gradient-to-br from-gray-800 to-gray-600 overflow-hidden">
+                      <div className="relative h-48 bg-gradient-to-br from-gray-800 to-gray-600 overflow-hidden">
                         <img 
                           src={caseId === 1 ? case1Image : caseId === 2 ? case2Image : case3Image} 
                           alt={metadata.title}
                           className="w-full h-full object-cover"
                         />
+                        {/* Blur gradient overlay at bottom */}
+                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 via-black/40 to-transparent backdrop-blur-[2px]" />
+                        
                         {!isUnlocked && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                             <div className="text-white text-sm font-semibold bg-black/70 px-4 py-2 rounded-lg">
