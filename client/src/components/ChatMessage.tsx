@@ -12,13 +12,14 @@ interface ChatMessageProps {
   index: number;
   onTypingStateChange?: (isTyping: boolean) => void;
   onTypingComplete?: () => void;
+  onCharacterTyped?: () => void;
 }
 
 function shouldUseTypewriter(speaker: string): boolean {
   return ["detective", "maya", "chris", "ryan", "client"].includes(speaker);
 }
 
-export function ChatMessage({ message, index, onTypingStateChange, onTypingComplete }: ChatMessageProps) {
+export function ChatMessage({ message, index, onTypingStateChange, onTypingComplete, onCharacterTyped }: ChatMessageProps) {
   const { playMessageSound } = useAudio();
   const { typewriterSpeed } = useDetectiveGame();
   
@@ -173,6 +174,7 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
               speed={typewriterSpeed}
               onTypingStateChange={useTypewriter ? onTypingStateChange : undefined}
               onTypingComplete={useTypewriter ? onTypingComplete : undefined}
+              onCharacterTyped={useTypewriter ? onCharacterTyped : undefined}
               bypassTypewriter={!useTypewriter}
               glossaryMode={isDetective ? "detective" : "normal"}
             />

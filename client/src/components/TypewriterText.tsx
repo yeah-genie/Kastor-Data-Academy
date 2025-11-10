@@ -7,16 +7,18 @@ interface TypewriterTextProps {
   speed: TypewriterSpeed;
   onTypingComplete?: () => void;
   onTypingStateChange?: (isTyping: boolean) => void;
+  onCharacterTyped?: () => void;
   bypassTypewriter?: boolean;
   className?: string;
   glossaryMode?: "detective" | "normal" | "none";
 }
 
-export function TypewriterText({ 
-  text, 
-  speed, 
-  onTypingComplete, 
+export function TypewriterText({
+  text,
+  speed,
+  onTypingComplete,
   onTypingStateChange,
+  onCharacterTyped,
   bypassTypewriter = false,
   className = "",
   glossaryMode = "normal"
@@ -58,6 +60,7 @@ export function TypewriterText({
       if (currentIndex < text.length) {
         setDisplayedText(text.slice(0, currentIndex + 1));
         currentIndex++;
+        onCharacterTyped?.();
         timerRef.current = window.setTimeout(typeNextChar, currentSpeed);
       } else {
         setIsTyping(false);

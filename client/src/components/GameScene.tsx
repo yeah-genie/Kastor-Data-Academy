@@ -74,6 +74,7 @@ export function GameScene() {
   const [dataRevealed, setDataRevealed] = useState(false);
   const revealTimersRef = useRef<number[]>([]);
   const [isAwaitingAdvance, setIsAwaitingAdvance] = useState(false);
+  const [typingTrigger, setTypingTrigger] = useState(0);
 
   const shouldUseTypewriter = (speaker: string): boolean => {
     return ["detective", "maya", "chris", "ryan", "client"].includes(speaker);
@@ -109,7 +110,11 @@ export function GameScene() {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [visibleMessages, showCharacterCardsSlider, showQuestion]);
+  }, [visibleMessages, showCharacterCardsSlider, showQuestion, showTypingIndicator, dataRevealed, hintRevealed, choicesRevealed, typingTrigger]);
+
+  const handleCharacterTyped = () => {
+    setTypingTrigger(prev => prev + 1);
+  };
   
 
   useEffect(() => {
@@ -563,7 +568,7 @@ export function GameScene() {
               if (message.speaker === "narrator" && !hintRevealed) {
                 return null;
               }
-              return <ChatMessage key={message.id} message={message} index={index} onTypingStateChange={handleTypingStateChange} onTypingComplete={handleTypingComplete} />;
+              return <ChatMessage key={message.id} message={message} index={index} onTypingStateChange={handleTypingStateChange} onTypingComplete={handleTypingComplete} onCharacterTyped={handleCharacterTyped} />;
             }
             
             return null;
