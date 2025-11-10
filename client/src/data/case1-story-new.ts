@@ -11,6 +11,14 @@ export interface DataVisualization {
   data: any;
 }
 
+export interface StageSummary {
+  stage: number;
+  title: string;
+  keyFindings: string[];
+  evidenceCount: number;
+  nextStageHint?: string;
+}
+
 export interface StoryNode {
   id: string;
   phase: "stage1" | "stage2" | "stage3" | "stage4" | "stage5";
@@ -40,6 +48,7 @@ export interface StoryNode {
     nextNode: string;
     delay: number;
   };
+  stageSummary?: StageSummary;
 }
 
 import { case1Evidence } from "./case1-evidence";

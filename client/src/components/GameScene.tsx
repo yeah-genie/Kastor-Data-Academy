@@ -21,6 +21,9 @@ import { CharacterEvidence } from "@/lib/stores/useDetectiveGame";
 import { CaseClosedModal } from "./CaseClosedModal";
 import { TypingIndicator } from "./TypingIndicator";
 import { TutorialOverlay } from "./TutorialOverlay";
+import { StageSummaryCard } from "./StageSummaryCard";
+import { getStageSummary } from "@/data/case1-summaries";
+import { type StageSummary } from "@/data/case1-story-new";
 
 export function GameScene() {
   const {
@@ -59,7 +62,19 @@ export function GameScene() {
   const [showTypingIndicator, setShowTypingIndicator] = useState(false);
   const [typingSpeaker, setTypingSpeaker] = useState<string | undefined>(undefined);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showStageSummary, setShowStageSummary] = useState(false);
+  const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const getStageNumberFromNode = (nodeId: string): number | null => {
+    const summaryMap: Record<string, number> = {
+      'stage2_start': 1,
+      'stage3_start': 2,
+      'stage4_start': 3,
+      'confront_chris': 4,
+    };
+    return summaryMap[nodeId] ?? null;
+  };
 
   useEffect(() => {
     const hasSeenTutorial = localStorage.getItem("kastor_tutorial_completed");
@@ -114,6 +129,25 @@ export function GameScene() {
       setCurrentStoryNode(node);
       setPhase(node.phase);
       
+      const stageNumber = getStageNumberFromNode(currentNode);
+      if (stageNumber !== null) {
+        const summary = getStageSummary(stageNumber);
+        if (summary) {
+          setCurrentStageSummary({
+            ...summary,
+            evidenceCount: evidenceCollected.length
+          });
+          setShowStageSummary(true);
+          setVisibleMessages(0);
+          setShowCharacterCardsSlider(false);
+          setShowQuestion(false);
+          setShowEvidencePresentation(false);
+          setHandledCelebrationId(null);
+          recordNodeVisited(currentNode);
+          return;
+        }
+      }
+      
       let autoVisibleCount = 0;
       for (const message of node.messages) {
         if (message.speaker === "system" || message.speaker === "narrator") {
@@ -144,7 +178,7 @@ export function GameScene() {
         }
       }
     }
-  }, [currentNode, currentCase]);
+  }, [currentNode, currentCase, evidenceCollected.length]);
   
   const handleChatClick = () => {
     if (!currentStoryNode) return;
@@ -212,6 +246,28 @@ export function GameScene() {
       setCurrentNode(presentation.nextNode);
       setShowEvidencePresentation(false);
     }, 500);
+  };
+
+  const handleStageSummaryContinue = () => {
+    setShowStageSummary(false);
+    setCurrentStageSummary(null);
+    
+    if (!currentStoryNode) return;
+    
+    let autoVisibleCount = 0;
+    for (const message of currentStoryNode.messages) {
+      if (message.speaker === "system" || message.speaker === "narrator") {
+        autoVisibleCount++;
+      } else {
+        break;
+      }
+    }
+    
+    if (autoVisibleCount === 0 && currentStoryNode.messages.length > 0) {
+      autoVisibleCount = 1;
+    }
+    
+    setVisibleMessages(autoVisibleCount);
   };
   
   const handleEvidencePresentWrong = () => {
@@ -365,7 +421,16 @@ export function GameScene() {
         onClick={handleChatClick}
         className="flex-1 overflow-y-auto px-4 py-4 space-y-3 cursor-pointer"
       >
-        {currentStoryNode.messages.slice(0, visibleMessages)
+        {showStageSummary && currentStageSummary && (
+          <div onClick={(e) => e.stopPropagation()}>
+            <StageSummaryCard 
+              summary={currentStageSummary}
+              onContinue={handleStageSummaryContinue}
+            />
+          </div>
+        )}
+        
+        {!showStageSummary && currentStoryNode.messages.slice(0, visibleMessages)
           .filter(message => !message.celebration)
           .map((message, index) => {
             if (message.dataVisualization) {
