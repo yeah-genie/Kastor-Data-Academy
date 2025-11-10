@@ -59,7 +59,7 @@ function EvidenceNode({ data, id }: { data: EvidenceNodeData; id: string }) {
   
   return (
     <div className="relative cursor-pointer" onClick={handleClick}>
-      <Handle type="target" position={Position.Top} className="!bg-blue-500 !w-3 !h-3" />
+      <Handle type="target" position={Position.Top} className="!bg-blue-500 !w-5 !h-5 !border-2 !border-white" />
       
       <motion.div 
         className={`rounded-2xl shadow-lg ${
@@ -87,7 +87,7 @@ function EvidenceNode({ data, id }: { data: EvidenceNodeData; id: string }) {
         {evidence.type === "DOCUMENT" && <DocumentCard evidence={evidence as DocumentEvidence} collapsed={isCollapsed} />}
       </motion.div>
       
-      <Handle type="source" position={Position.Bottom} className="!bg-blue-500 !w-3 !h-3" />
+      <Handle type="source" position={Position.Bottom} className="!bg-blue-500 !w-5 !h-5 !border-2 !border-white" />
     </div>
   );
 }
@@ -148,7 +148,7 @@ function EvidenceBoardInner({ onClose, onSwitchToList }: EvidenceBoardProps) {
       source: conn.from,
       target: conn.to,
       label: conn.label,
-      style: { stroke: '#3b82f6', strokeWidth: 2 },
+      style: { stroke: '#3b82f6', strokeWidth: 3 },
       animated: true,
     }));
   }, [evidenceBoardConnections]);
