@@ -18,7 +18,7 @@ export function CharacterCardsSlider({ characters, showNotification = false }: C
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="space-y-4">
         {characters.map((char) => (
           <CharacterProfileCard key={char.id} character={char} />
         ))}

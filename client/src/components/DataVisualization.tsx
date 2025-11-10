@@ -6,6 +6,8 @@ import { useState, useEffect, useMemo } from "react";
 import { IPMatchingPuzzle } from "./IPMatchingPuzzle";
 import { WinRatePrediction } from "./WinRatePrediction";
 import { EvidenceConnectionBoard } from "./EvidenceConnectionBoard";
+import { GanttChart } from "./GanttChart";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -43,6 +45,7 @@ export function DataVisualization({ visualization }: DataVisualizationProps) {
   const [puzzleCompleted, setPuzzleCompleted] = useState(false);
   const isMobile = useIsMobile();
   const [chartHeight, setChartHeight] = useState(300);
+  const { addScore, setCurrentNode } = useDetectiveGame();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -479,12 +482,44 @@ export function DataVisualization({ visualization }: DataVisualizationProps) {
     );
   };
 
+  const renderGantt = () => {
+    const { data, title, question, correctAnswer, nextNode, pointsAwarded } = visualization;
+    
+    return (
+      <GanttChart
+        title={title}
+        members={data.members}
+        question={question || ""}
+        correctAnswer={correctAnswer || ""}
+        onComplete={(selectedAnswer, isCorrect) => {
+          setPuzzleCompleted(true);
+          
+          if (isCorrect && pointsAwarded) {
+            addScore(pointsAwarded);
+          }
+          
+          if (nextNode) {
+            setTimeout(() => {
+              setCurrentNode(nextNode);
+            }, 2000);
+          }
+          
+          if (visualization.onComplete) {
+            visualization.onComplete(selectedAnswer, isCorrect);
+          }
+        }}
+      />
+    );
+  };
+
   const getIcon = () => {
     switch (visualization.type) {
       case "chart":
         return <BarChart3 className="w-4 h-4" />;
       case "bar":
         return <BarChart3 className="w-4 h-4" />;
+      case "gantt":
+        return <Clock className="w-4 h-4" />;
       case "table":
         return <Table2 className="w-4 h-4" />;
       case "log":
@@ -499,6 +534,10 @@ export function DataVisualization({ visualization }: DataVisualizationProps) {
         return <Link2 className="w-4 h-4" />;
     }
   };
+
+  if (visualization.type === "gantt") {
+    return renderGantt();
+  }
 
   return (
     <motion.div

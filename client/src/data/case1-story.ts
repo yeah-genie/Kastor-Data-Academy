@@ -17,7 +17,7 @@ export interface Message {
 }
 
 export interface DataVisualization {
-  type: "chart" | "table" | "log" | "bar" | "timeline" | "ip-matching" | "winrate-prediction" | "evidence-board";
+  type: "chart" | "table" | "log" | "bar" | "timeline" | "ip-matching" | "winrate-prediction" | "evidence-board" | "gantt";
   title: string;
   data: any;
   interactive?: boolean;
@@ -26,6 +26,11 @@ export interface DataVisualization {
     event: string;
     description: string;
   }>;
+  question?: string;
+  correctAnswer?: string;
+  nextNode?: string;
+  pointsAwarded?: number;
+  onComplete?: (selectedAnswer: string, isCorrect: boolean) => void;
 }
 
 export interface StoryNode {
@@ -109,29 +114,22 @@ export const case1Story: Record<string, StoryNode> = {
         id: "viz1", 
         speaker: "system", 
         dataVisualization: {
-          type: "bar",
-          title: "Team Overtime Hours - November 8",
+          type: "gantt",
+          title: "Team Work Hours - November 8",
+          question: "Who worked the longest hours on November 8th?",
+          correctAnswer: "Chris",
+          nextNode: "meet_team",
+          pointsAwarded: 10,
           data: {
-            labels: ["Maya", "Chris", "Ryan"],
-            datasets: [{
-              label: "Hours Worked",
-              data: [12, 14, 9],
-              color: "#3b82f6",
-            }],
-          },
+            members: [
+              { name: "Maya", startTime: 9, endTime: 21, hours: 12, color: "#8b5cf6" },
+              { name: "Chris", startTime: 8, endTime: 22, hours: 14, color: "#3b82f6" },
+              { name: "Ryan", startTime: 10, endTime: 19, hours: 9, color: "#10b981" }
+            ]
+          }
         }
-      },
-      { id: "q1b", speaker: "system", isQuestion: true },
-    ],
-    question: {
-      id: "q1b",
-      text: "🎯 What does this overtime data tell us?",
-      choices: [
-        { id: "c1b", text: "Chris worked the longest - 14 hours", isCorrect: true, nextNode: "meet_team", feedback: "He stayed very late. Let's meet everyone.", pointsAwarded: 10 },
-        { id: "c2b", text: "Maya worked 12 hours", isCorrect: true, nextNode: "meet_team", feedback: "A long day for her. Let's meet the team.", pointsAwarded: 10 },
-        { id: "c3b", text: "Everyone was working late", isCorrect: true, nextNode: "meet_team", feedback: "It was a busy day for the whole team.", pointsAwarded: 10 },
-      ],
-    },
+      }
+    ]
   },
 
   meet_team: {
