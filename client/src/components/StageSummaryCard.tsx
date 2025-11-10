@@ -42,27 +42,27 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
           className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
         >
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-6 border-b border-gray-200">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-8 border-b border-gray-200">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <StageIcon className="w-7 h-7 text-blue-600" />
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <StageIcon className="w-8 h-8 text-blue-600" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-snug">
                   Stage {summary.stage} Complete
                 </h3>
-                <p className="text-base text-gray-600">{summary.title}</p>
+                <p className="text-lg text-gray-700 leading-relaxed">{summary.title}</p>
               </div>
             </div>
           </div>
 
-          <div className="px-6 py-6 space-y-5">
+          <div className="px-6 py-8 space-y-6">
             <div>
-              <h4 className="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+              <h4 className="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                <CheckCircle className="w-6 h-6 text-green-600" />
                 Key Findings
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {summary.keyFindings.map((finding, index) => (
                   <motion.li
                     key={index}
@@ -71,19 +71,19 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
                     transition={{ delay: index * 0.1 }}
                     className="flex items-start gap-3 text-gray-800"
                   >
-                    <span className="text-blue-500 mt-0.5 text-lg">•</span>
-                    <span className="text-base leading-relaxed">{finding}</span>
+                    <span className="text-blue-500 mt-1 text-xl font-bold">•</span>
+                    <span className="text-base leading-loose flex-1">{finding}</span>
                   </motion.li>
                 ))}
               </ul>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <div className="text-base text-gray-700">
-                Evidence Collected: <span className="text-blue-600 font-semibold">{summary.evidenceCount}</span>
+            <div className="flex items-center justify-between pt-5 border-t border-gray-200">
+              <div className="text-lg text-gray-800 font-medium">
+                Evidence Collected: <span className="text-blue-600 font-bold">{summary.evidenceCount}</span>
               </div>
               {summary.nextStageHint && (
-                <div className="text-sm text-gray-500 italic max-w-xs text-right">
+                <div className="text-sm text-gray-500 italic max-w-xs text-right leading-relaxed">
                   💡 {summary.nextStageHint}
                 </div>
               )}
@@ -91,7 +91,7 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
 
             <button
               onClick={onContinue}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-base"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all text-lg"
             >
               Continue to Next Stage →
             </button>
