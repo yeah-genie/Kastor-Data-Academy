@@ -3,15 +3,19 @@ import { User, FileText } from "lucide-react";
 import { Message } from "@/data/case1-story";
 import { useEffect } from "react";
 import { useAudio } from "@/lib/stores/useAudio";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { parseTextWithGlossary } from "./GlossaryTooltip";
+import { TypewriterText } from "./TypewriterText";
 
 interface ChatMessageProps {
   message: Message;
   index: number;
+  onTypingStateChange?: (isTyping: boolean) => void;
 }
 
-export function ChatMessage({ message, index }: ChatMessageProps) {
+export function ChatMessage({ message, index, onTypingStateChange }: ChatMessageProps) {
   const { playMessageSound } = useAudio();
+  const { typewriterSpeed } = useDetectiveGame();
   
   useEffect(() => {
     playMessageSound();
@@ -70,7 +74,13 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
           className="flex justify-center my-2"
         >
           <div className="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-xs font-semibold text-center whitespace-pre-wrap">
-            {message.text}
+            <TypewriterText
+              text={message.text || ""}
+              speed={typewriterSpeed}
+              onTypingStateChange={onTypingStateChange}
+              bypassTypewriter={false}
+              glossaryMode="none"
+            />
           </div>
         </motion.div>
         
@@ -107,7 +117,12 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             <div className="flex-1">
               <div className="text-sm md:text-xs font-semibold text-amber-700 mb-1">Kastor's Hint</div>
               <p className="text-base md:text-sm leading-relaxed break-words whitespace-pre-wrap">
-                {parseTextWithGlossary(message.text)}
+                <TypewriterText
+                  text={message.text || ""}
+                  speed={typewriterSpeed}
+                  onTypingStateChange={onTypingStateChange}
+                  glossaryMode="normal"
+                />
               </p>
             </div>
           </div>
@@ -152,7 +167,13 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
             : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
         }`}>
           <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">
-            {parseTextWithGlossary(message.text, isDetective ? "detective" : "normal")}
+            <TypewriterText
+              text={message.text || ""}
+              speed={typewriterSpeed}
+              onTypingStateChange={onTypingStateChange}
+              bypassTypewriter={message.dataVisualization !== undefined}
+              glossaryMode={isDetective ? "detective" : "normal"}
+            />
           </p>
         </div>
       </div>

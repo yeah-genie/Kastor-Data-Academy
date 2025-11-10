@@ -64,6 +64,7 @@ export function GameScene() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showStageSummary, setShowStageSummary] = useState(false);
   const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const getStageNumberFromNode = (nodeId: string): number | null => {

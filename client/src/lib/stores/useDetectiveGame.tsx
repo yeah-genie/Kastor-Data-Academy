@@ -108,6 +108,8 @@ export interface SessionMetrics {
 
 export type Grade = 'S' | 'A' | 'B' | 'C';
 
+export type TypewriterSpeed = 'off' | 'normal' | 'fast';
+
 interface DetectiveGameState {
   phase: GamePhase;
   currentNode: StoryNode;
@@ -130,6 +132,7 @@ interface DetectiveGameState {
   evidenceBoardPositions: Record<string, EvidenceNodePosition>;
   evidenceBoardConnections: EvidenceConnection[];
   highlightedEvidenceId: string | null;
+  typewriterSpeed: TypewriterSpeed;
 
   setPhase: (phase: GamePhase) => void;
   setCurrentNode: (node: StoryNode) => void;
@@ -162,6 +165,7 @@ interface DetectiveGameState {
   getNodePosition: (evidenceId: string) => EvidenceNodePosition | null;
   openHintNotebook: (evidenceId: string) => void;
   clearHintHighlight: () => void;
+  setTypewriterSpeed: (speed: TypewriterSpeed) => void;
 }
 
 const initialProgress = loadProgress() || getInitialProgress();
@@ -221,6 +225,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     evidenceBoardPositions: {},
     evidenceBoardConnections: [],
     highlightedEvidenceId: null,
+    typewriterSpeed: (localStorage.getItem('typewriterSpeed') as TypewriterSpeed) || 'normal',
 
     initSessionMetrics: (totalEvidenceCount) => {
       set({
@@ -654,6 +659,11 @@ export const useDetectiveGame = create<DetectiveGameState>()(
 
     clearHintHighlight: () => {
       set({ highlightedEvidenceId: null });
+    },
+
+    setTypewriterSpeed: (speed) => {
+      set({ typewriterSpeed: speed });
+      localStorage.setItem('typewriterSpeed', speed);
     },
   }))
 );
