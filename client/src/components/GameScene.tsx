@@ -25,6 +25,7 @@ import { StageSummaryCard } from "./StageSummaryCard";
 import { getStageSummary } from "@/data/case1-summaries";
 import { type StageSummary } from "@/data/case1-story-new";
 import { ResumeGameModal } from "./ResumeGameModal";
+import { InteractiveSequenceHandler } from "./InteractiveSequenceHandler";
 
 export function GameScene() {
   const {
@@ -66,6 +67,7 @@ export function GameScene() {
   const [showStageSummary, setShowStageSummary] = useState(false);
   const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
   const [showBackModal, setShowBackModal] = useState(false);
+  const [showInteractiveSequence, setShowInteractiveSequence] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const activeTypingCount = useRef(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -184,7 +186,8 @@ export function GameScene() {
       setShowQuestion(false);
       setShowEvidencePresentation(false);
       setHandledCelebrationId(null);
-      
+      setShowInteractiveSequence(!!node.interactiveSequence);
+
       revealTimersRef.current.forEach(timer => clearTimeout(timer));
       revealTimersRef.current = [];
       setHintRevealed(false);
@@ -443,6 +446,15 @@ export function GameScene() {
     setPhase("menu");
   };
 
+  const handleInteractiveSequenceComplete = () => {
+    setShowInteractiveSequence(false);
+    if (currentStoryNode?.autoAdvance) {
+      setTimeout(() => {
+        setCurrentNode(currentStoryNode.autoAdvance!.nextNode);
+      }, currentStoryNode.autoAdvance.delay || 500);
+    }
+  };
+
   if (phase === "resolution" && currentNode === "end") {
     return <ResolutionScene onContinue={handleResolutionContinue} />;
   }
@@ -662,15 +674,24 @@ export function GameScene() {
       )}
       
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
-      
+
       {showStageSummary && currentStageSummary && (
-        <StageSummaryCard 
+        <StageSummaryCard
           summary={currentStageSummary}
           onContinue={handleStageSummaryContinue}
         />
       )}
-      
-      <ResumeGameModal 
+
+      {showInteractiveSequence && currentStoryNode?.interactiveSequence && (
+        <div className="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <InteractiveSequenceHandler
+            sequence={currentStoryNode.interactiveSequence}
+            onComplete={handleInteractiveSequenceComplete}
+          />
+        </div>
+      )}
+
+      <ResumeGameModal
         isOpen={showBackModal}
         onContinue={handleBackModalContinue}
         onStartOver={handleBackModalStartOver}

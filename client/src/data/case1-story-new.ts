@@ -1,8 +1,25 @@
+export interface InteractiveSequence {
+  type: "graph_analysis" | "logic_connection" | "timeline_reconstruction" | "testimony_press" | "evidence_presentation" | "document_examination";
+  id: string;
+  data: any;
+}
+
 export interface Message {
   id: string;
-  speaker: "detective" | "client" | "system" | "narrator";
-  text: string;
+  speaker: "detective" | "kastor" | "maya" | "ryan" | "daniel" | "alex" | "chris" | "client" | "system" | "narrator";
+  text?: string;
   avatar?: string;
+  celebration?: {
+    caseNumber: number;
+    caseTitle: string;
+  };
+  dataVisualization?: DataVisualization;
+  isQuestion?: boolean;
+  isCharacterCards?: boolean;
+  isEvidencePresentation?: boolean;
+  timestamp?: string;
+  characterName?: string;
+  photo?: string;
 }
 
 export interface DataVisualization {
@@ -23,6 +40,7 @@ export interface StoryNode {
   id: string;
   phase: "stage1" | "stage2" | "stage3" | "stage4" | "stage5";
   messages: Message[];
+  interactiveSequence?: InteractiveSequence;
   dataVisualizations?: DataVisualization[];
   question?: {
     id: string;
@@ -49,6 +67,19 @@ export interface StoryNode {
     delay: number;
   };
   stageSummary?: StageSummary;
+  showCharacterCards?: boolean;
+  evidencePresentation?: {
+    prompt: string;
+    npcStatement: string;
+    npcCharacter: string;
+    correctEvidenceId: string;
+    correctFeedback: string;
+    wrongFeedback: string;
+    nextNode: string;
+    wrongNode?: string;
+    pointsAwarded?: number;
+    penaltyPoints?: number;
+  };
 }
 
 import { case1Evidence } from "./case1-evidence";
@@ -58,287 +89,515 @@ export const case1Story: Record<string, StoryNode> = {
     id: "start",
     phase: "stage1",
     messages: [
-      { id: "m1", speaker: "system", text: "📁 CASE FILE #001" },
-      { id: "m2", speaker: "system", text: "THE MISSING BALANCE PATCH" },
-      { id: "m3", speaker: "narrator", text: "🕐 11:47 PM. Your detective office computer screen glows in the darkness. An email notification chimes." },
-      { id: "m4", speaker: "narrator", text: "📧 From: Game Studio HQ - Maya Chen" },
-      { id: "m5", speaker: "narrator", text: "Subject: [URGENT] Game balance issue - Investigation needed immediately" },
+      { id: "m1", speaker: "system", text: "Episode 1: The Missing Balance Patch" },
+      { id: "m2", speaker: "system", text: "Data Detective Academy - Case #001" },
+      { id: "m3", speaker: "narrator", text: "A run-down detective office. Papers scattered everywhere." },
+      { id: "m4", speaker: "kastor", text: "Zzz..." },
+      { id: "m5", speaker: "narrator", text: "[You open the door and enter]" },
     ],
-    autoAdvance: { nextNode: "email_content", delay: 1000 },
+    autoAdvance: { nextNode: "first_meeting", delay: 1000 },
   },
 
-  email_content: {
-    id: "email_content",
+  first_meeting: {
+    id: "first_meeting",
     phase: "stage1",
     messages: [
-      { id: "m6", speaker: "client", text: "Detective, we have a major problem. After last night's update, the character 'Shadow Reaper' became incredibly overpowered. Win rate jumped abnormally." },
-      { id: "m7", speaker: "client", text: "The community thinks someone deliberately manipulated the balance. Many players have stopped playing. I have a meeting tomorrow morning and need to know what happened." },
-      { id: "m8", speaker: "client", text: "- Maya Chen, Game Director" },
-      { id: "m9", speaker: "narrator", text: "💬 Kastor (your AI assistant): 'Interesting case! We'll need to analyze the data to solve this mystery. Where should we start?'" },
+      { id: "m6", speaker: "detective", text: "Is this the right place?" },
+      { id: "m7", speaker: "kastor", text: "Huh? [waking up] Oh, the newbie?" },
+      { id: "m8", speaker: "detective", text: "I'm the new detective." },
+      { id: "m9", speaker: "kastor", text: "You don't look like a detective." },
+      { id: "m10", speaker: "detective", text: "It's my first day!" },
+      { id: "m11", speaker: "kastor", text: "Yeah, I can tell. What's your name?" },
+      { id: "m12", speaker: "kastor", text: "Okay. I'm Kastor." },
+      { id: "m13", speaker: "kastor", text: "Alright, we've got our first case. Ready to dive in?" },
+    ],
+    autoAdvance: { nextNode: "email_arrives", delay: 500 },
+  },
+
+  email_arrives: {
+    id: "email_arrives",
+    phase: "stage1",
+    messages: [
+      { id: "m14", speaker: "kastor", text: "Mail's here!" },
+      { id: "m15", speaker: "system", text: "From: Maya Chen" },
+      { id: "m16", speaker: "system", text: "Subject: URGENT! Please help!" },
+      { id: "m17", speaker: "maya", text: "The Shadow character's win rate jumped from 50% to 85% overnight!" },
+      { id: "m18", speaker: "maya", text: "We didn't release any patches... This is a disaster!" },
     ],
     question: {
       id: "q1",
-      text: "🎯 HYPOTHESIS: What could cause a sudden win rate spike?",
+      text: "What's your initial assessment?",
       choices: [
-        { id: "c1", text: "A bug in the update made the character too strong", isCorrect: false, nextNode: "stage2_start", feedback: "Possible, but let's look for evidence of intentional changes first. Let's investigate further.", pointsAwarded: 3 },
-        { id: "c2", text: "Someone deliberately changed the balance data", isCorrect: true, nextNode: "stage2_start", feedback: "Good thinking! Let's investigate who had access and motive.", pointsAwarded: 10 },
-        { id: "c3", text: "Players discovered a new strategy", isCorrect: false, nextNode: "stage2_start", feedback: "An overnight discovery by all players? Unlikely. But let's investigate the facts.", pointsAwarded: 3 },
+        {
+          id: "c1",
+          text: "It suddenly became overpowered",
+          isCorrect: true,
+          nextNode: "call_maya",
+          feedback: "Right. Something changed the character's strength.",
+          pointsAwarded: 10,
+        },
+        {
+          id: "c2",
+          text: "It's probably a bug",
+          isCorrect: false,
+          nextNode: "call_maya",
+          feedback: "Possible, but let's gather more evidence first.",
+          pointsAwarded: 5,
+        },
       ],
     },
   },
 
-  stage2_start: {
-    id: "stage2_start",
-    phase: "stage2",
+  call_maya: {
+    id: "call_maya",
+    phase: "stage1",
     messages: [
-      { id: "m10", speaker: "system", text: "📊 STAGE 2: DATA COLLECTION" },
-      { id: "m11", speaker: "narrator", text: "☀️ 8:00 AM. You arrive at the impressive Game Studio headquarters. Large monitors display game stats everywhere." },
-      { id: "m12", speaker: "client", text: "Good morning, Detective. Let me introduce you to my team." },
+      { id: "m19", speaker: "kastor", text: "Should we call the client?" },
+      { id: "m20", speaker: "maya", text: "Hello! Is this the detective?" },
+      { id: "m21", speaker: "detective", text: "Yes, I received your email." },
+      { id: "m22", speaker: "maya", text: "This is a complete disaster! Players are rioting, the community is exploding with complaints..." },
+      { id: "m23", speaker: "maya", text: "If we lose player trust... the game could die!" },
+      { id: "m24", speaker: "detective", text: "Calm down. Tell me exactly what happened." },
+      { id: "m25", speaker: "maya", text: "We have a character called Shadow, and starting on Day 28, it suddenly became way too strong." },
+      { id: "m26", speaker: "maya", text: "But we didn't release any official patches!" },
+      { id: "m27", speaker: "kastor", text: "Interesting. Can you send us the data?" },
+      { id: "m28", speaker: "maya", text: "Yes! I'll send it right now!" },
     ],
-    autoAdvance: { nextNode: "meet_team", delay: 1000 },
+    autoAdvance: { nextNode: "graph_analysis_intro", delay: 1000 },
   },
 
-  meet_team: {
-    id: "meet_team",
+  graph_analysis_intro: {
+    id: "graph_analysis_intro",
     phase: "stage2",
     messages: [
-      { id: "m13", speaker: "client", text: "This is Maya Chen - I'm the Game Director, responsible for all balance decisions." },
-      { id: "m14", speaker: "client", text: "Chris Park is our Data Analyst. He specializes in game matchmaking systems." },
-      { id: "m15", speaker: "client", text: "And Ryan Torres, our Junior Server Engineer. He manages our log systems." },
-      { id: "m16", speaker: "narrator", text: "💬 Kastor: 'I've documented their roles and access levels in your evidence notebook.'" },
+      { id: "m29", speaker: "kastor", text: "Alright, data's in! Time for you to analyze it." },
+      { id: "m30", speaker: "kastor", text: "Shadow, Phoenix, Viper. What looks suspicious?" },
+    ],
+    interactiveSequence: {
+      type: "graph_analysis",
+      id: "graph1",
+      data: {
+        series: [
+          {
+            name: "Shadow",
+            color: "#ef4444",
+            data: [
+              { day: 24, winRate: 49.5 },
+              { day: 25, winRate: 50.1 },
+              { day: 26, winRate: 49.8 },
+              { day: 27, winRate: 50.2 },
+              { day: 28, winRate: 84.7 },
+              { day: 29, winRate: 85.1 },
+              { day: 30, winRate: 85.3 },
+            ],
+          },
+          {
+            name: "Phoenix",
+            color: "#3b82f6",
+            data: [
+              { day: 24, winRate: 52.3 },
+              { day: 25, winRate: 52.8 },
+              { day: 26, winRate: 53.1 },
+              { day: 27, winRate: 53.5 },
+              { day: 28, winRate: 55.2 },
+              { day: 29, winRate: 55.8 },
+              { day: 30, winRate: 56.1 },
+            ],
+          },
+          {
+            name: "Viper",
+            color: "#10b981",
+            data: [
+              { day: 24, winRate: 48.2 },
+              { day: 25, winRate: 48.5 },
+              { day: 26, winRate: 48.1 },
+              { day: 27, winRate: 47.9 },
+              { day: 28, winRate: 47.5 },
+              { day: 29, winRate: 47.2 },
+              { day: 30, winRate: 46.8 },
+            ],
+          },
+        ],
+        question: "Which character shows an abnormal pattern?",
+        correctAnswer: "Shadow",
+      },
+    },
+    autoAdvance: { nextNode: "graph_analysis_result", delay: 0 },
+  },
+
+  graph_analysis_result: {
+    id: "graph_analysis_result",
+    phase: "stage2",
+    messages: [
+      { id: "m31", speaker: "detective", text: "The red line starting from Day 28..." },
+      { id: "m32", speaker: "kastor", text: "Like a rollercoaster, right?" },
+      { id: "m33", speaker: "detective", text: "It shot straight up!" },
+      { id: "m34", speaker: "kastor", text: "Exactly! Something's definitely fishy." },
+      { id: "m35", speaker: "detective", text: "Phoenix went up a bit too though?" },
+      { id: "m36", speaker: "kastor", text: "That's a healthy increase. Shadow's is a rocket launch." },
+      { id: "m37", speaker: "detective", text: "Shadow is definitely the most suspicious." },
+      { id: "m38", speaker: "kastor", text: "Not bad for a rookie. Took you 10 minutes." },
+    ],
+    autoAdvance: { nextNode: "document_check", delay: 1000 },
+  },
+
+  document_check: {
+    id: "document_check",
+    phase: "stage2",
+    messages: [
+      { id: "m39", speaker: "kastor", text: "Let's check the official patch notes." },
+    ],
+    interactiveSequence: {
+      type: "document_examination",
+      id: "doc1",
+      data: {
+        title: "Day 28 Patch Notes",
+        sections: [
+          { label: "Phoenix", content: "Cooldown -2 seconds", suspicious: false },
+          { label: "Viper", content: "Bug fix (hitbox)", suspicious: false },
+          { label: "Shadow", content: "No changes listed", suspicious: true },
+        ],
+      },
+    },
+    autoAdvance: { nextNode: "logs_check", delay: 0 },
+  },
+
+  logs_check: {
+    id: "logs_check",
+    phase: "stage2",
+    messages: [
+      { id: "m40", speaker: "detective", text: "It says Shadow wasn't changed." },
+      { id: "m41", speaker: "kastor", text: "But the win rate went up. Suspicious. Let's check the server logs!" },
+    ],
+    interactiveSequence: {
+      type: "document_examination",
+      id: "logs1",
+      data: {
+        title: "Server Logs - Day 28",
+        sections: [
+          { label: "[Day 28 19:20]", content: "admin01 - Shadow data accessed (READ)", suspicious: false },
+          { label: "[Day 28 23:47]", content: "admin01 - Shadow data modified (WRITE)", suspicious: true },
+          { label: "[Day 28 23:52]", content: "admin01 - Log deletion attempt (FAILED)", suspicious: true },
+        ],
+      },
+    },
+    autoAdvance: { nextNode: "found_tampering", delay: 0 },
+  },
+
+  found_tampering: {
+    id: "found_tampering",
+    phase: "stage2",
+    messages: [
+      { id: "m42", speaker: "detective", text: "Wait, someone modified it!" },
+      { id: "m43", speaker: "kastor", text: "And at 11 PM. Plus they tried to delete the logs." },
     ],
     question: {
       id: "q2",
-      text: "🔍 Who should we interview first?",
+      text: "What does this evidence tell us?",
       choices: [
-        { id: "c4", text: "Maya Chen (Game Director)", isCorrect: true, nextNode: "maya_interview", feedback: "Good choice! As the person responsible for balance, Maya is key.", evidenceAwarded: [case1Evidence.maya_profile, case1Evidence.chris_profile, case1Evidence.ryan_profile], pointsAwarded: 15 },
-        { id: "c5", text: "Chris Park (Data Analyst)", isCorrect: true, nextNode: "chris_interview", feedback: "Smart! Data analysts often notice unusual patterns first.", evidenceAwarded: [case1Evidence.maya_profile, case1Evidence.chris_profile, case1Evidence.ryan_profile], pointsAwarded: 15 },
-        { id: "c6", text: "Ryan Torres (Server Engineer)", isCorrect: true, nextNode: "ryan_interview", feedback: "Excellent! Server logs will be crucial evidence.", evidenceAwarded: [case1Evidence.maya_profile, case1Evidence.chris_profile, case1Evidence.ryan_profile], pointsAwarded: 15 },
-      ],
-    },
-  },
-
-  maya_interview: {
-    id: "maya_interview",
-    phase: "stage2",
-    messages: [
-      { id: "m17", speaker: "detective", text: "Maya, tell me about the update process. What happened last night?" },
-      { id: "m18", speaker: "client", text: "I stayed late, until midnight, checking all the balance values. I triple-checked everything... [looks exhausted] But with all the pressure lately, maybe I made a mistake..." },
-      { id: "m19", speaker: "detective", text: "When did you access the database?" },
-      { id: "m20", speaker: "client", text: "I logged in with my admin01 account at 10:47 PM. I reviewed all the balance data, then logged out before midnight." },
-      { id: "m21", speaker: "narrator", text: "💬 Kastor: 'Interesting. Maya claims she checked everything carefully, but she admits being under stress. I've saved this conversation.'" },
-    ],
-    question: {
-      id: "q3",
-      text: "🎯 What's your next step?",
-      choices: [
-        { id: "c7", text: "Interview Chris Park", isCorrect: true, nextNode: "chris_interview", feedback: "Let's hear what the data analyst knows.", evidenceAwarded: case1Evidence.maya_dialogue, pointsAwarded: 10 },
-        { id: "c8", text: "Interview Ryan Torres", isCorrect: true, nextNode: "ryan_interview", feedback: "Good idea. Server logs will help verify Maya's story.", evidenceAwarded: case1Evidence.maya_dialogue, pointsAwarded: 10 },
-      ],
-    },
-  },
-
-  chris_interview: {
-    id: "chris_interview",
-    phase: "stage2",
-    messages: [
-      { id: "m22", speaker: "detective", text: "Chris, as a data analyst, did you notice anything unusual in the win rates?" },
-      { id: "m23", speaker: "client", text: "Oh, yes! [smiles nervously] I actually saw strange patterns a few days ago. But I've been really busy with... with my research project." },
-      { id: "m24", speaker: "detective", text: "Research project?" },
-      { id: "m25", speaker: "client", text: "[defensive] It's just... personal research. Using AI to create better game matchmaking. It's not related to the company! [pauses] Well, I needed some data for it..." },
-      { id: "m26", speaker: "narrator", text: "💬 Kastor: 'He's hiding something. Why would he need company data for 'personal' research? Let's keep investigating.'" },
-    ],
-    question: {
-      id: "q4",
-      text: "🎯 What's your next step?",
-      choices: [
-        { id: "c9", text: "Interview Ryan Torres", isCorrect: true, nextNode: "ryan_interview", feedback: "Server logs will show us what really happened.", evidenceAwarded: case1Evidence.chris_dialogue, pointsAwarded: 10 },
-        { id: "c10", text: "Interview Maya Chen", isCorrect: true, nextNode: "maya_interview", feedback: "Let's get Maya's perspective first.", evidenceAwarded: case1Evidence.chris_dialogue, pointsAwarded: 10 },
-      ],
-    },
-  },
-
-  ryan_interview: {
-    id: "ryan_interview",
-    phase: "stage2",
-    messages: [
-      { id: "m27", speaker: "detective", text: "Ryan, you manage server logs. Can you show me what happened last night?" },
-      { id: "m28", speaker: "client", text: "[quietly] ...Yes. But first, I need to tell you something. I was the one who anonymously posted about this issue to the gaming community." },
-      { id: "m29", speaker: "client", text: "I'm tired of this company's overtime culture and the way things are handled. Data doesn't lie. Look at these server logs - you'll see exactly what happened." },
-    ],
-    dataVisualizations: [{
-      type: "log",
-      title: "Server Access Logs - November 8",
-      data: {
-        entries: [
-          { time: "10:47 PM", user: "admin01", action: "Login", status: "success", ip: "192.168.1.47" },
-          { time: "11:12 PM", user: "admin01", action: "Access Balance_DB", status: "success", ip: "192.168.1.47" },
-          { time: "11:15 PM", user: "admin01", action: "MODIFY Shadow_Reaper.attack_power: 100 → 150", status: "success", ip: "192.168.1.47" },
-          { time: "11:58 PM", user: "admin01", action: "Logout", status: "success", ip: "192.168.1.47" },
-        ],
-      },
-    }],
-    question: {
-      id: "q5",
-      text: "🔍 What pattern do you see in these logs?",
-      choices: [
-        { id: "c11", text: "Maya's admin01 account modified Shadow Reaper at 11:15 PM", isCorrect: true, nextNode: "stage3_start", feedback: "Correct! But was it really Maya? Let's analyze deeper.", evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], pointsAwarded: 20 },
-        { 
-          id: "c12", 
-          text: "Nothing suspicious", 
-          isCorrect: false, 
-          nextNode: "stage3_start", 
-          feedback: "Actually, there is something suspicious. Let's analyze the modification timestamp and investigate who was really behind it.", 
-          evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], 
-          pointsAwarded: 8,
-          hintEvidenceId: "server_logs",
-          hintText: "서버 로그를 다시 자세히 살펴보세요. 11:15 PM에 어떤 일이 일어났나요? admin01 계정으로 Shadow Reaper의 공격력이 100에서 150으로 변경되었습니다!"
+        {
+          id: "c3",
+          text: "Someone tampered with Shadow after hours",
+          isCorrect: true,
+          nextNode: "logic_connection_intro",
+          feedback: "Correct! The official patch notes say no changes, but logs show modification.",
+          pointsAwarded: 20,
+        },
+        {
+          id: "c4",
+          text: "The logs might be wrong",
+          isCorrect: false,
+          nextNode: "logic_connection_intro",
+          feedback: "Server logs are very reliable. Let's investigate further.",
+          pointsAwarded: 5,
         },
       ],
     },
   },
 
-  stage3_start: {
-    id: "stage3_start",
+  logic_connection_intro: {
+    id: "logic_connection_intro",
     phase: "stage3",
     messages: [
-      { id: "m30", speaker: "system", text: "🔬 STAGE 3: DATA PREPROCESSING" },
-      { id: "m31", speaker: "narrator", text: "💬 Kastor: 'Detective, we have a critical clue! The admin01 account made changes at 11:15 PM. But we need to verify WHO was actually using it.'" },
-      { id: "m32", speaker: "detective", text: "Ryan, can you check the IP address and cross-reference it with workstation assignments?" },
-      { id: "m33", speaker: "client", text: "Good idea. Let me pull up the IP timeline..." },
+      { id: "m44", speaker: "kastor", text: "Time to connect the dots. What do these clues tell us?" },
     ],
-    autoAdvance: { nextNode: "ip_analysis", delay: 1000 },
-  },
-
-  ip_analysis: {
-    id: "ip_analysis",
-    phase: "stage3",
-    messages: [
-      { id: "m34", speaker: "client", text: "Here's what I found. This includes CCTV timestamps and network activity." },
-    ],
-    dataVisualizations: [{
-      type: "table",
-      title: "IP Address Timeline Analysis",
+    interactiveSequence: {
+      type: "logic_connection",
+      id: "logic1",
       data: {
-        headers: ["Time", "Event", "IP Address", "User/Device"],
-        rows: [
-          ["10:47 PM", "Maya leaves office (CCTV)", "N/A", "Maya Chen"],
-          ["11:12 PM", "admin01 login to Balance_DB", "192.168.1.47", "Unknown"],
-          ["11:12 PM", "Workstation activity detected", "192.168.1.47", "Chris Park's computer"],
-          ["11:15 PM", "Shadow Reaper modification", "192.168.1.47", "Chris Park's computer"],
-          ["11:58 PM", "admin01 logout", "192.168.1.47", "Chris Park's computer"],
+        thoughts: [
+          { id: "t1", text: "Shadow's Unnatural Power Spike" },
+          { id: "t2", text: "No Official Patch Released" },
+          { id: "t3", text: "Someone Tampered After Hours" },
+        ],
+        correctConnections: [
+          { from: "t1", to: "t2", deduction: "Unauthorized Patch Occurred" },
+          { from: "t2", to: "t3", deduction: "Secret Modification" },
         ],
       },
-    }],
-    question: {
-      id: "q6",
-      text: "🔍 ANOMALY DETECTION: What does this timeline reveal?",
-      choices: [
-        { 
-          id: "c13", 
-          text: "Maya made the changes from her office", 
-          isCorrect: false, 
-          nextNode: "stage4_start", 
-          feedback: "Actually, Maya left at 10:47 PM according to CCTV. But the evidence shows the modification happened at 11:15 PM from Chris's workstation. Let's continue the investigation.", 
-          evidenceAwarded: case1Evidence.ip_analysis, 
-          pointsAwarded: 10,
-          hintEvidenceId: "ip_analysis",
-          hintText: "위 타임라인 표를 다시 확인해보세요. Maya가 퇴근한 시간과 수정이 일어난 시간, 그리고 IP 주소가 어느 컴퓨터인지 주의깊게 살펴보세요."
-        },
-        { id: "c14", text: "Chris used Maya's admin01 account from his computer at 11:15 PM after she left", isCorrect: true, nextNode: "stage4_start", feedback: "Excellent detective work! The IP matches Chris's workstation!", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 25 },
-        { 
-          id: "c15", 
-          text: "The logs are wrong", 
-          isCorrect: false, 
-          nextNode: "stage4_start", 
-          feedback: "The logs are actually accurate. The IP evidence clearly shows it was Chris's computer. Let's synthesize all the evidence.", 
-          evidenceAwarded: case1Evidence.ip_analysis, 
-          pointsAwarded: 10,
-          hintEvidenceId: "ip_analysis",
-          hintText: "서버 로그는 매우 정확합니다. IP 주소 192.168.1.47이 누구의 컴퓨터인지 표에서 확인해보세요."
-        },
-      ],
     },
+    autoAdvance: { nextNode: "call_maya_admin", delay: 0 },
   },
 
-  stage4_start: {
-    id: "stage4_start",
-    phase: "stage4",
+  call_maya_admin: {
+    id: "call_maya_admin",
+    phase: "stage3",
     messages: [
-      { id: "m35", speaker: "system", text: "🧩 STAGE 4: EVIDENCE ANALYSIS" },
-      { id: "m36", speaker: "detective", text: "Let's review all the evidence we've gathered:" },
-      { id: "m37", speaker: "narrator", text: "💬 Kastor: 'Combining all evidence pieces...'" },
-      { id: "m38", speaker: "detective", text: "1. Shadow Reaper's attack power changed from 100 to 150\n2. Win rate jumped from 49% to 74% overnight\n3. Maya's admin01 account was used\n4. But Chris's computer (IP 192.168.1.47) made the change at 11:15 PM\n5. Maya had already left the office at 10:47 PM\n6. Chris mentioned needing data for 'research'" },
+      { id: "m45", speaker: "detective", text: "Maya, I checked the official documentation." },
+      { id: "m46", speaker: "maya", text: "Yes, we didn't touch Shadow." },
+      { id: "m47", speaker: "detective", text: "But the server logs show modification records by admin01." },
+      { id: "m48", speaker: "maya", text: "...What? Then someone secretly...?" },
+      { id: "m49", speaker: "maya", text: "admin01... Hold on, let me check." },
+      { id: "m50", speaker: "maya", text: "admin01 is Ryan Nakamura. He's our balance designer..." },
+      { id: "m51", speaker: "detective", text: "Did he work late that night?" },
+      { id: "m52", speaker: "maya", text: "No! Day 28 was a no-overtime day!" },
+      { id: "m53", speaker: "maya", text: "From home... did he log in secretly?" },
+      { id: "m54", speaker: "kastor", text: "Highly likely. We need to dig deeper." },
     ],
-    dataVisualizations: [{
-      type: "chart",
-      title: "Shadow Reaper Win Rate Timeline",
+    autoAdvance: { nextNode: "timeline_intro", delay: 1000 },
+  },
+
+  timeline_intro: {
+    id: "timeline_intro",
+    phase: "stage3",
+    messages: [
+      { id: "m55", speaker: "kastor", text: "Let's filter admin01's activity logs!" },
+      { id: "m56", speaker: "kastor", text: "Arrange these events in chronological order." },
+    ],
+    interactiveSequence: {
+      type: "timeline_reconstruction",
+      id: "timeline1",
       data: {
-        labels: ["Nov 7", "Nov 8 (Pre-Update)", "Nov 8 (Post-Update)", "Nov 9"],
-        datasets: [{
-          label: "Win Rate %",
-          data: [48.5, 49.2, 73.8, 75.1],
-          color: "#ef4444",
-        }],
+        events: [
+          { id: "e1", time: "19:15", text: "Office login", order: 1 },
+          { id: "e2", time: "19:20", text: "Shadow data accessed", order: 2 },
+          { id: "e3", time: "19:45", text: "Office logout", order: 3 },
+          { id: "e4", time: "23:35", text: "Home login", order: 4, suspicious: true },
+          { id: "e5", time: "23:47", text: "Shadow data modified", order: 5, suspicious: true },
+          { id: "e6", time: "23:52", text: "Log deletion attempt", order: 6, suspicious: true },
+        ],
       },
-    }],
-    question: {
-      id: "q7",
-      text: "🎯 EVIDENCE SYNTHESIS: What's the complete picture?",
-      choices: [
-        { 
-          id: "c16", 
-          text: "Maya made a mistake", 
-          isCorrect: false, 
-          nextNode: "confront_chris", 
-          feedback: "Actually, Maya wasn't in the office when the change was made. All evidence points to Chris using her account. Let's confront him.", 
-          evidenceAwarded: case1Evidence.winrate_chart, 
-          pointsAwarded: 12,
-          hintEvidenceId: "ip_analysis",
-          hintText: "IP 분석 증거를 다시 확인해보세요. Maya는 10:47 PM에 퇴근했지만, 수정은 11:15 PM에 Chris의 컴퓨터에서 일어났습니다."
-        },
-        { id: "c17", text: "Chris used Maya's account to modify the balance for his AI research experiment", isCorrect: true, nextNode: "confront_chris", feedback: "Perfect analysis! All evidence points to Chris!", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 30 },
-        { 
-          id: "c18", 
-          text: "Ryan framed Chris", 
-          isCorrect: false, 
-          nextNode: "confront_chris", 
-          feedback: "Ryan only provided the logs - the IP evidence is solid and verifiable. All signs point to Chris. Let's confront him.", 
-          evidenceAwarded: case1Evidence.winrate_chart, 
-          pointsAwarded: 12,
-          hintEvidenceId: "server_logs",
-          hintText: "서버 로그는 조작될 수 없습니다. IP 주소가 Chris의 컴퓨터를 가리키고 있으며, 이는 CCTV 타임라인과 일치합니다."
-        },
-      ],
     },
+    autoAdvance: { nextNode: "timeline_result", delay: 0 },
   },
 
-  confront_chris: {
-    id: "confront_chris",
+  timeline_result: {
+    id: "timeline_result",
+    phase: "stage3",
+    messages: [
+      { id: "m57", speaker: "detective", text: "He logged back in from home after leaving work!" },
+      { id: "m58", speaker: "kastor", text: "This was planned. But wait..." },
+      { id: "m59", speaker: "kastor", text: "There's also admin02. Logged in at 10:30 PM." },
+      { id: "m60", speaker: "detective", text: "That person seems suspicious too." },
+      { id: "m61", speaker: "kastor", text: "Let's interview Daniel to confirm." },
+    ],
+    autoAdvance: { nextNode: "daniel_interview", delay: 1000 },
+  },
+
+  daniel_interview: {
+    id: "daniel_interview",
+    phase: "stage3",
+    messages: [
+      { id: "m62", speaker: "daniel", text: "Hello? You were looking for me?" },
+      { id: "m63", speaker: "detective", text: "Daniel Schmidt? I have a few questions." },
+      { id: "m64", speaker: "daniel", text: "Sure, of course!" },
+      { id: "m65", speaker: "detective", text: "You logged in on Day 28 at 10:30 PM, correct?" },
+      { id: "m66", speaker: "daniel", text: "Oh, yes! There was an emergency server check." },
+      { id: "m67", speaker: "detective", text: "What did you do?" },
+      { id: "m68", speaker: "daniel", text: "Just checked the server status. About 10 minutes?" },
+      { id: "m69", speaker: "detective", text: "Do you know what Ryan was doing that night?" },
+      { id: "m70", speaker: "daniel", text: "Ryan? He probably went home." },
+      { id: "m71", speaker: "daniel", text: "We left together. Around 7 PM?" },
+      { id: "m72", speaker: "kastor", text: "But Ryan logged back in at 11:35 PM." },
+      { id: "m73", speaker: "daniel", text: "...What? From home?" },
+      { id: "m74", speaker: "daniel", text: "That can't be right... Ryan's a good kid!" },
+      { id: "m75", speaker: "detective", text: "Are you sure?" },
+      { id: "m76", speaker: "daniel", text: "Yes! I've been his mentor for a year. He's hardworking and kind!" },
+      { id: "m77", speaker: "kastor", text: "Understood. Thanks for your help." },
+    ],
+    autoAdvance: { nextNode: "ip_tracking", delay: 1000 },
+  },
+
+  ip_tracking: {
+    id: "ip_tracking",
     phase: "stage4",
     messages: [
-      { id: "m39", speaker: "detective", text: "Chris, the evidence shows you used Maya's admin01 account from your computer at 11:15 PM to modify Shadow Reaper's attack power. Care to explain?" },
-      { id: "m40", speaker: "client", text: "[shocked] How did you... [sighs deeply] ...Okay. You're right." },
-      { id: "m41", speaker: "client", text: "I needed experimental data for my AI research. I thought if I temporarily made Shadow Reaper overpowered, I could collect unusual gameplay patterns." },
-      { id: "m42", speaker: "client", text: "I was going to change it back in a few days! I never thought it would become this big of a problem... I didn't mean to harm anyone." },
-      { id: "m43", speaker: "client", text: "Maya Chen (angry): Chris! How could you use my account without permission?! Do you realize how many players this affected?!" },
-      { id: "m44", speaker: "client", text: "Ryan Torres: This is exactly what I was talking about. All for your 'research' while thousands of players suffered." },
+      { id: "m78", speaker: "kastor", text: "admin01's IP trace is back!" },
+      { id: "m79", speaker: "detective", text: "192.168.45.178?" },
+      { id: "m80", speaker: "kastor", text: "This IP also played the game. Let's search it." },
+      { id: "m81", speaker: "system", text: "IGN: Noctis" },
+      { id: "m82", speaker: "system", text: "IP: 192.168.45.178" },
+      { id: "m83", speaker: "system", text: "Main Character: Shadow (95% pick rate)" },
+      { id: "m84", speaker: "system", text: "Day 28 Session: 23:50~01:30" },
+      { id: "m85", speaker: "system", text: "Win Rate: 48% → 88%" },
+      { id: "m86", speaker: "detective", text: "Started playing 3 minutes after the modification!" },
     ],
-    autoAdvance: { nextNode: "stage5_resolution", delay: 1500 },
+    autoAdvance: { nextNode: "alex_interview", delay: 1000 },
   },
 
-  stage5_resolution: {
-    id: "stage5_resolution",
+  alex_interview: {
+    id: "alex_interview",
+    phase: "stage4",
+    messages: [
+      { id: "m87", speaker: "alex", text: "Hello? What's this about?" },
+      { id: "m88", speaker: "detective", text: "Alex Torres? I have some questions about the game." },
+      { id: "m89", speaker: "alex", text: "Sure! I'm a Shadow main!" },
+      { id: "m90", speaker: "detective", text: "You played on Day 28?" },
+      { id: "m91", speaker: "alex", text: "Yeah! From 7 PM to 9 PM!" },
+      { id: "m92", speaker: "alex", text: "Shadow got so strong that day, it was awesome!" },
+      { id: "m93", speaker: "detective", text: "Did you play after 11 PM that night?" },
+      { id: "m94", speaker: "alex", text: "No! I stopped at 9 and did homework!" },
+      { id: "m95", speaker: "alex", text: "Wait, am I a suspect?!" },
+      { id: "m96", speaker: "kastor", text: "Relax. Just confirming." },
+      { id: "m97", speaker: "alex", text: "It wasn't me! Really! I just played the game!" },
+      { id: "m98", speaker: "kastor", text: "Alex has an alibi. Logged out at 9." },
+    ],
+    autoAdvance: { nextNode: "ryan_confrontation_intro", delay: 1000 },
+  },
+
+  ryan_confrontation_intro: {
+    id: "ryan_confrontation_intro",
+    phase: "stage4",
+    messages: [
+      { id: "m99", speaker: "kastor", text: "Now for Ryan... Time to present our evidence." },
+      { id: "m100", speaker: "ryan", text: "Yes... what's going on?" },
+    ],
+    autoAdvance: { nextNode: "ryan_testimony", delay: 500 },
+  },
+
+  ryan_testimony: {
+    id: "ryan_testimony",
+    phase: "stage4",
+    messages: [
+      { id: "m101", speaker: "ryan", text: "I sometimes log in from home to check things." },
+      { id: "m102", speaker: "ryan", text: "Day 28 was a normal work day for me." },
+      { id: "m103", speaker: "ryan", text: "I left the office around 7 PM with Daniel." },
+      { id: "m104", speaker: "ryan", text: "I didn't do anything unusual that night." },
+    ],
+    interactiveSequence: {
+      type: "testimony_press",
+      id: "testimony1",
+      data: {
+        statements: [
+          {
+            id: "s1",
+            speaker: "ryan",
+            text: "I sometimes log in from home to check things.",
+            pressResponse: "Y-yes... when there are urgent issues...",
+            hasContradiction: false,
+          },
+          {
+            id: "s2",
+            speaker: "ryan",
+            text: "Day 28 was a normal work day for me.",
+            pressResponse: "Nothing special happened that day...",
+            hasContradiction: false,
+          },
+          {
+            id: "s3",
+            speaker: "ryan",
+            text: "I left the office around 7 PM with Daniel.",
+            pressResponse: "Yes, Daniel can confirm this...",
+            hasContradiction: true,
+            contradictionEvidence: "home_login_log",
+            contradictionFeedback: "But the logs show you logged in at 11:35 PM from home!",
+          },
+          {
+            id: "s4",
+            speaker: "ryan",
+            text: "I didn't do anything unusual that night.",
+            pressResponse: "Just a normal evening at home...",
+            hasContradiction: true,
+            contradictionEvidence: "shadow_modification_log",
+            contradictionFeedback: "At 11:47 PM, you modified Shadow's data!",
+          },
+        ],
+      },
+    },
+    autoAdvance: { nextNode: "evidence_chain", delay: 0 },
+  },
+
+  evidence_chain: {
+    id: "evidence_chain",
+    phase: "stage4",
+    messages: [
+      { id: "m105", speaker: "kastor", text: "Show him the complete evidence chain!" },
+    ],
+    interactiveSequence: {
+      type: "evidence_presentation",
+      id: "chain1",
+      data: {
+        evidencePieces: [
+          { id: "ev1", text: "Ryan logged in from home (23:35)", order: 1 },
+          { id: "ev2", text: "Ryan modified Shadow data (23:47)", order: 2 },
+          { id: "ev3", text: "Ryan logged into game as Noctis (23:50)", order: 3 },
+          { id: "ev4", text: "Noctis's win rate skyrocketed (48%→88%)", order: 4 },
+          { id: "ev5", text: "Ryan attempted to delete logs (23:52)", order: 5 },
+        ],
+      },
+    },
+    autoAdvance: { nextNode: "ryan_confession", delay: 0 },
+  },
+
+  ryan_confession: {
+    id: "ryan_confession",
     phase: "stage5",
     messages: [
-      { id: "m45", speaker: "system", text: "✅ STAGE 5: INSIGHT & RESOLUTION" },
-      { id: "m46", speaker: "detective", text: "Case Summary: Data Analyst Chris Park secretly used Game Director Maya Chen's admin01 credentials to modify Shadow Reaper's balance (attack power 100 → 150)." },
-      { id: "m47", speaker: "detective", text: "Motive: Chris needed experimental data for his unauthorized AI matchmaking research project." },
-      { id: "m48", speaker: "detective", text: "Evidence: Server logs, IP timeline analysis, character profiles, and interviews all confirmed Chris's actions from his workstation after Maya left the office." },
-      { id: "m49", speaker: "detective", text: "Impact: Win rate jumped from 49% to 74%, causing thousands of players to quit and damaging the game's reputation." },
-      { id: "m50", speaker: "client", text: "Maya Chen: Thank you, Detective. I can present this clearly at the meeting. We'll revert the changes immediately and review our account security." },
-      { id: "m51", speaker: "narrator", text: "✅ CASE CLOSED: The Missing Balance Patch" },
-      { id: "m52", speaker: "system", text: "💡 KEY INSIGHT: Data Analysis Process\n\n1. HYPOTHESIS: Identify possible causes\n2. DATA COLLECTION: Gather evidence (logs, interviews, profiles)\n3. DATA PREPROCESSING: Clean and organize (IP analysis, timelines)\n4. EVIDENCE ANALYSIS: Combine pieces to see patterns\n5. INSIGHT & RESOLUTION: Draw conclusions and solve the mystery\n\nAlways verify WHO, WHAT, WHEN, WHERE, and WHY using multiple evidence sources!" },
+      { id: "m106", speaker: "detective", text: "The evidence proves you illegally modified Shadow to boost your own gameplay." },
+      { id: "m107", speaker: "ryan", text: "......" },
+      { id: "m108", speaker: "ryan", text: "...I'm sorry." },
+      { id: "m109", speaker: "detective", text: "Why did you do it?" },
+      { id: "m110", speaker: "ryan", text: "I... I wanted to win." },
+      { id: "m111", speaker: "ryan", text: "I kept losing in the company tournaments." },
+      { id: "m112", speaker: "ryan", text: "I really love Shadow... but my skill wasn't there..." },
+      { id: "m113", speaker: "ryan", text: "So I thought, if I just make it a little... a little stronger..." },
+      { id: "m114", speaker: "ryan", text: "I'm truly sorry. There's no excuse." },
+    ],
+    autoAdvance: { nextNode: "case_summary", delay: 1500 },
+  },
+
+  case_summary: {
+    id: "case_summary",
+    phase: "stage5",
+    messages: [
+      { id: "m115", speaker: "kastor", text: "Alright, let's wrap this up." },
+      { id: "m116", speaker: "detective", text: "Ryan Nakamura, on Day 28 at 11:47 PM..." },
+      { id: "m117", speaker: "detective", text: "Used his developer privileges to illegally buff Shadow." },
+      { id: "m118", speaker: "detective", text: "Then logged into the game as his IGN Noctis..." },
+      { id: "m119", speaker: "detective", text: "And boosted his win rate from 48% to 88%." },
+      { id: "m120", speaker: "kastor", text: "Motive?" },
+      { id: "m121", speaker: "detective", text: "Competitive drive. He wanted to win." },
+      { id: "m122", speaker: "kastor", text: "Perfect deduction!" },
+    ],
+    autoAdvance: { nextNode: "reactions", delay: 1000 },
+  },
+
+  reactions: {
+    id: "reactions",
+    phase: "stage5",
+    messages: [
+      { id: "m123", speaker: "maya", text: "It really... was Ryan?" },
+      { id: "m124", speaker: "detective", text: "Yes. He confessed." },
+      { id: "m125", speaker: "maya", text: "...I'm disappointed. But I understand." },
+      { id: "m126", speaker: "maya", text: "Thank you so much for your help!" },
+      { id: "m127", speaker: "daniel", text: "Ryan... really did it?" },
+      { id: "m128", speaker: "detective", text: "Yes. The evidence was clear." },
+      { id: "m129", speaker: "daniel", text: "I trusted him... but thank you for finding the truth." },
+      { id: "m130", speaker: "alex", text: "You caught the culprit? Thank goodness! Thanks!" },
+    ],
+    autoAdvance: { nextNode: "case_closed", delay: 1500 },
+  },
+
+  case_closed: {
+    id: "case_closed",
+    phase: "stage5",
+    messages: [
+      { id: "m131", speaker: "kastor", text: "First case solved perfectly!" },
+      { id: "m132", speaker: "detective", text: "I feel accomplished!" },
+      { id: "m133", speaker: "kastor", text: "That's the detective high! Ready for the next case?" },
+      { id: "m134", speaker: "detective", text: "Already?!" },
+      { id: "m135", speaker: "kastor", text: "Detectives are busy~ Get used to it!" },
+      { id: "m136", speaker: "system", text: "CASE #001 COMPLETE" },
     ],
   },
 };
