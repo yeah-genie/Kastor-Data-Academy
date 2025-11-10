@@ -39,6 +39,7 @@ export function GameScene() {
     hasNewEvidence,
     clearNewEvidenceFlag,
     score,
+    highlightedEvidenceId,
   } = useDetectiveGame();
 
   const { isMuted, toggleMute, playSuccess, playHit } = useAudio();
@@ -71,6 +72,12 @@ export function GameScene() {
     localStorage.setItem("kastor_tutorial_completed", "true");
     setShowTutorial(false);
   };
+
+  useEffect(() => {
+    if (highlightedEvidenceId) {
+      setShowNotebook(true);
+    }
+  }, [highlightedEvidenceId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -185,7 +192,7 @@ export function GameScene() {
       }
     } else if (currentStoryNode.showCharacterCards && !showCharacterCardsSlider) {
       setShowCharacterCardsSlider(true);
-    } else if (currentStoryNode.autoAdvance && !currentStoryNode.question && !currentStoryNode.evidencePresentation) {
+    } else if (currentStoryNode.autoAdvance && !currentStoryNode.question && !currentStoryNode.evidencePresentation && !(currentStoryNode.dataVisualizations && currentStoryNode.dataVisualizations.length > 0)) {
       setCurrentNode(currentStoryNode.autoAdvance.nextNode);
     }
   };
@@ -437,9 +444,11 @@ export function GameScene() {
                 ? "Continue the conversation..." 
                 : showQuestion || showEvidencePresentation
                   ? "Make your choice above..."
-                  : currentStoryNode.autoAdvance
-                    ? "Story continues..."
-                    : "Tap Continue to proceed..."
+                  : currentStoryNode.dataVisualizations
+                    ? "📊 Review the data above, then tap Continue..."
+                    : currentStoryNode.autoAdvance
+                      ? "Story continues..."
+                      : "Tap Continue to proceed..."
               }
             </span>
           </div>

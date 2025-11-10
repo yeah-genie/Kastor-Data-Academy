@@ -3,7 +3,7 @@ import { BookOpen, Users, BarChart3, MessageSquare, Image as ImageIcon, FileText
 import { useDetectiveGame, CharacterEvidence, DataEvidence, DialogueEvidence, PhotoEvidence, DocumentEvidence } from "@/lib/stores/useDetectiveGame";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { EvidenceBoard } from "@/components/EvidenceBoard";
 
 interface EvidenceNotebookProps {
@@ -11,7 +11,7 @@ interface EvidenceNotebookProps {
   onClose: () => void;
 }
 
-function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
+function DataEvidenceCard({ data, idx, isHighlighted, evidenceRef }: { data: DataEvidence; idx: number; isHighlighted?: boolean; evidenceRef?: React.RefObject<HTMLDivElement> }) {
   const [highlightedIndices, setHighlightedIndices] = useState<number[]>([]);
 
   const toggleHighlight = (index: number) => {
@@ -22,10 +22,15 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
 
   return (
     <motion.div
+      ref={evidenceRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: idx * 0.1 }}
-      className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm"
+      className={`bg-white rounded-xl p-4 border-2 shadow-sm transition-all ${
+        isHighlighted 
+          ? 'border-amber-400 bg-amber-50 ring-4 ring-amber-200' 
+          : 'border-gray-200'
+      }`}
     >
       <div className="flex items-center gap-2 mb-3">
         <BarChart3 className="w-5 h-5 text-green-600" />
@@ -113,8 +118,22 @@ function DataEvidenceCard({ data, idx }: { data: DataEvidence; idx: number }) {
 }
 
 export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
-  const { evidenceCollected, score, hintsUsed, maxHints } = useDetectiveGame();
+  const { evidenceCollected, score, hintsUsed, maxHints, highlightedEvidenceId, clearHintHighlight } = useDetectiveGame();
   const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
+  const highlightedEvidenceRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (highlightedEvidenceId && highlightedEvidenceRef.current) {
+      setTimeout(() => {
+        highlightedEvidenceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }, [highlightedEvidenceId, isOpen]);
+
+  const handleClose = () => {
+    clearHintHighlight();
+    onClose();
+  };
 
   const characters = evidenceCollected.filter(e => e.type === "CHARACTER") as CharacterEvidence[];
   const dataViz = evidenceCollected.filter(e => e.type === "DATA") as DataEvidence[];
@@ -123,7 +142,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
   const documents = evidenceCollected.filter(e => e.type === "DOCUMENT") as DocumentEvidence[];
 
   if (viewMode === 'board') {
-    return <EvidenceBoard isOpen={isOpen} onClose={onClose} onSwitchToList={() => setViewMode('list')} />;
+    return <EvidenceBoard isOpen={isOpen} onClose={handleClose} onSwitchToList={() => setViewMode('list')} />;
   }
 
   return (
@@ -132,7 +151,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
         <>
           <div
             className="fixed inset-0 bg-black/70 z-40"
-            onClick={onClose}
+            onClick={handleClose}
           />
           
           <div
@@ -153,7 +172,7 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                   <span className="hidden md:inline">Board</span>
                 </button>
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="text-gray-400 hover:text-gray-900 text-3xl md:text-2xl font-bold min-w-[44px] min-h-[44px] flex items-center justify-center"
                 >
                   ×
@@ -267,7 +286,13 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
                           <div className="text-center text-gray-500 py-12 text-base">No data evidence yet</div>
                         ) : (
                           dataViz.map((data, idx) => (
-                            <DataEvidenceCard key={data.id} data={data} idx={idx} />
+                            <DataEvidenceCard 
+                              key={data.id} 
+                              data={data} 
+                              idx={idx}
+                              isHighlighted={highlightedEvidenceId === data.id}
+                              evidenceRef={highlightedEvidenceId === data.id ? highlightedEvidenceRef : undefined}
+                            />
                           ))
                         )}
                       </div>

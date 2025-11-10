@@ -1,15 +1,7 @@
 import { motion } from "framer-motion";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { useState } from "react";
-import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
-
-interface Choice {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-  nextNode: string;
-  feedback: string;
-}
+import { CheckCircle2, XCircle, Lightbulb } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useDetectiveGame, type Choice } from "@/lib/stores/useDetectiveGame";
 
 interface ChoiceButtonsProps {
   question: string;
@@ -18,9 +10,16 @@ interface ChoiceButtonsProps {
 }
 
 export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceButtonsProps) {
-  const { visitedCharacters } = useDetectiveGame();
+  const { visitedCharacters, openHintNotebook } = useDetectiveGame();
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+
+  useEffect(() => {
+    setHintUsed(false);
+    setSelectedChoice(null);
+    setShowFeedback(false);
+  }, [question]);
 
   const hasEmoji = /[\uD800-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u26FF]|[\u2700-\u27BF]/.test(question);
 
@@ -93,17 +92,48 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
       </div>
 
       {showFeedback && selectedChoice && selectedChoice.feedback && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={`mt-4 p-4 rounded-xl border-2 shadow-md ${
-            selectedChoice.isCorrect
-              ? "bg-green-500/20 border-green-500 text-gray-900"
-              : "bg-red-500/20 border-red-500 text-red-100"
-          }`}
-        >
-          <p className="text-base md:text-sm font-medium">{selectedChoice.feedback}</p>
-        </motion.div>
+        <>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mt-4 p-4 rounded-xl border-2 shadow-md ${
+              selectedChoice.isCorrect
+                ? "bg-green-500/20 border-green-500 text-gray-900"
+                : "bg-red-500/20 border-red-500 text-red-100"
+            }`}
+          >
+            <p className="text-base md:text-sm font-medium">{selectedChoice.feedback}</p>
+          </motion.div>
+
+          {!selectedChoice.isCorrect && selectedChoice.hintEvidenceId && !hintUsed && (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              onClick={() => {
+                openHintNotebook(selectedChoice.hintEvidenceId!);
+                setHintUsed(true);
+              }}
+              className="mt-3 w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2"
+            >
+              <Lightbulb className="w-5 h-5" />
+              <span>💡 힌트 보기 (증거 노트북 열기)</span>
+            </motion.button>
+          )}
+
+          {hintUsed && selectedChoice.hintText && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-3 p-4 bg-amber-50 border-2 border-amber-400 rounded-xl"
+            >
+              <div className="flex items-start gap-2">
+                <Lightbulb className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-900 font-medium">{selectedChoice.hintText}</p>
+              </div>
+            </motion.div>
+          )}
+        </>
       )}
     </motion.div>
   );

@@ -84,6 +84,8 @@ export interface Choice {
   isCorrect: boolean;
   nextNode: string;
   feedback: string;
+  hintEvidenceId?: string;
+  hintText?: string;
 }
 
 export interface Question {
@@ -127,6 +129,7 @@ interface DetectiveGameState {
   sessionMetrics: SessionMetrics;
   evidenceBoardPositions: Record<string, EvidenceNodePosition>;
   evidenceBoardConnections: EvidenceConnection[];
+  highlightedEvidenceId: string | null;
 
   setPhase: (phase: GamePhase) => void;
   setCurrentNode: (node: StoryNode) => void;
@@ -157,6 +160,8 @@ interface DetectiveGameState {
   addEvidenceConnection: (from: string, to: string, label?: string) => void;
   removeEvidenceConnection: (connectionId: string) => void;
   getNodePosition: (evidenceId: string) => EvidenceNodePosition | null;
+  openHintNotebook: (evidenceId: string) => void;
+  clearHintHighlight: () => void;
 }
 
 const initialProgress = loadProgress() || getInitialProgress();
@@ -215,6 +220,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     },
     evidenceBoardPositions: {},
     evidenceBoardConnections: [],
+    highlightedEvidenceId: null,
 
     initSessionMetrics: (totalEvidenceCount) => {
       set({
@@ -639,6 +645,15 @@ export const useDetectiveGame = create<DetectiveGameState>()(
     getNodePosition: (evidenceId) => {
       const position = get().evidenceBoardPositions[evidenceId];
       return position || null;
+    },
+
+    openHintNotebook: (evidenceId) => {
+      set({ highlightedEvidenceId: evidenceId });
+      get().useHint();
+    },
+
+    clearHintHighlight: () => {
+      set({ highlightedEvidenceId: null });
     },
   }))
 );

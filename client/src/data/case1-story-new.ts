@@ -32,6 +32,8 @@ export interface StoryNode {
       };
       evidenceAwarded?: any;
       pointsAwarded?: number;
+      hintEvidenceId?: string;
+      hintText?: string;
     }[];
   };
   autoAdvance?: {
@@ -172,7 +174,17 @@ export const case1Story: Record<string, StoryNode> = {
       text: "🔍 What pattern do you see in these logs?",
       choices: [
         { id: "c11", text: "Maya's admin01 account modified Shadow Reaper at 11:15 PM", isCorrect: true, nextNode: "stage3_start", feedback: "Correct! But was it really Maya? Let's analyze deeper.", evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], pointsAwarded: 20 },
-        { id: "c12", text: "Nothing suspicious", isCorrect: false, nextNode: "stage3_start", feedback: "Actually, there is something suspicious. Let's analyze the modification timestamp and investigate who was really behind it.", evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], pointsAwarded: 8 },
+        { 
+          id: "c12", 
+          text: "Nothing suspicious", 
+          isCorrect: false, 
+          nextNode: "stage3_start", 
+          feedback: "Actually, there is something suspicious. Let's analyze the modification timestamp and investigate who was really behind it.", 
+          evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], 
+          pointsAwarded: 8,
+          hintEvidenceId: "server_logs",
+          hintText: "서버 로그를 다시 자세히 살펴보세요. 11:15 PM에 어떤 일이 일어났나요? admin01 계정으로 Shadow Reaper의 공격력이 100에서 150으로 변경되었습니다!"
+        },
       ],
     },
   },
@@ -213,9 +225,29 @@ export const case1Story: Record<string, StoryNode> = {
       id: "q6",
       text: "🔍 ANOMALY DETECTION: What does this timeline reveal?",
       choices: [
-        { id: "c13", text: "Maya made the changes from her office", isCorrect: false, nextNode: "stage4_start", feedback: "Actually, Maya left at 10:47 PM according to CCTV. But the evidence shows the modification happened at 11:15 PM from Chris's workstation. Let's continue the investigation.", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 10 },
+        { 
+          id: "c13", 
+          text: "Maya made the changes from her office", 
+          isCorrect: false, 
+          nextNode: "stage4_start", 
+          feedback: "Actually, Maya left at 10:47 PM according to CCTV. But the evidence shows the modification happened at 11:15 PM from Chris's workstation. Let's continue the investigation.", 
+          evidenceAwarded: case1Evidence.ip_analysis, 
+          pointsAwarded: 10,
+          hintEvidenceId: "ip_analysis",
+          hintText: "위 타임라인 표를 다시 확인해보세요. Maya가 퇴근한 시간과 수정이 일어난 시간, 그리고 IP 주소가 어느 컴퓨터인지 주의깊게 살펴보세요."
+        },
         { id: "c14", text: "Chris used Maya's admin01 account from his computer at 11:15 PM after she left", isCorrect: true, nextNode: "stage4_start", feedback: "Excellent detective work! The IP matches Chris's workstation!", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 25 },
-        { id: "c15", text: "The logs are wrong", isCorrect: false, nextNode: "stage4_start", feedback: "The logs are actually accurate. The IP evidence clearly shows it was Chris's computer. Let's synthesize all the evidence.", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 10 },
+        { 
+          id: "c15", 
+          text: "The logs are wrong", 
+          isCorrect: false, 
+          nextNode: "stage4_start", 
+          feedback: "The logs are actually accurate. The IP evidence clearly shows it was Chris's computer. Let's synthesize all the evidence.", 
+          evidenceAwarded: case1Evidence.ip_analysis, 
+          pointsAwarded: 10,
+          hintEvidenceId: "ip_analysis",
+          hintText: "서버 로그는 매우 정확합니다. IP 주소 192.168.1.47이 누구의 컴퓨터인지 표에서 확인해보세요."
+        },
       ],
     },
   },
@@ -245,9 +277,29 @@ export const case1Story: Record<string, StoryNode> = {
       id: "q7",
       text: "🎯 EVIDENCE SYNTHESIS: What's the complete picture?",
       choices: [
-        { id: "c16", text: "Maya made a mistake", isCorrect: false, nextNode: "confront_chris", feedback: "Actually, Maya wasn't in the office when the change was made. All evidence points to Chris using her account. Let's confront him.", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 12 },
+        { 
+          id: "c16", 
+          text: "Maya made a mistake", 
+          isCorrect: false, 
+          nextNode: "confront_chris", 
+          feedback: "Actually, Maya wasn't in the office when the change was made. All evidence points to Chris using her account. Let's confront him.", 
+          evidenceAwarded: case1Evidence.winrate_chart, 
+          pointsAwarded: 12,
+          hintEvidenceId: "ip_analysis",
+          hintText: "IP 분석 증거를 다시 확인해보세요. Maya는 10:47 PM에 퇴근했지만, 수정은 11:15 PM에 Chris의 컴퓨터에서 일어났습니다."
+        },
         { id: "c17", text: "Chris used Maya's account to modify the balance for his AI research experiment", isCorrect: true, nextNode: "confront_chris", feedback: "Perfect analysis! All evidence points to Chris!", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 30 },
-        { id: "c18", text: "Ryan framed Chris", isCorrect: false, nextNode: "confront_chris", feedback: "Ryan only provided the logs - the IP evidence is solid and verifiable. All signs point to Chris. Let's confront him.", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 12 },
+        { 
+          id: "c18", 
+          text: "Ryan framed Chris", 
+          isCorrect: false, 
+          nextNode: "confront_chris", 
+          feedback: "Ryan only provided the logs - the IP evidence is solid and verifiable. All signs point to Chris. Let's confront him.", 
+          evidenceAwarded: case1Evidence.winrate_chart, 
+          pointsAwarded: 12,
+          hintEvidenceId: "server_logs",
+          hintText: "서버 로그는 조작될 수 없습니다. IP 주소가 Chris의 컴퓨터를 가리키고 있으며, 이는 CCTV 타임라인과 일치합니다."
+        },
       ],
     },
   },
