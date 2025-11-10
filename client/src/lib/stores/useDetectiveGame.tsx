@@ -105,6 +105,12 @@ export interface SessionMetrics {
     timestamp: number;
   }>;
   totalEvidenceInCase: number;
+  logicConnectionsMade: number;
+  totalLogicConnections: number;
+  contradictionsFound: number;
+  totalContradictions: number;
+  interactiveSequencesCompleted: number;
+  totalInteractiveSequences: number;
 }
 
 export type Grade = 'S' | 'A' | 'B' | 'C';
@@ -162,6 +168,19 @@ interface DetectiveGameState {
   recordDecision: (questionId: string, choiceId: string, isCorrect: boolean) => void;
   calculateGrade: () => Grade;
   initSessionMetrics: (totalEvidenceCount: number) => void;
+  recordLogicConnection: () => void;
+  recordContradiction: () => void;
+  recordInteractiveSequence: () => void;
+  getCaseStats: () => {
+    evidenceCollected: number;
+    totalEvidence: number;
+    logicConnectionsMade: number;
+    totalLogicConnections: number;
+    contradictionsFound: number;
+    totalContradictions: number;
+    interviewAccuracy: number;
+    timeTaken: string;
+  };
   setNodePosition: (evidenceId: string, x: number, y: number, zIndex?: number) => void;
   addEvidenceConnection: (from: string, to: string, label?: string) => void;
   removeEvidenceConnection: (connectionId: string) => void;
@@ -227,6 +246,12 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       endTime: null,
       decisions: [],
       totalEvidenceInCase: 0,
+      logicConnectionsMade: 0,
+      totalLogicConnections: 0,
+      contradictionsFound: 0,
+      totalContradictions: 0,
+      interactiveSequencesCompleted: 0,
+      totalInteractiveSequences: 0,
     },
     evidenceBoardPositions: {},
     evidenceBoardConnections: [],
@@ -242,8 +267,69 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           endTime: null,
           decisions: [],
           totalEvidenceInCase: totalEvidenceCount,
+          logicConnectionsMade: 0,
+          totalLogicConnections: 5,
+          contradictionsFound: 0,
+          totalContradictions: 3,
+          interactiveSequencesCompleted: 0,
+          totalInteractiveSequences: 6,
         },
       });
+    },
+
+    recordLogicConnection: () => {
+      set((state) => ({
+        sessionMetrics: {
+          ...state.sessionMetrics,
+          logicConnectionsMade: state.sessionMetrics.logicConnectionsMade + 1,
+        },
+      }));
+    },
+
+    recordContradiction: () => {
+      set((state) => ({
+        sessionMetrics: {
+          ...state.sessionMetrics,
+          contradictionsFound: state.sessionMetrics.contradictionsFound + 1,
+        },
+      }));
+    },
+
+    recordInteractiveSequence: () => {
+      set((state) => ({
+        sessionMetrics: {
+          ...state.sessionMetrics,
+          interactiveSequencesCompleted: state.sessionMetrics.interactiveSequencesCompleted + 1,
+        },
+      }));
+    },
+
+    getCaseStats: () => {
+      const state = get();
+      const metrics = state.sessionMetrics;
+
+      const correctDecisions = metrics.decisions.filter(d => d.isCorrect).length;
+      const totalDecisions = metrics.decisions.length;
+      const interviewAccuracy = totalDecisions > 0 ? Math.round((correctDecisions / totalDecisions) * 100) : 100;
+
+      const duration = metrics.endTime
+        ? metrics.endTime - metrics.startTime
+        : Date.now() - metrics.startTime;
+
+      const minutes = Math.floor(duration / 60000);
+      const seconds = Math.floor((duration % 60000) / 1000);
+      const timeTaken = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+      return {
+        evidenceCollected: state.evidenceCollected.length,
+        totalEvidence: metrics.totalEvidenceInCase,
+        logicConnectionsMade: metrics.logicConnectionsMade,
+        totalLogicConnections: metrics.totalLogicConnections,
+        contradictionsFound: metrics.contradictionsFound,
+        totalContradictions: metrics.totalContradictions,
+        interviewAccuracy,
+        timeTaken,
+      };
     },
 
     recordDecision: (questionId, choiceId, isCorrect) => {
@@ -412,6 +498,12 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           endTime: null,
           decisions: [],
           totalEvidenceInCase: 0,
+          logicConnectionsMade: 0,
+          totalLogicConnections: 0,
+          contradictionsFound: 0,
+          totalContradictions: 0,
+          interactiveSequencesCompleted: 0,
+          totalInteractiveSequences: 0,
         },
         evidenceBoardPositions: {},
         evidenceBoardConnections: [],

@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Check, X } from "lucide-react";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 interface GraphDataPoint {
   day: number;
@@ -28,6 +29,7 @@ export function GraphAnalysisInteractive({
   correctAnswer,
   onComplete,
 }: GraphAnalysisInteractiveProps) {
+  const recordInteractiveSequence = useDetectiveGame((state) => state.recordInteractiveSequence);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
 
@@ -35,6 +37,10 @@ export function GraphAnalysisInteractive({
     setSelectedAnswer(answer);
     setShowFeedback(true);
     const isCorrect = answer === correctAnswer;
+
+    if (isCorrect) {
+      recordInteractiveSequence();
+    }
 
     setTimeout(() => {
       onComplete(isCorrect);

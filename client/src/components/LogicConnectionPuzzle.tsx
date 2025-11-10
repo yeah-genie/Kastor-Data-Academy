@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Brain, ArrowRight, Check } from "lucide-react";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 interface Thought {
   id: string;
@@ -25,6 +26,7 @@ export function LogicConnectionPuzzle({
   correctConnections,
   onComplete,
 }: LogicConnectionPuzzleProps) {
+  const recordLogicConnection = useDetectiveGame((state) => state.recordLogicConnection);
   const [selectedThoughts, setSelectedThoughts] = useState<string[]>([]);
   const [madeConnections, setMadeConnections] = useState<Connection[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -51,6 +53,7 @@ export function LogicConnectionPuzzle({
 
     if (connection) {
       setMadeConnections([...madeConnections, connection]);
+      recordLogicConnection();
 
       setTimeout(() => {
         setSelectedThoughts([]);

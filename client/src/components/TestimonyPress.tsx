@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { MessageSquare, AlertCircle, FileText } from "lucide-react";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 interface Statement {
   id: string;
@@ -19,6 +20,7 @@ interface TestimonyPressProps {
 }
 
 export function TestimonyPress({ statements, onComplete }: TestimonyPressProps) {
+  const recordContradiction = useDetectiveGame((state) => state.recordContradiction);
   const [currentStatementIndex, setCurrentStatementIndex] = useState(0);
   const [pressedStatements, setPressedStatements] = useState<Set<string>>(new Set());
   const [foundContradictions, setFoundContradictions] = useState<Set<string>>(new Set());
@@ -46,6 +48,7 @@ export function TestimonyPress({ statements, onComplete }: TestimonyPressProps) 
 
     setFoundContradictions(new Set([...foundContradictions, currentStatement.id]));
     setShowContradiction(true);
+    recordContradiction();
 
     setTimeout(() => {
       if (foundContradictions.size + 1 === statements.filter((s) => s.hasContradiction).length) {

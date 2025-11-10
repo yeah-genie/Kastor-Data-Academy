@@ -5,6 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Clock, GripVertical, AlertTriangle } from "lucide-react";
+import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 
 interface TimelineEvent {
   id: string;
@@ -54,6 +55,7 @@ function SortableEvent({ event }: { event: TimelineEvent }) {
 }
 
 export function TimelineReconstruction({ events, onComplete }: TimelineReconstructionProps) {
+  const recordInteractiveSequence = useDetectiveGame((state) => state.recordInteractiveSequence);
   const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -93,6 +95,10 @@ export function TimelineReconstruction({ events, onComplete }: TimelineReconstru
     });
 
     setIsCorrect(correct);
+
+    if (correct) {
+      recordInteractiveSequence();
+    }
 
     setTimeout(() => {
       onComplete(correct);
