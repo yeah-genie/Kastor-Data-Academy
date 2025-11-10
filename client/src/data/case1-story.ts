@@ -355,12 +355,12 @@ export const case1Story: Record<string, StoryNode> = {
         title: "Who is the Suspect?",
         instructions: "Connect the logs, IP address, and CCTV data to identify the suspect.",
         nodes: [
-          { id: "log1", label: "admin01 login at 11:12 PM", type: "evidence", color: "#3b82f6" },
-          { id: "log2", label: "Data modified at 11:15 PM", type: "evidence", color: "#3b82f6" },
-          { id: "ip1", label: "IP: 192.168.1.47", type: "data", color: "#8b5cf6" },
-          { id: "cctv1", label: "CCTV: Maya left at 10:47 PM", type: "data", color: "#8b5cf6" },
-          { id: "chris1", label: "Computer belongs to Chris", type: "data", color: "#8b5cf6" },
-          { id: "conclusion1", label: "Chris used Maya's account", type: "conclusion", color: "#10b981" },
+          { id: "log1", label: "admin01 login at 11:12 PM", type: "evidence", color: "#3b82f6", description: "Server logs show Maya's admin account was used after she left" },
+          { id: "log2", label: "Data modified at 11:15 PM", type: "evidence", color: "#3b82f6", description: "Shadow Reaper's attack power was changed from 100 to 150" },
+          { id: "ip1", label: "IP: 192.168.1.47", type: "data", color: "#8b5cf6", description: "The IP address used to access the database" },
+          { id: "cctv1", label: "CCTV: Maya left at 10:47 PM", type: "data", color: "#8b5cf6", description: "Security camera footage confirms Maya's departure time" },
+          { id: "chris1", label: "Computer belongs to Chris", type: "data", color: "#8b5cf6", description: "IP 192.168.1.47 is registered to Chris Anderson's workstation" },
+          { id: "conclusion1", label: "Chris used Maya's account", type: "conclusion", color: "#10b981", description: "Chris accessed the database using Maya's credentials from his computer" },
         ],
         correctConnections: [
           { from: "log1", to: "ip1" },
