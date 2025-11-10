@@ -74,7 +74,6 @@ export const case1EpisodeFinal: Record<string, StoryNode> = {
     id: "start",
     phase: "stage1",
     messages: [
-      { id: "m1", speaker: "system", text: "Episode 1: The Missing Balance Patch" },
       { id: "m2", speaker: "system", text: "Data Detective Academy - Case #001" },
       {
         id: "m3",
