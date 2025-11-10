@@ -64,9 +64,10 @@ export function GameScene() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showStageSummary, setShowStageSummary] = useState(false);
   const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
-  const [isTyping, setIsTyping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const activeTypingCount = useRef(0);
+  const [isTyping, setIsTyping] = useState(false);
 
   const getStageNumberFromNode = (nodeId: string): number | null => {
     const summaryMap: Record<string, number> = {
@@ -181,6 +182,19 @@ export function GameScene() {
       }
     }
   }, [currentNode, currentCase, evidenceCollected.length]);
+  
+  const handleTypingStateChange = (typing: boolean) => {
+    if (typing) {
+      activeTypingCount.current += 1;
+      setIsTyping(true);
+    } else {
+      activeTypingCount.current -= 1;
+      if (activeTypingCount.current <= 0) {
+        activeTypingCount.current = 0;
+        setIsTyping(false);
+      }
+    }
+  };
   
   const handleChatClick = () => {
     if (!currentStoryNode) return;
@@ -494,7 +508,7 @@ export function GameScene() {
             }
             
             if (message.text) {
-              return <ChatMessage key={message.id} message={message} index={index} onTypingStateChange={setIsTyping} />;
+              return <ChatMessage key={message.id} message={message} index={index} onTypingStateChange={handleTypingStateChange} />;
             }
             
             return null;

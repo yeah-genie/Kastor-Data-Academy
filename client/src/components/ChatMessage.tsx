@@ -77,7 +77,7 @@ export function ChatMessage({ message, index, onTypingStateChange }: ChatMessage
             <TypewriterText
               text={message.text || ""}
               speed={typewriterSpeed}
-              onTypingStateChange={onTypingStateChange}
+              onTypingStateChange={undefined}
               bypassTypewriter={true}
               glossaryMode="none"
             />
@@ -121,6 +121,7 @@ export function ChatMessage({ message, index, onTypingStateChange }: ChatMessage
                   text={message.text || ""}
                   speed={typewriterSpeed}
                   onTypingStateChange={onTypingStateChange}
+                  bypassTypewriter={false}
                   glossaryMode="normal"
                 />
               </p>
@@ -170,7 +171,7 @@ export function ChatMessage({ message, index, onTypingStateChange }: ChatMessage
             <TypewriterText
               text={message.text || ""}
               speed={typewriterSpeed}
-              onTypingStateChange={onTypingStateChange}
+              onTypingStateChange={undefined}
               bypassTypewriter={true}
               glossaryMode={isDetective ? "detective" : "normal"}
             />

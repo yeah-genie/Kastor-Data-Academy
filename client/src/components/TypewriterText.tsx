@@ -25,6 +25,7 @@ export function TypewriterText({
   const [isTyping, setIsTyping] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const isActivelyTyping = useRef(false);
 
   const speedMs = {
     off: 0,
@@ -40,6 +41,7 @@ export function TypewriterText({
     if (bypassTypewriter || speed === 'off') {
       setDisplayedText(text);
       setIsTyping(false);
+      isActivelyTyping.current = false;
       onTypingStateChange?.(false);
       onTypingComplete?.();
       return;
@@ -47,6 +49,7 @@ export function TypewriterText({
 
     setDisplayedText("");
     setIsTyping(true);
+    isActivelyTyping.current = true;
     onTypingStateChange?.(true);
     
     let currentIndex = 0;
@@ -58,6 +61,7 @@ export function TypewriterText({
         timerRef.current = window.setTimeout(typeNextChar, currentSpeed);
       } else {
         setIsTyping(false);
+        isActivelyTyping.current = false;
         onTypingStateChange?.(false);
         onTypingComplete?.();
       }
@@ -69,6 +73,10 @@ export function TypewriterText({
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
+      if (isActivelyTyping.current) {
+        isActivelyTyping.current = false;
+        onTypingStateChange?.(false);
+      }
     };
   }, [text, speed, bypassTypewriter]);
 
@@ -77,6 +85,7 @@ export function TypewriterText({
       setIsSkipped(true);
       setDisplayedText(text);
       setIsTyping(false);
+      isActivelyTyping.current = false;
       onTypingStateChange?.(false);
       onTypingComplete?.();
       if (timerRef.current) {
