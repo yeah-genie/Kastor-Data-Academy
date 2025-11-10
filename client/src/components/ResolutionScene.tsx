@@ -130,7 +130,7 @@ export function ResolutionScene({ onContinue }: ResolutionSceneProps) {
           </button>
           
           <button
-            onClick={() => window.location.reload()}
+            onClick={onContinue}
             className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3 rounded-lg transition-colors"
           >
             Main Menu

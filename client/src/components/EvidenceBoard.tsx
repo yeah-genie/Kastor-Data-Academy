@@ -41,12 +41,12 @@ function EvidenceNode({ evidence, position, boardWidth, boardHeight, onClick, is
 
   const getNodeColor = () => {
     switch (evidence.type) {
-      case "CHARACTER": return "bg-blue-500 text-white";
-      case "DATA": return "bg-green-500 text-white";
-      case "DIALOGUE": return "bg-purple-500 text-white";
-      case "PHOTO": return "bg-pink-500 text-white";
-      case "DOCUMENT": return "bg-orange-500 text-white";
-      default: return "bg-slate-500 text-white";
+      case "CHARACTER": return "bg-gradient-to-br from-blue-400 to-blue-600 text-white";
+      case "DATA": return "bg-gradient-to-br from-green-400 to-green-600 text-white";
+      case "DIALOGUE": return "bg-gradient-to-br from-purple-400 to-purple-600 text-white";
+      case "PHOTO": return "bg-gradient-to-br from-pink-400 to-pink-600 text-white";
+      case "DOCUMENT": return "bg-gradient-to-br from-orange-400 to-orange-600 text-white";
+      default: return "bg-gradient-to-br from-slate-400 to-slate-600 text-white";
     }
   };
 
@@ -72,8 +72,8 @@ function EvidenceNode({ evidence, position, boardWidth, boardHeight, onClick, is
       }}
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
-      whileHover={{ scale: 1.05 }}
-      className={`w-32 md:w-40 cursor-move select-none ${getNodeColor()} rounded-lg p-3 shadow-md hover:shadow-lg transition-all`}
+      whileHover={{ scale: 1.08, y: -2 }}
+      className={`w-32 md:w-40 cursor-move select-none ${getNodeColor()} rounded-2xl p-3 shadow-xl hover:shadow-2xl transition-all border-2 border-white/20`}
     >
       <div className="flex items-center gap-2 mb-2">
         {getIcon()}
@@ -111,15 +111,24 @@ function ConnectionLayer({ connections, nodePositions, boardWidth, boardHeight, 
         const x2 = toPos.x * boardWidth + 80;
         const y2 = toPos.y * boardHeight + 40;
 
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const offset = Math.sqrt(dx * dx + dy * dy) * 0.2;
+        const cx = midX + (dy / Math.sqrt(dx * dx + dy * dy)) * offset;
+        const cy = midY - (dx / Math.sqrt(dx * dx + dy * dy)) * offset;
+        
+        const pathD = `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`;
+
         return (
           <g key={conn.id}>
-            <line
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
+            <path
+              d={pathD}
               stroke="#64748b"
-              strokeWidth="2"
+              strokeWidth="3"
+              fill="none"
+              className="drop-shadow-md"
             />
             <circle
               cx={(x1 + x2) / 2}

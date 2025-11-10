@@ -7,7 +7,7 @@ import "@fontsource/inter";
 
 function App() {
   const { phase } = useDetectiveGame();
-  const { setBackgroundMusic, setSuccessSound } = useAudio();
+  const { setBackgroundMusic, setSuccessSound, setHitSound } = useAudio();
 
   useEffect(() => {
     const bgMusic = new Audio("/sounds/background.mp3");
@@ -18,7 +18,11 @@ function App() {
     const successSound = new Audio("/sounds/success.mp3");
     successSound.volume = 0.5;
     setSuccessSound(successSound);
-  }, [setBackgroundMusic, setSuccessSound]);
+
+    const hitSound = new Audio("/sounds/hit.mp3");
+    hitSound.volume = 0.4;
+    setHitSound(hitSound);
+  }, [setBackgroundMusic, setSuccessSound, setHitSound]);
 
   return (
     <div className="min-h-screen bg-slate-900">

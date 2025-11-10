@@ -38,9 +38,10 @@ export function GameScene() {
     evidenceCollected,
     hasNewEvidence,
     clearNewEvidenceFlag,
+    score,
   } = useDetectiveGame();
 
-  const { isMuted, toggleMute, playSuccess } = useAudio();
+  const { isMuted, toggleMute, playSuccess, playHit } = useAudio();
 
   const [currentStoryNode, setCurrentStoryNode] = useState<StoryNode | null>(null);
   const [visibleMessages, setVisibleMessages] = useState<number>(0);
@@ -229,6 +230,12 @@ export function GameScene() {
       recordDecision(currentQuestion.id, choice.id, choice.isCorrect);
     }
     
+    if (choice.isCorrect) {
+      playSuccess();
+    } else {
+      playHit();
+    }
+    
     if (choice.clueAwarded) {
       const clue = {
         ...choice.clueAwarded,
@@ -236,12 +243,10 @@ export function GameScene() {
       };
       addClue(clue);
       setPendingClue(clue);
-      playSuccess();
     }
 
     if (choice.evidenceAwarded) {
       unlockEvidence(choice.evidenceAwarded, false);
-      playSuccess();
     }
 
     if (choice.pointsAwarded) {
@@ -315,6 +320,13 @@ export function GameScene() {
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full shadow-sm">
+            <div className="flex items-center gap-1.5">
+              <span className="text-white text-xs font-bold">⭐</span>
+              <span className="text-white text-sm font-bold">{score}</span>
+            </div>
+          </div>
+          
           <button
             onClick={toggleMute}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"

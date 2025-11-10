@@ -69,9 +69,9 @@ export const case1Story: Record<string, StoryNode> = {
       id: "q1",
       text: "🎯 HYPOTHESIS: What could cause a sudden win rate spike?",
       choices: [
-        { id: "c1", text: "A bug in the update made the character too strong", isCorrect: false, nextNode: "email_content", feedback: "Possible, but let's look for evidence of intentional changes first.", pointsAwarded: 0 },
+        { id: "c1", text: "A bug in the update made the character too strong", isCorrect: false, nextNode: "stage2_start", feedback: "Possible, but let's look for evidence of intentional changes first. Let's investigate further.", pointsAwarded: 3 },
         { id: "c2", text: "Someone deliberately changed the balance data", isCorrect: true, nextNode: "stage2_start", feedback: "Good thinking! Let's investigate who had access and motive.", pointsAwarded: 10 },
-        { id: "c3", text: "Players discovered a new strategy", isCorrect: false, nextNode: "email_content", feedback: "An overnight discovery by all players? Unlikely. Think deeper.", pointsAwarded: 0 },
+        { id: "c3", text: "Players discovered a new strategy", isCorrect: false, nextNode: "stage2_start", feedback: "An overnight discovery by all players? Unlikely. But let's investigate the facts.", pointsAwarded: 3 },
       ],
     },
   },
@@ -172,7 +172,7 @@ export const case1Story: Record<string, StoryNode> = {
       text: "🔍 What pattern do you see in these logs?",
       choices: [
         { id: "c11", text: "Maya's admin01 account modified Shadow Reaper at 11:15 PM", isCorrect: true, nextNode: "stage3_start", feedback: "Correct! But was it really Maya? Let's analyze deeper.", evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], pointsAwarded: 20 },
-        { id: "c12", text: "Nothing suspicious", isCorrect: false, nextNode: "ryan_interview", feedback: "Look closer at the modification timestamp.", pointsAwarded: 0 },
+        { id: "c12", text: "Nothing suspicious", isCorrect: false, nextNode: "stage3_start", feedback: "Actually, there is something suspicious. Let's analyze the modification timestamp and investigate who was really behind it.", evidenceAwarded: [case1Evidence.ryan_dialogue, case1Evidence.server_logs], pointsAwarded: 8 },
       ],
     },
   },
@@ -213,9 +213,9 @@ export const case1Story: Record<string, StoryNode> = {
       id: "q6",
       text: "🔍 ANOMALY DETECTION: What does this timeline reveal?",
       choices: [
-        { id: "c13", text: "Maya made the changes from her office", isCorrect: false, nextNode: "ip_analysis", feedback: "But Maya left at 10:47 PM according to CCTV!", pointsAwarded: 0 },
+        { id: "c13", text: "Maya made the changes from her office", isCorrect: false, nextNode: "stage4_start", feedback: "Actually, Maya left at 10:47 PM according to CCTV. But the evidence shows the modification happened at 11:15 PM from Chris's workstation. Let's continue the investigation.", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 10 },
         { id: "c14", text: "Chris used Maya's admin01 account from his computer at 11:15 PM after she left", isCorrect: true, nextNode: "stage4_start", feedback: "Excellent detective work! The IP matches Chris's workstation!", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 25 },
-        { id: "c15", text: "The logs are wrong", isCorrect: false, nextNode: "ip_analysis", feedback: "The evidence is clear. Look at the IP match.", pointsAwarded: 0 },
+        { id: "c15", text: "The logs are wrong", isCorrect: false, nextNode: "stage4_start", feedback: "The logs are actually accurate. The IP evidence clearly shows it was Chris's computer. Let's synthesize all the evidence.", evidenceAwarded: case1Evidence.ip_analysis, pointsAwarded: 10 },
       ],
     },
   },
@@ -227,6 +227,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m35", speaker: "system", text: "🧩 STAGE 4: EVIDENCE ANALYSIS" },
       { id: "m36", speaker: "detective", text: "Let's review all the evidence we've gathered:" },
       { id: "m37", speaker: "narrator", text: "💬 Kastor: 'Combining all evidence pieces...'" },
+      { id: "m38", speaker: "detective", text: "1. Shadow Reaper's attack power changed from 100 to 150\n2. Win rate jumped from 49% to 74% overnight\n3. Maya's admin01 account was used\n4. But Chris's computer (IP 192.168.1.47) made the change at 11:15 PM\n5. Maya had already left the office at 10:47 PM\n6. Chris mentioned needing data for 'research'" },
     ],
     dataVisualizations: [{
       type: "chart",
@@ -240,16 +241,13 @@ export const case1Story: Record<string, StoryNode> = {
         }],
       },
     }],
-    messages: [
-      { id: "m38", speaker: "detective", text: "1. Shadow Reaper's attack power changed from 100 to 150\n2. Win rate jumped from 49% to 74% overnight\n3. Maya's admin01 account was used\n4. But Chris's computer (IP 192.168.1.47) made the change at 11:15 PM\n5. Maya had already left the office at 10:47 PM\n6. Chris mentioned needing data for 'research'" },
-    ],
     question: {
       id: "q7",
       text: "🎯 EVIDENCE SYNTHESIS: What's the complete picture?",
       choices: [
-        { id: "c16", text: "Maya made a mistake", isCorrect: false, nextNode: "stage4_start", feedback: "But she wasn't in the office when the change was made!", pointsAwarded: 0 },
+        { id: "c16", text: "Maya made a mistake", isCorrect: false, nextNode: "confront_chris", feedback: "Actually, Maya wasn't in the office when the change was made. All evidence points to Chris using her account. Let's confront him.", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 12 },
         { id: "c17", text: "Chris used Maya's account to modify the balance for his AI research experiment", isCorrect: true, nextNode: "confront_chris", feedback: "Perfect analysis! All evidence points to Chris!", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 30 },
-        { id: "c18", text: "Ryan framed Chris", isCorrect: false, nextNode: "stage4_start", feedback: "Ryan only provided the logs. The IP evidence is solid.", pointsAwarded: 0 },
+        { id: "c18", text: "Ryan framed Chris", isCorrect: false, nextNode: "confront_chris", feedback: "Ryan only provided the logs - the IP evidence is solid and verifiable. All signs point to Chris. Let's confront him.", evidenceAwarded: case1Evidence.winrate_chart, pointsAwarded: 12 },
       ],
     },
   },

@@ -43,7 +43,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
       onChoiceSelected(choice);
       setShowFeedback(false);
       setSelectedChoice(null);
-    }, 2500);
+    }, 4000);
   };
 
   return (
