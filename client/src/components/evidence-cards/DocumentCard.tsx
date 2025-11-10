@@ -14,9 +14,11 @@ export const DocumentCard = forwardRef<HTMLDivElement, DocumentCardProps>(
   ({ evidence, delay = 0, isHighlighted = false, collapsed = false }, ref) => {
     if (collapsed) {
       return (
-        <div className="flex items-center gap-2 p-3 min-w-[120px]">
-          <FileText className="w-6 h-6 text-orange-600 flex-shrink-0" />
-          <p className="text-sm font-semibold text-gray-900 line-clamp-2">{evidence.title}</p>
+        <div className="flex items-center gap-3 p-4 min-w-[140px]">
+          <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <FileText className="w-6 h-6 text-orange-600" />
+          </div>
+          <p className="text-base font-bold text-gray-900 line-clamp-2 flex-1">{evidence.title}</p>
         </div>
       );
     }

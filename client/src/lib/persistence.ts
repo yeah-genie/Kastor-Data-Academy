@@ -17,6 +17,7 @@ export interface GameProgress {
       visitedNodeIds?: string[];
       lastUpdated?: number;
       evidenceBoardState?: EvidenceBoardState;
+      collapsedNodes?: string[];
     };
   };
   unlockedCases: number[];

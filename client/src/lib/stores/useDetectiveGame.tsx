@@ -318,12 +318,14 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           const existingIndex = state.evidenceCollected.findIndex(e => e.id === ev.id);
           let newEvidenceCollected;
           let newBoardPositions = { ...state.evidenceBoardPositions };
+          const newCollapsedNodes = new Set(state.collapsedNodes);
           
           if (existingIndex !== -1) {
             newEvidenceCollected = [...state.evidenceCollected];
             newEvidenceCollected[existingIndex] = ev;
           } else {
             newEvidenceCollected = [...state.evidenceCollected, ev];
+            newCollapsedNodes.add(ev.id);
             
             if (!state.evidenceBoardPositions[ev.id]) {
               const position = calculateDefaultNodePosition(newEvidenceCollected.length - 1);
@@ -337,6 +339,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           return {
             evidenceCollected: newEvidenceCollected,
             evidenceBoardPositions: newBoardPositions,
+            collapsedNodes: newCollapsedNodes,
             recentEvidenceId: ev.id,
             isEvidenceModalOpen: showModal,
             hasNewEvidence: true,
@@ -410,6 +413,10 @@ export const useDetectiveGame = create<DetectiveGameState>()(
       const totalEvidenceCount = 15;
       
       if (resumeMode && savedCaseProgress && !savedCaseProgress.completed) {
+        const savedCollapsedNodes = savedCaseProgress.collapsedNodes 
+          ? new Set(savedCaseProgress.collapsedNodes)
+          : new Set((savedCaseProgress.evidenceCollected || []).map((e: any) => e.id));
+        
         set({
           currentCase: caseNumber,
           phase: "stage1",
@@ -424,6 +431,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           visitedCharacters: [],
           evidenceBoardPositions: savedCaseProgress.evidenceBoardState?.nodePositions || {},
           evidenceBoardConnections: savedCaseProgress.evidenceBoardState?.connections || [],
+          collapsedNodes: savedCollapsedNodes,
         });
       } else {
         set({
@@ -440,6 +448,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
           visitedCharacters: [],
           evidenceBoardPositions: {},
           evidenceBoardConnections: [],
+          collapsedNodes: new Set(),
         });
         get().initSessionMetrics(totalEvidenceCount);
       }
@@ -523,6 +532,7 @@ export const useDetectiveGame = create<DetectiveGameState>()(
               nodePositions: state.evidenceBoardPositions,
               connections: state.evidenceBoardConnections,
             },
+            collapsedNodes: Array.from(state.collapsedNodes),
           },
         },
         unlockedCases: state.unlockedCases,

@@ -13,11 +13,11 @@ export const PhotoCard = forwardRef<HTMLDivElement, PhotoCardProps>(
   ({ evidence, delay = 0, isHighlighted = false, collapsed = false }, ref) => {
     if (collapsed) {
       return (
-        <div className="p-2">
+        <div className="p-3">
           <img 
             src={evidence.imageUrl} 
             alt={evidence.caption} 
-            className="w-20 h-20 object-cover rounded-lg" 
+            className="w-24 h-24 object-cover rounded-xl shadow-md border-2 border-pink-200" 
           />
         </div>
       );

@@ -14,19 +14,19 @@ export const CharacterCard = forwardRef<HTMLDivElement, CharacterCardProps>(
   ({ evidence, delay = 0, isHighlighted = false, collapsed = false }, ref) => {
     if (collapsed) {
       return (
-        <div className="flex flex-col items-center justify-center p-3 min-w-[100px]">
+        <div className="flex flex-col items-center justify-center p-4 min-w-[120px]">
           {evidence.photo ? (
             <img 
               src={evidence.photo} 
               alt={evidence.name} 
-              className="w-12 h-12 rounded-full object-cover object-top border-2 border-blue-400 mb-2" 
+              className="w-16 h-16 rounded-full object-cover object-top border-2 border-blue-400 mb-2 shadow-md" 
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-400 mb-2">
-              <User className="w-6 h-6 text-blue-600" />
+            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-400 mb-2 shadow-md">
+              <User className="w-8 h-8 text-blue-600" />
             </div>
           )}
-          <p className="text-sm font-semibold text-gray-900 text-center line-clamp-2">{evidence.name}</p>
+          <p className="text-base font-bold text-gray-900 text-center line-clamp-2">{evidence.name}</p>
         </div>
       );
     }
