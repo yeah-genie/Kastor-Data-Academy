@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, XCircle, FileText, Users, MessageSquare, Image, File } from "lucide-react";
 import { useDetectiveGame, type Evidence, type EvidenceType } from "@/lib/stores/useDetectiveGame";
+import { useAudio } from "@/lib/stores/useAudio";
 
 interface EvidencePresentationModalProps {
   isOpen: boolean;
@@ -45,6 +46,7 @@ export function EvidencePresentationModal({
   onClose,
 }: EvidencePresentationModalProps) {
   const evidenceCollected = useDetectiveGame((state) => state.evidenceCollected);
+  const { playSuccess, playHit } = useAudio();
   const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
@@ -57,6 +59,12 @@ export function EvidencePresentationModal({
     setIsCorrect(correct);
     setShowResult(true);
     setFeedbackText(correct ? (correctFeedback || "Correct!") : (wrongFeedback || "Wrong!"));
+
+    if (correct) {
+      playSuccess();
+    } else {
+      playHit();
+    }
 
     setTimeout(() => {
       if (correct) {
