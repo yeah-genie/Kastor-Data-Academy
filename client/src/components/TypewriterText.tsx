@@ -80,8 +80,9 @@ export function TypewriterText({
     };
   }, [text, speed, bypassTypewriter]);
 
-  const handleSkip = () => {
+  const handleSkip = (e: React.MouseEvent) => {
     if (isTyping && !isSkipped) {
+      e.stopPropagation();
       setIsSkipped(true);
       setDisplayedText(text);
       setIsTyping(false);
