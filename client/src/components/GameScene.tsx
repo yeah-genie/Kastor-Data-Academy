@@ -24,6 +24,7 @@ import { TutorialOverlay } from "./TutorialOverlay";
 import { StageSummaryCard } from "./StageSummaryCard";
 import { getStageSummary } from "@/data/case1-summaries";
 import { type StageSummary } from "@/data/case1-story-new";
+import { ResumeGameModal } from "./ResumeGameModal";
 
 export function GameScene() {
   const {
@@ -65,6 +66,7 @@ export function GameScene() {
   const [showStageSummary, setShowStageSummary] = useState(false);
   const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showBackModal, setShowBackModal] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const activeTypingCount = useRef(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -366,6 +368,15 @@ export function GameScene() {
   };
 
   const handleBackToMenu = () => {
+    setShowBackModal(true);
+  };
+  
+  const handleBackModalContinue = () => {
+    setShowBackModal(false);
+  };
+  
+  const handleBackModalStartOver = () => {
+    setShowBackModal(false);
     setPhase("menu");
   };
 
@@ -599,6 +610,13 @@ export function GameScene() {
           onContinue={handleStageSummaryContinue}
         />
       )}
+      
+      <ResumeGameModal 
+        isOpen={showBackModal}
+        onContinue={handleBackModalContinue}
+        onStartOver={handleBackModalStartOver}
+        onClose={handleBackModalContinue}
+      />
     </div>
   );
 }
