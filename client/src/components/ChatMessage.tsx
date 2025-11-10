@@ -47,12 +47,20 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
   
   const getSpeakerName = () => {
     if (message.characterName) return message.characterName;
-    
+
     switch (message.speaker) {
       case "detective":
         return "Detective";
+      case "kastor":
+        return "Kastor";
       case "maya":
         return "Maya";
+      case "kaito":
+        return "Kaito";
+      case "lukas":
+        return "Lukas";
+      case "diego":
+        return "Diego";
       case "chris":
         return "Chris";
       case "ryan":
@@ -70,8 +78,16 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
     switch (message.speaker) {
       case "detective":
         return "/detective.jpg";
+      case "kastor":
+        return "/detective.jpg"; // Using detective image for Kastor temporarily
       case "maya":
         return "/characters/maya.jpg";
+      case "kaito":
+        return "/characters/kaito.jpg";
+      case "lukas":
+        return "/characters/lukas.jpg";
+      case "diego":
+        return "/characters/diego.jpg";
       case "chris":
         return "/characters/chris.jpg";
       case "ryan":
@@ -84,7 +100,8 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
   const isDetective = message.speaker === "detective";
   const isSystem = message.speaker === "system";
   const isNarrator = message.speaker === "narrator";
-  const isCharacter = ["maya", "chris", "ryan"].includes(message.speaker);
+  const isKastor = message.speaker === "kastor";
+  const isCharacter = ["maya", "chris", "ryan", "kaito", "lukas", "diego", "kastor"].includes(message.speaker);
   const avatarUrl = getSpeakerAvatar();
   const useTypewriter = shouldUseTypewriter(message.speaker);
 
@@ -123,17 +140,9 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
               {/* Divider */}
               <div className="border-t border-gray-200 my-4"></div>
 
-              {/* Body with Typewriter Effect */}
+              {/* Body - Full Text Display (No Typewriter) */}
               <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
-                <TypewriterText
-                  text={message.email.body}
-                  speed={typewriterSpeed}
-                  onTypingStateChange={onTypingStateChange}
-                  onTypingComplete={onTypingComplete}
-                  onCharacterTyped={onCharacterTyped}
-                  bypassTypewriter={false}
-                  glossaryMode="normal"
-                />
+                {message.email.body}
               </div>
             </div>
           </div>
