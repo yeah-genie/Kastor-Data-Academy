@@ -16,7 +16,8 @@ interface ChatMessageProps {
 }
 
 function shouldUseTypewriter(speaker: string): boolean {
-  return ["maya", "chris", "ryan", "client", "kaito", "lukas", "diego"].includes(speaker);
+  // No typewriter for any character - only emails use typewriter
+  return false;
 }
 
 export function ChatMessage({ message, index, onTypingStateChange, onTypingComplete, onCharacterTyped }: ChatMessageProps) {
