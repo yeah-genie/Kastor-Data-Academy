@@ -18,6 +18,21 @@ export function TypingIndicator({ speaker = "typing" }: TypingIndicatorProps) {
     }
   };
 
+  const getSpeakerAvatar = () => {
+    switch (speaker) {
+      case "maya":
+        return "/characters/maya.jpg";
+      case "chris":
+        return "/characters/chris.jpg";
+      case "ryan":
+        return "/characters/ryan.jpg";
+      default:
+        return null;
+    }
+  };
+
+  const avatarUrl = getSpeakerAvatar();
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -27,9 +42,17 @@ export function TypingIndicator({ speaker = "typing" }: TypingIndicatorProps) {
       className="flex gap-2"
     >
       <div className="flex-shrink-0">
-        <div className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-gray-300 flex items-center justify-center">
-          <span className="text-xs">💬</span>
-        </div>
+        {avatarUrl ? (
+          <img 
+            src={avatarUrl} 
+            alt={getSpeakerName()} 
+            className="w-10 h-10 md:w-8 md:h-8 rounded-full object-cover object-center"
+          />
+        ) : (
+          <div className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-gray-300 flex items-center justify-center">
+            <span className="text-xs">💬</span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col max-w-[80%] md:max-w-[75%] items-start">
