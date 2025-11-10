@@ -117,7 +117,7 @@ export function ChoiceButtons({ question, choices, onChoiceSelected }: ChoiceBut
               className="mt-3 w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:from-amber-600 hover:to-amber-700 transition-all flex items-center justify-center gap-2"
             >
               <Lightbulb className="w-5 h-5" />
-              <span>💡 힌트 보기 (증거 노트북 열기)</span>
+              <span>💡 View Hint (Open Evidence Notebook)</span>
             </motion.button>
           )}
 

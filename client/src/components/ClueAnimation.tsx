@@ -50,7 +50,7 @@ export function ClueAnimation({ clue, onComplete }: ClueAnimationProps) {
             className="text-center relative z-10"
           >
             <div className="text-6xl mb-4">🔍</div>
-            <h2 className="text-2xl font-bold text-amber-100 mb-2">단서 획득!</h2>
+            <h2 className="text-2xl font-bold text-amber-100 mb-2">Clue Obtained!</h2>
             <h3 className="text-xl font-semibold text-amber-200 mb-3">{clue.title}</h3>
             <p className="text-amber-100 text-sm">{clue.description}</p>
             
@@ -60,7 +60,7 @@ export function ClueAnimation({ clue, onComplete }: ClueAnimationProps) {
               transition={{ delay: 1.5 }}
               className="mt-6 text-amber-300 text-xs"
             >
-              (화면을 터치하여 계속)
+              (Tap to continue)
             </motion.div>
           </motion.div>
         </motion.div>

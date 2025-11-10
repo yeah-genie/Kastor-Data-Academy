@@ -60,7 +60,7 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
             <div>
               <h4 className="text-base font-semibold text-gray-700 mb-4 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-600" />
-                핵심 발견사항
+                Key Findings
               </h4>
               <ul className="space-y-3">
                 {summary.keyFindings.map((finding, index) => (
@@ -80,7 +80,7 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
 
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <div className="text-base text-gray-700">
-                수집된 증거: <span className="text-blue-600 font-semibold">{summary.evidenceCount}</span>개
+                Evidence Collected: <span className="text-blue-600 font-semibold">{summary.evidenceCount}</span>
               </div>
               {summary.nextStageHint && (
                 <div className="text-sm text-gray-500 italic max-w-xs text-right">
@@ -93,7 +93,7 @@ export function StageSummaryCard({ summary, onContinue }: StageSummaryCardProps)
               onClick={onContinue}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-base"
             >
-              다음 Stage로 계속 →
+              Continue to Next Stage →
             </button>
           </div>
         </motion.div>
