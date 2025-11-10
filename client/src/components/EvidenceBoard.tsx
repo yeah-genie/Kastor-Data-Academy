@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useEffect, useRef } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import { 
   ReactFlow, 
-  MiniMap, 
   Controls, 
   Background,
   useNodesState,
@@ -13,7 +12,6 @@ import {
   Panel,
   NodeChange,
   EdgeChange,
-  useReactFlow,
   ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -50,9 +48,9 @@ function EvidenceNode({ data }: { data: EvidenceNodeData }) {
   
   return (
     <div className="relative">
-      <Handle type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Top} className="!bg-blue-500 !w-3 !h-3" />
       
-      <div className="bg-white rounded-lg shadow-lg">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
         {evidence.type === "CHARACTER" && <CharacterCard evidence={evidence as CharacterEvidence} />}
         {evidence.type === "DATA" && <DataCard evidence={evidence as DataEvidence} />}
         {evidence.type === "DIALOGUE" && <DialogueCard evidence={evidence as DialogueEvidence} />}
@@ -60,7 +58,7 @@ function EvidenceNode({ data }: { data: EvidenceNodeData }) {
         {evidence.type === "DOCUMENT" && <DocumentCard evidence={evidence as DocumentEvidence} />}
       </div>
       
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Bottom} className="!bg-blue-500 !w-3 !h-3" />
     </div>
   );
 }
@@ -121,7 +119,8 @@ function EvidenceBoardInner({ onClose, onSwitchToList }: EvidenceBoardProps) {
       source: conn.from,
       target: conn.to,
       label: conn.label,
-      type: 'smoothstep',
+      style: { stroke: '#3b82f6', strokeWidth: 2 },
+      animated: true,
     }));
   }, [evidenceBoardConnections]);
 
@@ -175,30 +174,29 @@ function EvidenceBoardInner({ onClose, onSwitchToList }: EvidenceBoardProps) {
 
   return (
     <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-sm z-50 flex flex-col">
-      <div className="bg-slate-800/90 border-b border-slate-700 p-4 flex items-center justify-between">
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-xl font-bold text-slate-100">Evidence Board</h2>
-          <span className="text-sm text-slate-400">마인드맵</span>
+          <h2 className="text-xl font-bold text-gray-800">Evidence Board</h2>
+          <span className="text-sm text-gray-500">마인드맵</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={onSwitchToList}
-            className="px-3 py-2 hover:bg-slate-700 rounded-lg transition-colors text-slate-300 flex items-center gap-2"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 flex items-center gap-2"
             title="Switch to List View"
           >
             <List className="w-5 h-5" />
-            <span className="hidden md:inline">List View</span>
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-slate-100"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-2xl transition-colors text-white font-medium"
           >
             Close
           </button>
         </div>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 bg-gray-100">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -207,25 +205,11 @@ function EvidenceBoardInner({ onClose, onSwitchToList }: EvidenceBoardProps) {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-slate-900"
+          className="bg-gray-100"
         >
-          <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#475569" />
-          <Controls className="bg-slate-800 border-slate-700" />
-          <MiniMap 
-            className="bg-slate-800 border-slate-700" 
-            nodeColor={(node) => {
-              const evidence = (node.data as unknown as EvidenceNodeData).evidence;
-              switch (evidence.type) {
-                case 'CHARACTER': return '#3b82f6';
-                case 'DATA': return '#22c55e';
-                case 'DIALOGUE': return '#a855f7';
-                case 'PHOTO': return '#ec4899';
-                case 'DOCUMENT': return '#f97316';
-                default: return '#64748b';
-              }
-            }}
-          />
-          <Panel position="top-left" className="bg-slate-800/80 text-slate-200 px-3 py-2 rounded-lg text-sm">
+          <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#d1d5db" />
+          <Controls className="!bg-white !border-gray-200 shadow-lg" />
+          <Panel position="bottom-center" className="bg-white/95 text-gray-700 px-4 py-2 rounded-2xl text-sm border border-gray-200 shadow-sm mb-4 hidden md:block">
             <p>💡 노드를 드래그해서 배치하고, 연결점을 드래그해서 증거 연결</p>
           </Panel>
         </ReactFlow>
