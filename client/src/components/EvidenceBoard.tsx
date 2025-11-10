@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import { 
   ReactFlow, 
   Controls, 
@@ -60,17 +61,31 @@ function EvidenceNode({ data, id }: { data: EvidenceNodeData; id: string }) {
     <div className="relative cursor-pointer" onClick={handleClick}>
       <Handle type="target" position={Position.Top} className="!bg-blue-500 !w-3 !h-3" />
       
-      <div className={`rounded-2xl shadow-lg transition-all ${
-        isSelected 
-          ? "bg-blue-100 border-2 border-blue-500" 
-          : "bg-white border border-gray-200"
-      }`}>
+      <motion.div 
+        className={`rounded-2xl shadow-lg ${
+          isSelected 
+            ? "bg-blue-100 border-2 border-blue-500" 
+            : "bg-white border border-gray-200"
+        }`}
+        initial={false}
+        animate={{ 
+          scale: isSelected ? 1.05 : 1,
+          boxShadow: isSelected 
+            ? "0 20px 25px -5px rgba(59, 130, 246, 0.2), 0 10px 10px -5px rgba(59, 130, 246, 0.1)" 
+            : "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+        }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 25 
+        }}
+      >
         {evidence.type === "CHARACTER" && <CharacterCard evidence={evidence as CharacterEvidence} collapsed={isCollapsed} />}
         {evidence.type === "DATA" && <DataCard evidence={evidence as DataEvidence} collapsed={isCollapsed} />}
         {evidence.type === "DIALOGUE" && <DialogueCard evidence={evidence as DialogueEvidence} collapsed={isCollapsed} />}
         {evidence.type === "PHOTO" && <PhotoCard evidence={evidence as PhotoEvidence} collapsed={isCollapsed} />}
         {evidence.type === "DOCUMENT" && <DocumentCard evidence={evidence as DocumentEvidence} collapsed={isCollapsed} />}
-      </div>
+      </motion.div>
       
       <Handle type="source" position={Position.Bottom} className="!bg-blue-500 !w-3 !h-3" />
     </div>
