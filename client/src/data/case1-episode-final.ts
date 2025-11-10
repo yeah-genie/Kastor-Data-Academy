@@ -8,14 +8,18 @@ export interface InteractiveSequence {
     | "document_examination"
     | "database_search"
     | "case_report_assembly"
-    | "log_filtering";
+    | "log_filtering"
+    | "ghost_account_selection"
+    | "pattern_matching"
+    | "email_filter"
+    | "code_debugging";
   id: string;
   data: any;
 }
 
 export interface Message {
   id: string;
-  speaker: "detective" | "kastor" | "maya" | "kaito" | "lukas" | "diego" | "system" | "narrator" | "chris" | "ryan" | "client";
+  speaker: "detective" | "kastor" | "maya" | "kaito" | "lukas" | "diego" | "system" | "narrator" | "chris" | "ryan" | "client" | "marcus" | "elena" | "nina" | "camille" | "jake" | "alex" | "harrison" | "luna" | "fixer";
   text: string;
   avatar?: string;
   characterName?: string; // Override for display name

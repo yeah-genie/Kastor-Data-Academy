@@ -1,6 +1,6 @@
 import { case1EpisodeFinal } from "./case1-episode-final";
-import { case2Story } from "./case2-story";
-import { case3Story } from "./case3-story";
+import { case2EpisodeFull } from "./case2-episode-full";
+import { case3EpisodeFull } from "./case3-episode-full";
 import type { StoryNode } from "./case1-episode-final";
 
 export interface CaseMetadata {
@@ -35,19 +35,19 @@ export const caseMetadata: Record<number, CaseMetadata> = {
   },
   3: {
     id: 3,
-    title: "The Secret of the Hidden Algorithm",
-    subtitle: "Expose the rigged matchmaking system",
-    description: "A matchmaking system favorable to certain users has been discovered. Analyze the matchmaking result distribution and algorithm settings to identify the manipulated rules!",
+    title: "The Perfect Victory",
+    subtitle: "Investigate the tournament match-fixing",
+    description: "An underdog team swept the finals 3-0 against the favorites. Analyze betting patterns, server logs, and encrypted messages to uncover a sophisticated match-fixing scheme.",
     difficulty: "Advanced",
-    tags: ["Algorithm Analysis", "Pattern Recognition", "Fairness Verification"],
-    keyLearning: "Algorithm fairness must be verified not only by code but also by execution results. Unusual patterns are evidence of hidden bias.",
+    tags: ["Match-Fixing", "Betting Analysis", "Incomplete Evidence"],
+    keyLearning: "Sometimes investigators have strong suspicions but insufficient proof. Document everything, stay patient, and wait for mistakes.",
   },
 };
 
 export const stories: Record<number, Record<string, StoryNode>> = {
   1: case1EpisodeFinal,
-  2: case2Story,
-  3: case3Story,
+  2: case2EpisodeFull,
+  3: case3EpisodeFull,
 };
 
 export function getStory(caseId: number): Record<string, StoryNode> {
