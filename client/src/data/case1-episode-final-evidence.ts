@@ -1,7 +1,9 @@
 import { Evidence } from "@/lib/stores/useDetectiveGame";
 
 const mayaImage = "/characters/maya.jpg";
-const kaitoImage = "/ryan-new.jpg";
+const kaitoImage = "/characters/kaito.jpg";
+const lukasImage = "/characters/lukas.jpg";
+const diegoImage = "/characters/diego.jpg";
 
 export const case1EpisodeFinalEvidence: Record<string, Evidence> = {
   maya_email: {
@@ -149,6 +151,7 @@ export const case1EpisodeFinalEvidence: Record<string, Evidence> = {
     title: "Lukas Schmidt",
     name: "Lukas Schmidt",
     role: "Senior Admin, Kaito's Mentor",
+    photo: lukasImage,
     description: "Senior system administrator. Has been Kaito's mentor for a year. Performed emergency server check on Day 28 at 10:30 PM.",
     personality: "Trusting and supportive mentor. Believes in Kaito's integrity and work ethic.",
     suspicionLevel: 1,
@@ -195,6 +198,7 @@ export const case1EpisodeFinalEvidence: Record<string, Evidence> = {
     title: "Diego Torres",
     name: "Diego Torres",
     role: "Shadow Main Player (ShadowFan99)",
+    photo: diegoImage,
     description: "Enthusiastic Shadow player. Played on Day 28 from 7 PM to 9 PM. Has clean alibi.",
     personality: "Passionate gamer who loves playing Shadow. Innocent bystander who benefited from the buff.",
     suspicionLevel: 0,
