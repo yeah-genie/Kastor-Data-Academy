@@ -222,6 +222,7 @@ export function EvidenceBoard({ isOpen, onClose, onSwitchToList }: EvidenceBoard
   const [activeId, setActiveId] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const [boardDimensions, setBoardDimensions] = useState({ width: 800, height: 500 });
+  const [currentScale, setCurrentScale] = useState(1);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -238,12 +239,15 @@ export function EvidenceBoard({ isOpen, onClose, onSwitchToList }: EvidenceBoard
       return;
     }
 
-    const newX = Math.max(0, Math.min(1, currentPos.x + delta.x / boardDimensions.width));
-    const newY = Math.max(0, Math.min(1, currentPos.y + delta.y / boardDimensions.height));
+    const scaledDeltaX = delta.x / currentScale;
+    const scaledDeltaY = delta.y / currentScale;
+
+    const newX = Math.max(0, Math.min(1, currentPos.x + scaledDeltaX / boardDimensions.width));
+    const newY = Math.max(0, Math.min(1, currentPos.y + scaledDeltaY / boardDimensions.height));
 
     setNodePosition(evidenceId, newX, newY);
     setActiveId(null);
-  }, [evidenceBoardPositions, boardDimensions, setNodePosition]);
+  }, [evidenceBoardPositions, boardDimensions, setNodePosition, currentScale]);
 
   const handleNodeClick = useCallback((evidence: Evidence) => {
     if (connectMode) {
@@ -371,6 +375,9 @@ export function EvidenceBoard({ isOpen, onClose, onSwitchToList }: EvidenceBoard
             limitToBounds={false}
             panning={{ disabled: connectMode }}
             doubleClick={{ disabled: true }}
+            onTransformed={(ref) => {
+              setCurrentScale(ref.state.scale);
+            }}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
