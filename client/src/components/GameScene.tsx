@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, Volume2, VolumeX, Plus, Mic, Send, Settings } from "lucide-react";
+import { BookOpen, Volume2, VolumeX, Plus, Mic, Send } from "lucide-react";
 import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { useAudio } from "@/lib/stores/useAudio";
 import { type StoryNode } from "@/data/case1-story";
@@ -65,7 +65,6 @@ export function GameScene() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [showStageSummary, setShowStageSummary] = useState(false);
   const [currentStageSummary, setCurrentStageSummary] = useState<StageSummary | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
   const [showBackModal, setShowBackModal] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const activeTypingCount = useRef(0);
@@ -488,13 +487,6 @@ export function GameScene() {
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
           >
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-          
-          <button
-            onClick={() => setShowSettings(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
-          >
-            <Settings className="w-5 h-5" />
           </button>
           
           <button
