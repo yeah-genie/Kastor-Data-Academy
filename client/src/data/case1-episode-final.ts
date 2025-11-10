@@ -19,7 +19,7 @@ export interface InteractiveSequence {
 
 export interface Message {
   id: string;
-  speaker: "detective" | "kastor" | "maya" | "kaito" | "lukas" | "diego" | "system" | "narrator" | "chris" | "ryan" | "client" | "marcus" | "elena" | "nina" | "camille";
+  speaker: "detective" | "kastor" | "maya" | "kaito" | "lukas" | "diego" | "system" | "narrator" | "chris" | "ryan" | "client" | "marcus" | "elena" | "nina" | "camille" | "jake" | "alex" | "harrison" | "luna" | "fixer";
   text: string;
   avatar?: string;
   characterName?: string; // Override for display name
