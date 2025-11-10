@@ -447,16 +447,7 @@ export function GameScene() {
         onClick={handleChatClick}
         className="flex-1 overflow-y-auto px-4 py-4 space-y-3 cursor-pointer"
       >
-        {showStageSummary && currentStageSummary && (
-          <div onClick={(e) => e.stopPropagation()}>
-            <StageSummaryCard 
-              summary={currentStageSummary}
-              onContinue={handleStageSummaryContinue}
-            />
-          </div>
-        )}
-        
-        {!showStageSummary && currentStoryNode.messages.slice(0, visibleMessages)
+        {currentStoryNode.messages.slice(0, visibleMessages)
           .filter(message => !message.celebration)
           .map((message, index) => {
             if (message.dataVisualization) {
@@ -601,6 +592,13 @@ export function GameScene() {
       )}
       
       {showTutorial && <TutorialOverlay onComplete={handleTutorialComplete} />}
+      
+      {showStageSummary && currentStageSummary && (
+        <StageSummaryCard 
+          summary={currentStageSummary}
+          onContinue={handleStageSummaryContinue}
+        />
+      )}
     </div>
   );
 }
