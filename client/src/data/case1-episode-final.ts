@@ -31,6 +31,7 @@ export interface Message {
   };
   image?: string; // Unsplash image for narrator actions
   soundEffect?: string; // Sound effect to play
+  reaction?: string; // Reaction sticker emoji (e.g., "👍", "🤔", "⚠️")
 }
 
 export interface DataVisualization {
@@ -201,18 +202,18 @@ Director, Legend Arena`
         {
           id: "c1",
           text: "Official patch (they're lying)",
-          isCorrect: false,
+          isCorrect: true,
           nextNode: "kastor_response",
-          feedback: "Possible, but let's not assume they're lying yet!",
-          pointsAwarded: 5,
+          feedback: "Interesting angle! Could be a cover-up!",
+          pointsAwarded: 10,
         },
         {
           id: "c2",
           text: "Rare bug",
-          isCorrect: false,
+          isCorrect: true,
           nextNode: "kastor_response",
-          feedback: "Could be! But bugs usually make things weaker, not stronger.",
-          pointsAwarded: 5,
+          feedback: "Good thinking! Technical issues can be sneaky!",
+          pointsAwarded: 10,
         },
         {
           id: "c3",
@@ -231,9 +232,9 @@ Director, Legend Arena`
     phase: "stage1",
     messages: [
       { id: "m53", speaker: "detective", text: "Just... a feeling." },
-      { id: "m54", speaker: "kastor", text: "Detectives can't work on feelings~" },
+      { id: "m54", speaker: "kastor", text: "Detectives can't work on feelings~", reaction: "🤔" },
       { id: "m55", speaker: "detective", text: "Then what?" },
-      { id: "m56", speaker: "kastor", text: "DATA! Numbers don't lie!" },
+      { id: "m56", speaker: "kastor", text: "DATA! Numbers don't lie!", reaction: "👍" },
       { id: "m57", speaker: "detective", text: "People do?" },
       { id: "m58", speaker: "kastor", text: "All the time! Let's go check!" },
       {
@@ -374,15 +375,15 @@ Director, Legend Arena`
     phase: "stage2",
     messages: [
       { id: "m96", speaker: "detective", text: "50% to 85%... That's a 35% jump!" },
-      { id: "m97", speaker: "kastor", text: "Exactly! This isn't normal growth." },
+      { id: "m97", speaker: "kastor", text: "Exactly! This isn't normal growth.", reaction: "⚠️" },
       { id: "m98", speaker: "detective", text: "Phoenix also went up a bit..." },
       { id: "m99", speaker: "kastor", text: "Phoenix is a good kid. Slow and steady." },
       { id: "m100", speaker: "detective", text: "But Shadow's like a rocket launch!" },
-      { id: "m101", speaker: "kastor", text: "Bingo! For a rookie, you're pretty fast!" },
+      { id: "m101", speaker: "kastor", text: "Bingo! For a rookie, you're pretty fast!", reaction: "⭐" },
       { id: "m102", speaker: "detective", text: "Really?" },
       { id: "m103", speaker: "kastor", text: "Yeah! Usually takes 30 minutes. You did it in 10!" },
       { id: "m104", speaker: "detective", text: "That's... good?" },
-      { id: "m105", speaker: "kastor", text: "Very good! Natural talent maybe?" },
+      { id: "m105", speaker: "kastor", text: "Very good! Natural talent maybe?", reaction: "👍" },
       { id: "m106", speaker: "detective", text: "(smiles)" },
       {
         id: "m107",
@@ -467,9 +468,9 @@ Director, Legend Arena`
     phase: "stage2",
     messages: [
       { id: "m117", speaker: "detective", text: "Wait! Someone DID modify Shadow!" },
-      { id: "m118", speaker: "kastor", text: "At 11:47 PM! And tried to delete the evidence!" },
+      { id: "m118", speaker: "kastor", text: "At 11:47 PM! And tried to delete the evidence!", reaction: "🚨" },
       { id: "m119", speaker: "detective", text: "But the official notes say nothing changed!" },
-      { id: "m120", speaker: "kastor", text: "Exactly! Someone's lying!" },
+      { id: "m120", speaker: "kastor", text: "Exactly! Someone's lying!", reaction: "⚠️" },
       { id: "m121", speaker: "detective", text: "We need to ask Maya!" },
       {
         id: "m122",
@@ -576,15 +577,15 @@ Director, Legend Arena`
     phase: "stage3",
     messages: [
       { id: "m145", speaker: "detective", text: "He checked the data at work..." },
-      { id: "m146", speaker: "kastor", text: "Then went home and modified it!" },
+      { id: "m146", speaker: "kastor", text: "Then went home and modified it!", reaction: "🔍" },
       { id: "m147", speaker: "detective", text: "Why from home?" },
-      { id: "m148", speaker: "kastor", text: "Hmm... I'm hungry." },
+      { id: "m148", speaker: "kastor", text: "Hmm... I'm hungry.", reaction: "🤔" },
       { id: "m149", speaker: "detective", text: "What?! We're working!" },
       { id: "m150", speaker: "kastor", text: "Kidding~ To avoid being caught, obviously!" },
       { id: "m151", speaker: "kastor", text: "At the office: CCTV, people everywhere." },
-      { id: "m152", speaker: "kastor", text: "At home: Quiet, alone, sneaky~" },
+      { id: "m152", speaker: "kastor", text: "At home: Quiet, alone, sneaky~", reaction: "🕵️" },
       { id: "m153", speaker: "detective", text: "So it was planned!" },
-      { id: "m154", speaker: "kastor", text: "Yep! Very calculated!" },
+      { id: "m154", speaker: "kastor", text: "Yep! Very calculated!", reaction: "👍" },
       {
         id: "m155",
         speaker: "system",
@@ -697,9 +698,9 @@ Director, Legend Arena`
     phase: "stage4",
     messages: [
       { id: "m198", speaker: "detective", text: "23:50! Three minutes after the modification!" },
-      { id: "m199", speaker: "kastor", text: "Timing is PERFECT!" },
+      { id: "m199", speaker: "kastor", text: "Timing is PERFECT!", reaction: "🎯" },
       { id: "m200", speaker: "detective", text: "And his win rate jumped 40%!" },
-      { id: "m201", speaker: "kastor", text: "From losing to winning. Motivation clear!" },
+      { id: "m201", speaker: "kastor", text: "From losing to winning. Motivation clear!", reaction: "💡" },
       {
         id: "m202",
         speaker: "system",

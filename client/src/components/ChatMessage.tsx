@@ -265,26 +265,40 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
         <div className="text-xs md:text-[11px] text-gray-500 mb-1 px-2">
           {getSpeakerName()} • {message.timestamp || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
         </div>
-        <div className={`rounded-2xl px-4 py-3 md:py-2 ${
-          isThought
-            ? isDetective
-              ? "bg-blue-100 text-gray-600 border-2 border-dashed border-blue-300 rounded-tr-sm italic"
-              : "bg-gray-50 text-gray-500 border-2 border-dashed border-gray-300 rounded-tl-sm italic"
-            : isDetective
-              ? "bg-blue-500 text-white rounded-tr-sm"
-              : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
-        }`}>
-          <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">
-            <TypewriterText
-              text={message.text || ""}
-              speed={typewriterSpeed}
-              onTypingStateChange={useTypewriter ? onTypingStateChange : undefined}
-              onTypingComplete={useTypewriter ? onTypingComplete : undefined}
-              onCharacterTyped={useTypewriter ? onCharacterTyped : undefined}
-              bypassTypewriter={!useTypewriter}
-              glossaryMode={isDetective ? "detective" : "normal"}
-            />
-          </p>
+        <div className="relative">
+          <div className={`rounded-2xl px-4 py-3 md:py-2 ${
+            isThought
+              ? isDetective
+                ? "bg-blue-100 text-gray-600 border-2 border-dashed border-blue-300 rounded-tr-sm italic"
+                : "bg-gray-50 text-gray-500 border-2 border-dashed border-gray-300 rounded-tl-sm italic"
+              : isDetective
+                ? "bg-blue-500 text-white rounded-tr-sm"
+                : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
+          }`}>
+            <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">
+              <TypewriterText
+                text={message.text || ""}
+                speed={typewriterSpeed}
+                onTypingStateChange={useTypewriter ? onTypingStateChange : undefined}
+                onTypingComplete={useTypewriter ? onTypingComplete : undefined}
+                onCharacterTyped={useTypewriter ? onCharacterTyped : undefined}
+                bypassTypewriter={!useTypewriter}
+                glossaryMode={isDetective ? "detective" : "normal"}
+              />
+            </p>
+          </div>
+
+          {/* Reaction Sticker */}
+          {message.reaction && (
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: index * 0.2 + 0.5, type: "spring", stiffness: 200 }}
+              className={`absolute -bottom-2 ${isDetective ? "-left-3" : "-right-3"} bg-white rounded-full p-1.5 shadow-lg border-2 border-gray-200`}
+            >
+              <span className="text-2xl leading-none">{message.reaction}</span>
+            </motion.div>
+          )}
         </div>
       </div>
     </motion.div>
