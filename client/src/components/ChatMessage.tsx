@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { User, FileText, Mail } from "lucide-react";
 import { Message } from "@/data/case1-episode-final";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAudio } from "@/lib/stores/useAudio";
 import { useDetectiveGame } from "@/lib/stores/useDetectiveGame";
 import { parseTextWithGlossary } from "./GlossaryTooltip";
 import { TypewriterText } from "./TypewriterText";
+import { EmailNotificationModal } from "./EmailNotificationModal";
 
 interface ChatMessageProps {
   message: Message;
@@ -23,6 +24,7 @@ function shouldUseTypewriter(speaker: string): boolean {
 export function ChatMessage({ message, index, onTypingStateChange, onTypingComplete, onCharacterTyped }: ChatMessageProps) {
   const { playMessageSound } = useAudio();
   const { typewriterSpeed } = useDetectiveGame();
+  const [showEmailModal, setShowEmailModal] = useState(false);
 
   useEffect(() => {
     playMessageSound();
@@ -110,46 +112,44 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
 
   // System messages (centered notifications) or Email
   if (isSystem) {
-    // Email layout
+    // Email notification - clickable to open modal
     if (message.email) {
       return (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.2, duration: 0.4 }}
-          className="flex justify-center my-4"
-        >
-          <div className="w-full max-w-[90%] md:max-w-[85%] bg-white border-2 border-gray-300 rounded-2xl shadow-xl overflow-hidden">
-            {/* Email Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 flex items-center gap-3">
-              <Mail className="w-6 h-6 text-white" />
-              <div className="text-white font-bold text-lg">New Message</div>
-            </div>
-
-            {/* Email Content */}
-            <div className="p-6 space-y-4">
-              {/* From */}
-              <div className="flex items-start gap-2">
-                <span className="text-sm font-semibold text-gray-600 min-w-[60px]">From:</span>
-                <span className="text-sm text-gray-900 font-medium">{message.email.from}</span>
+        <>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: index * 0.2, duration: 0.5, type: "spring" }}
+            className="flex justify-center my-4"
+          >
+            <motion.button
+              onClick={() => setShowEmailModal(true)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-3 cursor-pointer"
+            >
+              <motion.div
+                animate={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <Mail className="w-6 h-6" />
+              </motion.div>
+              <div className="text-left">
+                <div className="text-sm font-semibold">📧 New Email</div>
+                <div className="text-xs opacity-90">From: {message.email.from.split('<')[0].trim()}</div>
+                <div className="text-xs opacity-90 font-bold mt-1">{message.email.subject}</div>
               </div>
+            </motion.button>
+          </motion.div>
 
-              {/* Subject */}
-              <div className="flex items-start gap-2">
-                <span className="text-sm font-semibold text-gray-600 min-w-[60px]">Subject:</span>
-                <span className="text-base font-bold text-gray-900">{message.email.subject}</span>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 my-4"></div>
-
-              {/* Body - Full Text Display (No Typewriter) */}
-              <div className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
-                {message.email.body}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          <EmailNotificationModal
+            isOpen={showEmailModal}
+            onClose={() => setShowEmailModal(false)}
+            from={message.email.from}
+            subject={message.email.subject}
+            body={message.email.body}
+          />
+        </>
       );
     }
 

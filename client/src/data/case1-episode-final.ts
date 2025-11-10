@@ -79,7 +79,7 @@ export const case1EpisodeFinal: Record<string, StoryNode> = {
         id: "m3",
         speaker: "narrator",
         text: "[Setting: A run-down detective office. Dust on the desk. Papers everywhere.]",
-        image: "/detective-office.jpg"
+        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80"
       },
       { id: "m4", speaker: "kastor", text: "Zzzzz..." },
       {
@@ -149,13 +149,6 @@ export const case1EpisodeFinal: Record<string, StoryNode> = {
       { id: "m29", speaker: "kastor", text: "Yep! You're lucky! No cases = boring." },
       { id: "m30", speaker: "detective", text: "Is that... good luck?" },
       { id: "m31", speaker: "kastor", text: "Obviously! Now click it!" },
-      {
-        id: "m32",
-        speaker: "narrator",
-        text: "[Opens email]",
-        image: "/detective-office.jpg",
-        soundEffect: "click"
-      },
       {
         id: "m33",
         speaker: "system",
@@ -307,7 +300,12 @@ Director, Legend Arena`
     phase: "stage2",
     messages: [
       { id: "m84", speaker: "kastor", text: "Alright! Data time!" },
-      { id: "m85", speaker: "narrator", text: "[Screen shows graph with three colored lines]" },
+      {
+        id: "m85",
+        speaker: "narrator",
+        text: "[Screen shows graph with three colored lines]",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+      },
       { id: "m86", speaker: "detective", text: "Three lines..." },
       { id: "m87", speaker: "kastor", text: "Yep! Shadow, Phoenix, Viper. See anything weird?" },
       { id: "m88", speaker: "detective", text: "Um..." },
@@ -402,7 +400,12 @@ Director, Legend Arena`
     phase: "stage2",
     messages: [
       { id: "m108", speaker: "kastor", text: "Next! Official patch notes!" },
-      { id: "m109", speaker: "narrator", text: "[Document appears on screen]" },
+      {
+        id: "m109",
+        speaker: "narrator",
+        text: "[Document appears on screen]",
+        image: "https://images.unsplash.com/photo-1568667256549-094345857637?w=800&q=80"
+      },
     ],
     interactiveSequence: {
       type: "document_examination",
@@ -437,7 +440,12 @@ Director, Legend Arena`
     id: "server_logs",
     phase: "stage2",
     messages: [
-      { id: "m116", speaker: "narrator", text: "[Server logs appear]" },
+      {
+        id: "m116",
+        speaker: "narrator",
+        text: "[Server logs appear]",
+        image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&q=80"
+      },
     ],
     interactiveSequence: {
       type: "document_examination",
@@ -537,7 +545,12 @@ Director, Legend Arena`
     phase: "stage3",
     messages: [
       { id: "m143", speaker: "kastor", text: "Time to track Kaito's movements!" },
-      { id: "m144", speaker: "narrator", text: "[Filtering admin01 activities...]" },
+      {
+        id: "m144",
+        speaker: "narrator",
+        text: "[Filtering admin01 activities...]",
+        image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=80"
+      },
     ],
     interactiveSequence: {
       type: "timeline_reconstruction",
@@ -586,7 +599,12 @@ Director, Legend Arena`
     id: "admin02_discover",
     phase: "stage3",
     messages: [
-      { id: "m156", speaker: "narrator", text: "[Scrolling through logs...]" },
+      {
+        id: "m156",
+        speaker: "narrator",
+        text: "[Scrolling through logs...]",
+        image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80"
+      },
       { id: "m157", speaker: "kastor", text: "Wait. There's admin02 too." },
       { id: "m158", speaker: "system", text: "ADMIN02 ACTIVITY:" },
       { id: "m159", speaker: "system", text: "22:30 - Login (Office)" },
