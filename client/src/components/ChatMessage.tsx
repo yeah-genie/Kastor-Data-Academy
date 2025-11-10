@@ -105,6 +105,9 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
   const avatarUrl = getSpeakerAvatar();
   const useTypewriter = shouldUseTypewriter(message.speaker);
 
+  // Check if message is a thought (starts with "(" and ends with ")")
+  const isThought = message.text?.trim().startsWith("(") && message.text?.trim().endsWith(")");
+
   // System messages (centered notifications) or Email
   if (isSystem) {
     // Email layout
@@ -263,9 +266,13 @@ export function ChatMessage({ message, index, onTypingStateChange, onTypingCompl
           {getSpeakerName()} • {message.timestamp || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
         </div>
         <div className={`rounded-2xl px-4 py-3 md:py-2 ${
-          isDetective 
-            ? "bg-blue-500 text-white rounded-tr-sm" 
-            : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
+          isThought
+            ? isDetective
+              ? "bg-blue-100 text-gray-600 border-2 border-dashed border-blue-300 rounded-tr-sm italic"
+              : "bg-gray-50 text-gray-500 border-2 border-dashed border-gray-300 rounded-tl-sm italic"
+            : isDetective
+              ? "bg-blue-500 text-white rounded-tr-sm"
+              : "bg-white text-gray-800 border border-gray-200 rounded-tl-sm"
         }`}>
           <p className="text-base md:text-sm leading-relaxed whitespace-pre-wrap">
             <TypewriterText
