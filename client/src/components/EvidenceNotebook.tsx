@@ -35,18 +35,18 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
   const photos = evidenceCollected.filter(e => e.type === "PHOTO") as PhotoEvidence[];
   const documents = evidenceCollected.filter(e => e.type === "DOCUMENT") as DocumentEvidence[];
 
+  if (!isOpen) return null;
+
   if (viewMode === 'board') {
-    return <EvidenceBoard isOpen={isOpen} onClose={handleClose} onSwitchToList={() => setViewMode('list')} />;
+    return <EvidenceBoard onClose={handleClose} onSwitchToList={() => setViewMode('list')} />;
   }
 
   return (
     <>
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/70 z-40"
-            onClick={handleClose}
-          />
+      <div
+        className="fixed inset-0 bg-black/70 z-40"
+        onClick={handleClose}
+      />
           
           <div
             className="fixed inset-3 md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[85vw] md:h-[85vh] md:max-w-5xl bg-white border-2 border-gray-200 rounded-2xl z-50 overflow-hidden flex flex-col shadow-2xl"
@@ -220,8 +220,6 @@ export function EvidenceNotebook({ isOpen, onClose }: EvidenceNotebookProps) {
               </Tabs>
             </div>
           </div>
-        </>
-      )}
     </>
   );
 }
