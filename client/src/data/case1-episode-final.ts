@@ -8,7 +8,11 @@ export interface InteractiveSequence {
     | "document_examination"
     | "database_search"
     | "case_report_assembly"
-    | "log_filtering";
+    | "log_filtering"
+    | "ghost_account_selection"
+    | "pattern_matching"
+    | "email_filter"
+    | "code_debugging";
   id: string;
   data: any;
 }
