@@ -15,29 +15,25 @@ export function GlossaryTooltip({ word, definition, children, variant = "normal"
     : "text-blue-600 decoration-blue-400 hover:decoration-blue-600";
 
   return (
-    <>
-      <span className="relative inline-block">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-          className={`underline decoration-dotted underline-offset-2 cursor-help font-medium inline ${textColor}`}
-        >
-          {children}
-        </button>
-      </span>
+    <span className="relative inline-block">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        className={`underline decoration-dotted underline-offset-2 cursor-help font-medium inline ${textColor}`}
+      >
+        {children}
+      </button>
       
       {isOpen && (
-        <span
-          className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
-          onClick={() => setIsOpen(false)}
-        >
-          <span className="bg-slate-800 text-white rounded-xl p-4 shadow-2xl border border-slate-600 max-w-xs pointer-events-auto">
-            <span className="block text-xs font-bold text-blue-300 mb-2">{word}</span>
-            <span className="block text-sm leading-relaxed">{definition}</span>
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50">
+          <span className="block bg-slate-800 text-white rounded-lg px-3 py-2 shadow-xl border border-slate-600 min-w-[200px] max-w-[280px]">
+            <span className="block text-xs font-bold text-blue-300 mb-1">{word}</span>
+            <span className="block text-xs leading-relaxed">{definition}</span>
           </span>
+          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-800"></span>
         </span>
       )}
-    </>
+    </span>
   );
 }
 
