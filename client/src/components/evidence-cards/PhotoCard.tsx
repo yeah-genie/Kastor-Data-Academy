@@ -1,0 +1,23 @@
+import { BaseEvidenceCard } from "./BaseEvidenceCard";
+import { PhotoEvidence } from "@/lib/stores/useDetectiveGame";
+
+interface PhotoCardProps {
+  evidence: PhotoEvidence;
+  delay?: number;
+}
+
+export function PhotoCard({ evidence, delay = 0 }: PhotoCardProps) {
+  return (
+    <BaseEvidenceCard delay={delay} className="overflow-hidden p-0">
+      <img 
+        src={evidence.imageUrl} 
+        alt={evidence.caption} 
+        className="w-full h-32 md:h-40 object-cover" 
+      />
+      <div className="p-3 md:p-4">
+        <h4 className="font-semibold text-sm md:text-base text-gray-900 mb-1">{evidence.title}</h4>
+        <p className="text-xs md:text-sm text-gray-600">{evidence.caption}</p>
+      </div>
+    </BaseEvidenceCard>
+  );
+}
