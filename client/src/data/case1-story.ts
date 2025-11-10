@@ -166,6 +166,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m20", speaker: "detective", text: "What time did you access the system?", timestamp: "8:13 AM" },
       { id: "m21", speaker: "maya", text: "I logged in at 10:47 PM, reviewed the balance data, then left before midnight. Everything seemed fine when I left.", timestamp: "8:13 AM" },
       { id: "m22", speaker: "narrator", text: "Maya seems burned out - a perfectionist pushed to her limits. Her profile has been updated with personality insights." },
+      { id: "q3", speaker: "system", isQuestion: true },
     ],
     question: {
       id: "q3",
@@ -188,6 +189,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m26", speaker: "chris", text: "Ah, well... I was swamped with my own project. Um... I'm working on a personal AI matchmaking algorithm. 🤔", timestamp: "8:22 AM" },
       { id: "m27", speaker: "chris", text: "It's separate from company work, but... I've been using some real game data to test it. You know, for accuracy. 😰", timestamp: "8:23 AM" },
       { id: "m28", speaker: "narrator", text: "Interesting - he's friendly and upbeat on the surface, but his eyes are carefully watching your reaction. His profile has been updated." },
+      { id: "q4", speaker: "system", isQuestion: true },
     ],
     question: {
       id: "q4",
@@ -210,6 +212,7 @@ export const case1Story: Record<string, StoryNode> = {
       { id: "m32", speaker: "ryan", text: "I'm frustrated with the overtime culture here - the crunch, the pressure. I felt like reporting internally wouldn't change anything. Someone had to speak up. 😤", timestamp: "8:32 AM" },
       { id: "m33", speaker: "ryan", text: "But I can provide you the server access logs. The data doesn't lie. That's what I believe in. 👁️", timestamp: "8:33 AM" },
       { id: "m34", speaker: "narrator", text: "He's principled and honest - willing to risk his job for what he believes is right. His profile has been updated." },
+      { id: "q5", speaker: "system", isQuestion: true },
     ],
     question: {
       id: "q5",
