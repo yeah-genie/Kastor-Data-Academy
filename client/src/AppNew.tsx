@@ -48,8 +48,7 @@ function AppNew() {
       title: "The Missing Balance Patch",
       difficulty: 2,
       duration: "30-40 min",
-      thumbnail:
-        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+      thumbnail: "/episodes/ep1-thumbnail.png",
       isLocked: false
     },
     {
@@ -57,8 +56,7 @@ function AppNew() {
       title: "The Ghost User's Ranking Manipulation",
       difficulty: 3,
       duration: "45-60 min",
-      thumbnail:
-        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+      thumbnail: "/episodes/ep2-thumbnail.png",
       isLocked: true
     },
     {
@@ -66,8 +64,7 @@ function AppNew() {
       title: "The Perfect Victory",
       difficulty: 4,
       duration: "50-60 min",
-      thumbnail:
-        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+      thumbnail: "/episodes/ep3-thumbnail.png",
       isLocked: true,
       isDemo: true
     }
