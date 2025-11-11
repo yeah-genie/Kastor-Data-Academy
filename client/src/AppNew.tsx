@@ -19,7 +19,7 @@ type Screen =
 function AppNew() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("splash");
   const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
-  const { phase, setPhase, setCurrentCase, setCurrentNode } = useDetectiveGame();
+  const { phase, setPhase, startCase, setCurrentNode } = useDetectiveGame();
   const { setBackgroundMusic, setSuccessSound, setHitSound } = useAudio();
 
   // Initialize audio
@@ -94,7 +94,7 @@ function AppNew() {
 
   const handleSelectEpisode = (episodeId: number) => {
     setSelectedEpisode(episodeId);
-    setCurrentCase(episodeId);
+    startCase(episodeId, false); // Start new case without resume mode
 
     // Set initial node based on episode
     switch (episodeId) {
