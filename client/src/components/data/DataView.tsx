@@ -1,6 +1,18 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, ArrowRight, ChevronDown, ChevronUp, Download, Filter, Info, RefreshCw, Search } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Filter,
+  Info,
+  RefreshCw,
+  Search,
+  Sparkles,
+  XCircle,
+} from "lucide-react";
 import styled from "styled-components";
 
 type ActionType = "Read" | "Write" | "Download" | "Delete" | "Modify";
@@ -234,6 +246,44 @@ const LOG_ENTRIES: LogEntry[] = [
   },
 ];
 
+interface PuzzlePattern {
+  id: string;
+  title: string;
+  summary: string;
+  requiredRows: string[];
+  reward: number;
+}
+
+const PUZZLE_PATTERNS: PuzzlePattern[] = [
+  {
+    id: "pattern-exfiltration",
+    title: "심야 대용량 데이터 유출",
+    summary: "svc_boundary 계정이 짧은 간격으로 외부 IP로 대량 전송했습니다.",
+    requiredRows: ["log-001", "log-002", "log-003"],
+    reward: 40,
+  },
+  {
+    id: "pattern-ghost-reader",
+    title: "미확인 엔드포인트 접근",
+    summary: "외부 VPS(52.18.74.4)에서 HR 아카이브를 대량으로 읽었습니다.",
+    requiredRows: ["log-008"],
+    reward: 25,
+  },
+  {
+    id: "pattern-cover-tracks",
+    title: "증거 삭제 시도",
+    summary: "같은 외부 IP가 보안 이벤트 버퍼를 삭제하려 했습니다.",
+    requiredRows: ["log-015"],
+    reward: 35,
+  },
+];
+
+const PUZZLE_HINTS = [
+  "심야(02:00~03:30) 구간의 동일 계정 활동에 집중해 보세요.",
+  "외부 IP 178.34.22.9 및 52.18.74.4 가 반복적으로 등장합니다.",
+  "이상 징후는 데이터 유출, 정찰, 흔적 제거의 세 단계로 이루어집니다.",
+];
+
 const USERS = Array.from(
   new Set(LOG_ENTRIES.map((entry) => entry.user).filter((name) => name !== "unknown")),
 ).sort();
@@ -374,6 +424,13 @@ const GhostButton = styled.button`
     background: rgba(255, 255, 255, 0.12);
     transform: translateY(-1px);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    background: rgba(255, 255, 255, 0.06);
+    transform: none;
+  }
 `;
 
 const PrimaryButton = styled.button`
@@ -394,6 +451,13 @@ const PrimaryButton = styled.button`
 
   &:hover {
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
   }
 `;
 
@@ -718,6 +782,133 @@ const ExpandedDetail = styled.div`
   color: ${({ theme }) => theme.colors.lightGray};
 `;
 
+const PuzzleShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(33, 150, 243, 0.14);
+  background: linear-gradient(140deg, rgba(33, 150, 243, 0.12), rgba(10, 18, 30, 0.82));
+  padding: 1.2rem 1.35rem;
+`;
+
+const PuzzleHeader = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+`;
+
+const PuzzleTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.white};
+  }
+
+  span {
+    font-size: 0.82rem;
+    color: ${({ theme }) => theme.colors.lightGray};
+  }
+`;
+
+const PuzzleStats = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  color: ${({ theme }) => theme.colors.lightGray};
+  font-size: 0.78rem;
+
+  strong {
+    color: ${({ theme }) => theme.colors.white};
+  }
+`;
+
+const PuzzleProgress = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+`;
+
+const ProgressTrack = styled.div`
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div<{ $percent: number }>`
+  width: ${({ $percent }) => `${$percent}%`};
+  height: 100%;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.9), rgba(66, 165, 245, 0.85));
+  border-radius: inherit;
+  transition: width 0.35s ease;
+`;
+
+const PuzzleActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+`;
+
+const HintList = styled.ul`
+  margin: 0.25rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.4rem;
+  color: ${({ theme }) => theme.colors.lightGray};
+  font-size: 0.78rem;
+`;
+
+const FeedbackToast = styled(motion.div)<{ $variant: "success" | "error" | "info" }>`
+  padding: 0.85rem 1rem;
+  border-radius: 0.85rem;
+  border: 1px solid
+    ${({ $variant, theme }) =>
+      $variant === "success"
+        ? "rgba(76, 175, 80, 0.3)"
+        : $variant === "error"
+        ? "rgba(244, 67, 54, 0.35)"
+        : "rgba(33, 150, 243, 0.28)"};
+  background: ${({ $variant }) => {
+    switch ($variant) {
+      case "success":
+        return "rgba(76, 175, 80, 0.15)";
+      case "error":
+        return "rgba(244, 67, 54, 0.18)";
+      default:
+        return "rgba(33, 150, 243, 0.16)";
+    }
+  }};
+  color: ${({ theme }) => theme.colors.white};
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+`;
+
+const PuzzleCompleteBanner = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(76, 175, 80, 0.35);
+  background: rgba(76, 175, 80, 0.18);
+  color: ${({ theme }) => theme.colors.white};
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+`;
+
 const highlightText = (value: string, query: string) => {
   if (!query) return value;
   const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
@@ -935,6 +1126,23 @@ export function DataView() {
         resetFilters,
     },
   } = useDataFilters(LOG_ENTRIES);
+  const [foundPatternIds, setFoundPatternIds] = useState<string[]>([]);
+  const [hintLevel, setHintLevel] = useState(0);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [puzzlePoints, setPuzzlePoints] = useState(75);
+  const [feedback, setFeedback] = useState<{ variant: "success" | "error" | "info"; message: string } | null>(null);
+
+  useEffect(() => {
+    if (!feedback) return;
+    const timer = window.setTimeout(() => setFeedback(null), 3200);
+    return () => window.clearTimeout(timer);
+  }, [feedback]);
+
+  const selectedCount = selectedRows.size;
+  const puzzleProgress = Math.round((foundPatternIds.length / PUZZLE_PATTERNS.length) * 100);
+  const puzzleComplete = foundPatternIds.length === PUZZLE_PATTERNS.length;
+  const patternsRemaining = PUZZLE_PATTERNS.length - foundPatternIds.length;
+  const revealedHints = PUZZLE_HINTS.slice(0, hintLevel);
 
   const handleExportCsv = () => {
     if (filteredEntries.length === 0) return;
@@ -966,6 +1174,61 @@ export function DataView() {
 
   const toggleExpand = (id: string) => {
     setExpandedRow((prev) => (prev === id ? null : id));
+  };
+
+  const handleRevealHint = () => {
+    if (hintLevel >= PUZZLE_HINTS.length) {
+      setFeedback({ variant: "info", message: "사용 가능한 힌트를 모두 확인했습니다." });
+      return;
+    }
+    setHintLevel((prev) => prev + 1);
+    setHintsUsed((prev) => prev + 1);
+    setPuzzlePoints((prev) => Math.max(0, prev - 10));
+    const nextIndex = hintLevel;
+    setFeedback({ variant: "info", message: `힌트 ${nextIndex + 1}: ${PUZZLE_HINTS[nextIndex]}` });
+  };
+
+  const handleResetSelection = () => {
+    if (selectedRows.size === 0) return;
+    clearSelection();
+    setExpandedRow(null);
+    setFeedback({ variant: "info", message: "선택한 로그를 초기화했습니다." });
+  };
+
+  const handleSubmitSelection = () => {
+    if (puzzleComplete) {
+      setFeedback({ variant: "info", message: "이미 모든 패턴을 해결했습니다. 탁월해요!" });
+      return;
+    }
+
+    const selectedIds = Array.from(selectedRows);
+    if (selectedIds.length === 0) {
+      setFeedback({ variant: "error", message: "먼저 패턴으로 의심되는 로그를 선택해 주세요." });
+      return;
+    }
+
+    const matchedPattern = PUZZLE_PATTERNS.find(
+      (pattern) =>
+        !foundPatternIds.includes(pattern.id) &&
+        pattern.requiredRows.every((rowId) => selectedRows.has(rowId)),
+    );
+
+    if (matchedPattern) {
+      setFoundPatternIds((prev) => [...prev, matchedPattern.id]);
+      setPuzzlePoints((prev) => prev + matchedPattern.reward);
+      setFeedback({
+        variant: "success",
+        message: `${matchedPattern.title} 패턴을 찾아냈어요! ${matchedPattern.summary}`,
+      });
+      clearSelection();
+      setExpandedRow(null);
+    } else {
+      setPuzzlePoints((prev) => Math.max(0, prev - 5));
+      setFeedback({
+        variant: "error",
+        message: "선택된 로그로는 패턴이 확인되지 않아요. 다른 조합을 시도해 보세요.",
+      });
+    }
   };
 
   return (
@@ -1068,6 +1331,99 @@ export function DataView() {
           </PrimaryButton>
         </ActionsRow>
       </ControlsShell>
+
+      <PuzzleShell>
+        <PuzzleHeader>
+          <PuzzleTitle>
+            <h3>패턴 찾기 퍼즐</h3>
+            <span>심야 로그에서 의심스러운 활동을 모두 찾아내면 다음 단계가 열립니다.</span>
+          </PuzzleTitle>
+          <PuzzleStats>
+            <span>
+              발견한 패턴: <strong>{foundPatternIds.length}</strong> / {PUZZLE_PATTERNS.length}
+            </span>
+            <span>
+              선택한 로그: <strong>{selectedCount}</strong>
+            </span>
+            <span>
+              현재 점수: <strong>{puzzlePoints} XP</strong>
+            </span>
+            {hintsUsed > 0 && (
+              <span>
+                사용한 힌트: <strong>{hintsUsed}</strong>
+              </span>
+            )}
+          </PuzzleStats>
+        </PuzzleHeader>
+        <PuzzleProgress>
+          <ProgressTrack>
+            <ProgressFill $percent={puzzleProgress} />
+          </ProgressTrack>
+          <PuzzleStats>
+            {puzzleComplete ? (
+              <strong>완벽해요! 모든 패턴을 밝혀냈습니다.</strong>
+            ) : (
+              <span>남은 패턴 {patternsRemaining}개 • 의심 로그를 선택 후 제출해 확인하세요.</span>
+            )}
+          </PuzzleStats>
+        </PuzzleProgress>
+        <PuzzleActions>
+          <PrimaryButton type="button" onClick={handleSubmitSelection} disabled={puzzleComplete}>
+            <Sparkles size={16} />
+            선택한 로그로 패턴 확인
+          </PrimaryButton>
+          <GhostButton type="button" onClick={handleRevealHint} disabled={hintLevel >= PUZZLE_HINTS.length}>
+            <Info size={16} />
+            힌트 보기 {hintLevel >= PUZZLE_HINTS.length ? "(모두 사용)" : ""}
+          </GhostButton>
+          <GhostButton type="button" onClick={handleResetSelection} disabled={selectedCount === 0}>
+            <RefreshCw size={16} />
+            선택 초기화
+          </GhostButton>
+        </PuzzleActions>
+        {hintLevel > 0 && (
+          <HintList>
+            {revealedHints.map((hint, index) => (
+              <li key={hint}>
+                <strong>힌트 {index + 1}.</strong> {hint}
+              </li>
+            ))}
+          </HintList>
+        )}
+        <AnimatePresence>
+          {feedback && (
+            <FeedbackToast
+              key={feedback.message}
+              $variant={feedback.variant}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+            >
+              {feedback.variant === "success" ? (
+                <Sparkles size={18} />
+              ) : feedback.variant === "error" ? (
+                <AlertTriangle size={18} />
+              ) : (
+                <Info size={18} />
+              )}
+              <span>{feedback.message}</span>
+            </FeedbackToast>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {puzzleComplete && (
+            <PuzzleCompleteBanner
+              key="puzzle-complete"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+            >
+              <Sparkles size={18} />
+              모든 패턴 분석 완료! Kastor가 다음 단계로 이동할 준비가 되었습니다.
+            </PuzzleCompleteBanner>
+          )}
+        </AnimatePresence>
+      </PuzzleShell>
 
       <AnimatePresence>
         {patternDetected && (
