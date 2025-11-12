@@ -33,6 +33,11 @@ export interface Message {
   type: MessageType;
   attachments?: Evidence[];
   choices?: Choice[];
+  dataVisualization?: unknown;
+  isQuestion?: boolean;
+  isCharacterCards?: boolean;
+  isEvidencePresentation?: boolean;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ChoiceConsequence {
@@ -46,6 +51,7 @@ export interface Choice {
   text: string;
   nextScene?: string;
   consequence?: ChoiceConsequence;
+  clueAwarded?: string;
 }
 
 export type SceneType = "chat" | "data" | "files" | "team" | "interactive";
@@ -64,6 +70,7 @@ export interface Scene {
   interactiveContent?: unknown;
   nextScene?: string;
   requirements?: SceneRequirements;
+  choices?: Choice[];
 }
 
 export interface Episode {
@@ -88,6 +95,7 @@ export interface GameState {
   characterRelationships: Record<string, number>;
   progress: number;
   completedEpisodes: string[];
+  currentTab: string;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -237,6 +245,7 @@ export const isGameState = (value: unknown): value is GameState => {
     isRecord(value.characterRelationships) &&
     Object.values(value.characterRelationships).every((score) => typeof score === "number") &&
     typeof value.progress === "number" &&
-    isStringArray(value.completedEpisodes)
+    isStringArray(value.completedEpisodes) &&
+    typeof value.currentTab === "string"
   );
 };

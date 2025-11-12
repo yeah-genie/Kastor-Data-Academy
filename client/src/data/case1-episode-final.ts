@@ -49,9 +49,10 @@ export interface Message {
 }
 
 export interface DataVisualization {
-  type: "chart" | "table" | "log";
+  type: string;
   title: string;
   data: any;
+  [key: string]: unknown;
 }
 
 export interface Hint {
@@ -77,12 +78,20 @@ export interface StoryNode {
       nextNode: string;
       feedback: string;
       pointsAwarded?: number;
+      clueAwarded?: string;
     }[];
   };
   autoAdvance?: {
     nextNode: string;
     delay: number;
   };
+  dataVisualizations?: DataVisualization[];
+  evidencePresentation?: Record<string, unknown>;
+  showCharacterCards?: boolean;
+  showNotebook?: boolean;
+  showEvidencePresentation?: boolean;
+  isQuestion?: boolean;
+  [key: string]: unknown;
 }
 
 // Character names updated:
