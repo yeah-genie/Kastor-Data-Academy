@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { Paperclip, Send, Lock, Clock } from "lucide-react";
+import { ChoiceButton, type EnhancedChoice } from "./ChoiceButton";
 
 type MessageKind = "text" | "evidence" | "system";
 
@@ -319,6 +320,34 @@ const TypingDots = styled.div`
   }
 `;
 
+const ChoiceSection = styled(motion.div)`
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.5rem 0;
+`;
+
+const ChoiceLead = styled.span`
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.lightGray};
+  opacity: 0.8;
+`;
+
+const ChoiceGrid = styled.div`
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+`;
+
+const FeedbackBanner = styled.div`
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.lightGray};
+  opacity: 0.8;
+`;
+
 const InputBar = styled.form`
   padding: 1rem 1.5rem;
   background: rgba(0, 0, 0, 0.35);
@@ -410,6 +439,113 @@ const evidenceIconMap: Record<EvidenceAttachment["type"], string> = {
   video: "📹",
 };
 
+const formatTimestamp = () =>
+  new Date().toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+interface ChoiceResponsePayload {
+  author?: Author;
+  name?: string;
+  avatar?: string;
+  content: string;
+  kind?: MessageKind;
+}
+
+interface ScriptedChoice extends EnhancedChoice {
+  response?: ChoiceResponsePayload;
+  followUpChoices?: ScriptedChoice[];
+  unlocksEvidence?: string;
+}
+
+const scriptedChoices: ScriptedChoice[] = [
+  {
+    id: "choice-check-logs",
+    text: "시스템 로그부터 확인하자",
+    icon: "🗂️",
+    variant: "standard",
+    response: {
+      author: "kastor",
+      content: "좋아요! 로그 뷰어를 열어둘게요. 수상한 접근이 보이면 바로 알려줄게요.",
+    },
+    unlocksEvidence: "ev-001",
+    followUpChoices: [
+      {
+        id: "choice-deep-scan",
+        text: "심층 스캔을 실행한다",
+        icon: "🛰️",
+        variant: "consequence",
+        consequence: {
+          relationshipChange: {
+            maya: 1,
+          },
+        },
+        response: {
+          author: "maya",
+          name: "Maya Zhang",
+          avatar: "🛰️",
+          content: "좋은 판단이에요! 의심스러운 IP 범위를 바로 공유할게요.",
+        },
+      },
+      {
+        id: "choice-present-evidence",
+        text: "로그 증거를 제시한다",
+        icon: "📑",
+        variant: "requires-evidence",
+        requiredEvidence: ["ev-001"],
+        response: {
+          author: "marcus",
+          name: "Marcus Chen",
+          avatar: "🖥️",
+          content: "증거를 반영해서 방화벽 규칙을 업데이트할게요.",
+        },
+      },
+    ],
+  },
+  {
+    id: "choice-brief-team",
+    text: "팀에게 브리핑을 요청한다",
+    icon: "👥",
+    variant: "consequence",
+    consequence: {
+      relationshipChange: {
+        marcus: 1,
+      },
+    },
+    response: {
+      author: "marcus",
+      name: "Marcus Chen",
+      avatar: "🖥️",
+      content: "알겠습니다. 네트워크 포렌식 데이터를 정리해서 공유하겠습니다.",
+    },
+  },
+  {
+    id: "choice-hold",
+    text: "조금만 더 관찰한다",
+    icon: "⏳",
+    variant: "timed",
+    timerSeconds: 12,
+    response: {
+      author: "kastor",
+      content: "좋아요, 10초 동안 새로운 이상 징후를 모니터링할게요.",
+    },
+  },
+  {
+    id: "choice-evidence-locked",
+    text: "서버 액세스 로그를 제시한다",
+    icon: "🔒",
+    variant: "requires-evidence",
+    requiredEvidence: ["ev-001"],
+    response: {
+      author: "camille",
+      name: "Camille Beaumont",
+      avatar: "🛡️",
+      content: "로그를 기반으로 경보 레벨을 높였어요. 나머지 증거도 계속 확보해봐요!",
+    },
+  },
+];
+
 const initialMessages: ChatMessage[] = [
   {
     id: "sys-1",
@@ -481,6 +617,17 @@ export function ChatView() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isAwaitingKastor, setIsAwaitingKastor] = useState(false);
+  const [collectedEvidenceIds, setCollectedEvidenceIds] = useState<string[]>([]);
+  const [relationshipScores, setRelationshipScores] = useState<Record<string, number>>({
+    maya: 3,
+    marcus: 3,
+    camille: 2,
+    kastor: 5,
+  });
+  const [activeChoices, setActiveChoices] = useState<ScriptedChoice[]>([]);
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
+  const [expiredChoiceIds, setExpiredChoiceIds] = useState<string[]>([]);
+  const [choiceFeedback, setChoiceFeedback] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -493,16 +640,27 @@ export function ChatView() {
     });
   }, [messages]);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setActiveChoices(scriptedChoices), 600);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!choiceFeedback) return;
+    const timer = window.setTimeout(() => setChoiceFeedback(null), 3200);
+    return () => window.clearTimeout(timer);
+  }, [choiceFeedback]);
+
+  useEffect(() => {
+    setExpiredChoiceIds([]);
+  }, [activeChoices]);
+
   const isSendDisabled = isAwaitingKastor || input.trim().length === 0;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSendDisabled) return;
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const timestamp = formatTimestamp();
 
     const playerMessage: ChatMessage = {
       id: `player-${Date.now()}`,
@@ -527,13 +685,132 @@ export function ChatView() {
           author: "kastor",
           name: "Kastor",
           avatar: "🦊",
-          timestamp,
+          timestamp: formatTimestamp(),
           content:
             "좋은 관찰이에요! 데이터를 필터링해서 02:00-04:00 로그만 추려볼까요?",
         },
       ]);
       setIsAwaitingKastor(false);
     }, 1800);
+  };
+
+  const handleChoiceSelect = (rawChoice: EnhancedChoice) => {
+    const choice = rawChoice as ScriptedChoice;
+    if (selectedChoiceId) return;
+
+    const requiresEvidenceMissing =
+      choice.variant === "requires-evidence" &&
+      choice.requiredEvidence?.some((id) => !collectedEvidenceIds.includes(id));
+
+    if (requiresEvidenceMissing) {
+      setChoiceFeedback("🔒 해당 선택지를 사용하려면 관련 증거를 먼저 확보해야 해요.");
+      return;
+    }
+
+    if (expiredChoiceIds.includes(choice.id)) {
+      setChoiceFeedback("⏱️ 시간이 지나 선택할 수 없는 선택지입니다.");
+      return;
+    }
+
+    setChoiceFeedback(null);
+    setSelectedChoiceId(choice.id);
+
+    const timestamp = formatTimestamp();
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `player-choice-${choice.id}`,
+        kind: "text",
+        author: "player",
+        name: "Player",
+        avatar: "🕵️‍♂️",
+        timestamp,
+        content: choice.text,
+      },
+    ]);
+
+    if (choice.consequence?.relationshipChange) {
+      setRelationshipScores((prev) => {
+        const next = { ...prev };
+        Object.entries(choice.consequence!.relationshipChange!).forEach(([characterId, delta]) => {
+          next[characterId] = (next[characterId] ?? 0) + delta;
+        });
+        return next;
+      });
+    }
+
+    const responseDelay = choice.variant === "timed" ? 700 : 850;
+
+    window.setTimeout(() => {
+      setSelectedChoiceId(null);
+      setMessages((prev) => {
+        const nextMessages = [...prev];
+        if (choice.response) {
+          nextMessages.push({
+            id: `choice-response-${choice.id}`,
+            kind: choice.response.kind ?? "text",
+            author: choice.response.author ?? "kastor",
+            name: choice.response.name ?? "Kastor",
+            avatar: choice.response.avatar ?? "🦊",
+            timestamp: formatTimestamp(),
+            content: choice.response.content,
+          });
+        }
+        if (choice.unlocksEvidence) {
+          nextMessages.push({
+            id: `system-evidence-${choice.id}`,
+            kind: "system",
+            author: "system",
+            name: "System",
+            avatar: "ℹ️",
+            timestamp: formatTimestamp(),
+            content: "새로운 증거가 확보되었습니다.",
+          });
+        }
+        return nextMessages;
+      });
+
+      if (choice.unlocksEvidence) {
+        setCollectedEvidenceIds((prev) =>
+          prev.includes(choice.unlocksEvidence as string)
+            ? prev
+            : [...prev, choice.unlocksEvidence as string],
+        );
+        setChoiceFeedback("✅ 새로운 증거를 확보했습니다.");
+      }
+
+      setActiveChoices(choice.followUpChoices ?? []);
+      setExpiredChoiceIds([]);
+    }, responseDelay);
+  };
+
+  const handleChoiceTimeout = (rawChoice: EnhancedChoice) => {
+    const choice = rawChoice as ScriptedChoice;
+    if (expiredChoiceIds.includes(choice.id) || selectedChoiceId) return;
+
+    setExpiredChoiceIds((prev) => [...prev, choice.id]);
+    const timestamp = formatTimestamp();
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `timeout-${choice.id}`,
+        kind: "system",
+        author: "system",
+        name: "System",
+        avatar: "⏱️",
+        timestamp,
+        content: `선택지 "${choice.text}" 시간이 만료되었습니다.`,
+      },
+    ]);
+    setChoiceFeedback(`⏱️ "${choice.text}" 선택지가 만료되었습니다.`);
+  };
+
+  const handleEvidenceAccess = (attachment: EvidenceAttachment) => {
+    setCollectedEvidenceIds((prev) => {
+      if (prev.includes(attachment.id)) return prev;
+      setChoiceFeedback(`📁 '${attachment.title}' 증거를 확보했습니다.`);
+      return [...prev, attachment.id];
+    });
   };
 
   const typingIndicator = useMemo(
@@ -617,27 +894,80 @@ export function ChatView() {
                       <BubbleBody>{message.content}</BubbleBody>
                     )}
                     {message.attachments && (
-                      <AttachmentsList>
-                        {message.attachments.map((attachment) => (
-                          <EvidenceCard key={attachment.id} type="button">
-                            <EvidenceIcon>
-                              {evidenceIconMap[attachment.type]}
-                            </EvidenceIcon>
-                            <EvidenceMeta>
-                              <EvidenceTitle>
-                                {attachment.title}
-                              </EvidenceTitle>
-                              <EvidenceType>{attachment.type}</EvidenceType>
-                            </EvidenceMeta>
-                          </EvidenceCard>
-                        ))}
-                      </AttachmentsList>
+                        <AttachmentsList>
+                          {message.attachments.map((attachment) => (
+                            <EvidenceCard
+                              key={attachment.id}
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                handleEvidenceAccess(attachment);
+                              }}
+                            >
+                              <EvidenceIcon>
+                                {evidenceIconMap[attachment.type]}
+                              </EvidenceIcon>
+                              <EvidenceMeta>
+                                <EvidenceTitle>
+                                  {attachment.title}
+                                </EvidenceTitle>
+                                <EvidenceType>{attachment.type}</EvidenceType>
+                              </EvidenceMeta>
+                            </EvidenceCard>
+                          ))}
+                        </AttachmentsList>
                     )}
                   </Bubble>
                 </MessageItem>
               );
             })}
-          </AnimatePresence>
+            </AnimatePresence>
+            <AnimatePresence>
+              {activeChoices.length > 0 && (
+                <ChoiceSection
+                  key="active-choices"
+                  onClick={(event) => event.stopPropagation()}
+                  initial={{ opacity: 0, translateY: 16 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  exit={{ opacity: 0, translateY: -12 }}
+                  layout
+                >
+                  <ChoiceLead>다음 행동을 선택하세요</ChoiceLead>
+                  <ChoiceGrid>
+                    {activeChoices.map((choice) => {
+                      const evidenceMissing =
+                        choice.variant === "requires-evidence" &&
+                        choice.requiredEvidence?.some((id) => !collectedEvidenceIds.includes(id));
+                      const isExpired = expiredChoiceIds.includes(choice.id);
+                      const isSelected = selectedChoiceId === choice.id;
+                      const disabled =
+                        evidenceMissing ||
+                        isExpired ||
+                        (selectedChoiceId !== null && selectedChoiceId !== choice.id);
+                      const disabledReason = evidenceMissing
+                        ? "필요한 증거를 확보해야 해요."
+                        : isExpired
+                        ? "시간이 초과되었어요."
+                        : null;
+                      return (
+                        <ChoiceButton
+                          key={choice.id}
+                          choice={choice}
+                          disabled={disabled || (isSelected && selectedChoiceId !== null)}
+                          disabledReason={disabledReason}
+                          isSelected={isSelected}
+                          isExpired={isExpired}
+                          onSelect={handleChoiceSelect}
+                          onExpire={handleChoiceTimeout}
+                          relationshipMap={relationshipScores}
+                        />
+                      );
+                    })}
+                  </ChoiceGrid>
+                  {choiceFeedback && <FeedbackBanner>{choiceFeedback}</FeedbackBanner>}
+                </ChoiceSection>
+              )}
+            </AnimatePresence>
           {typingIndicator}
         </MessageScrollArea>
 
