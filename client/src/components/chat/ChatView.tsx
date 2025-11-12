@@ -3,6 +3,8 @@ import styled, { css } from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 import { Paperclip, Send, Lock, Clock } from "lucide-react";
 import { ChoiceButton, type EnhancedChoice } from "./ChoiceButton";
+import { EvidenceModal, type EvidenceModalItem } from "../files/EvidenceModal";
+import { useTabContext } from "@/contexts/TabContext";
 
 type MessageKind = "text" | "evidence" | "system";
 
@@ -270,6 +272,13 @@ const EvidenceType = styled.span`
   opacity: 0.65;
 `;
 
+const EvidenceAction = styled.span`
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.primary};
+  letter-spacing: 0.04em;
+`;
+
 const SystemMessage = styled.div`
   padding: 0.75rem 1rem;
   border-radius: 999px;
@@ -439,6 +448,116 @@ const evidenceIconMap: Record<EvidenceAttachment["type"], string> = {
   video: "📹",
 };
 
+const evidenceLibrary: Record<string, EvidenceModalItem> = {
+  "ev-001": {
+    id: "ev-001",
+    title: "03:00 AM Server Access Log",
+    type: "log",
+    tag: "CRITICAL",
+    detail: {
+      kind: "log",
+      summary: "데이터 센터 DMZ 서버에서 새벽 3시에 비정상적인 대용량 전송이 감지되었습니다.",
+      body: [
+        "03:02:12  •  svc_boundary  •  192.168.10.37  →  52.18.74.4  •  18.4MB/s",
+        "03:02:36  •  svc_boundary  •  192.168.10.37  →  52.18.74.4  •  22.1MB/s",
+        "03:02:48  •  svc_boundary  •  192.168.10.37  →  178.34.22.9  •  432MB/s",
+        "03:02:51  •  svc_boundary  •  192.168.10.37  →  178.34.22.9  •  487MB/s",
+        "03:03:02  •  svc_boundary  •  192.168.10.37  →  178.34.22.9  •  512MB/s",
+        "03:03:14  •  svc_boundary  •  192.168.10.37  →  178.34.22.9  •  525MB/s",
+      ],
+      highlights: ["03:02:48  •  svc_boundary  •  192.168.10.37  →  178.34.22.9  •  432MB/s"],
+    },
+    metadata: [
+      { label: "Source", value: "Edge Firewall Sensor" },
+      { label: "Severity", value: "High" },
+    ],
+    relatedCharacters: ["Maya Zhang"],
+  },
+  "ev-002": {
+    id: "ev-002",
+    title: "Incident Briefing Notes",
+    type: "document",
+    detail: {
+      kind: "document",
+      summary: "초기 사고 대응 회의에서 정리된 핵심 상황 브리핑입니다.",
+      body: [
+        "• 03:01 AM: 자동 침입 탐지 시스템이 비정상 전송 알림 발송",
+        "• 03:02 AM: Kastor가 데이터 유출량 1.2TB 추정",
+        "• 미확인 계정 `svc_boundary`가 DMZ 서버에서 대용량 다운로드 수행",
+        "• 다음 조치: 로그 필터링, CCTV 확인, 출입 기록 조사",
+      ],
+    },
+    metadata: [
+      { label: "Prepared By", value: "Marcus Chen" },
+      { label: "Created", value: "03:04 AM" },
+    ],
+    relatedCharacters: ["Marcus Chen", "Camille Beaumont"],
+  },
+  "ev-003": {
+    id: "ev-003",
+    title: "SOC Alert Email",
+    type: "email",
+    detail: {
+      kind: "email",
+      headers: {
+        from: "SOC Automation <soc@legendarena.com>",
+        to: ["incident-response@legendarena.com"],
+        cc: ["kastor@legendarena.com", "camille.beaumont@legendarena.com"],
+        subject: "[URGENT] Data Exfiltration Detected - Ticket #5741",
+        timestamp: "03:03 AM (UTC+9)",
+      },
+      body: [
+        "팀 여러분,",
+        "FW-DMZ-02 센서가 03:02 AM 기준으로 대량 데이터 업로드를 감지했습니다.",
+        "초기 분석에 따르면 전송 대상은 익명화된 해외 VPS로 추정되며, 총 전송량은 약 1.2TB입니다.",
+        "즉시 전송을 차단하고, 관련 로그와 사용자 활동을 확보해 주세요.",
+        "- SOC Automation",
+      ],
+    },
+    relatedCharacters: ["Camille Beaumont"],
+  },
+  "ev-004": {
+    id: "ev-004",
+    title: "Server Room Snapshot",
+    type: "image",
+    detail: {
+      kind: "image",
+      src: "/office-scene.jpg",
+      caption: "03:00 AM 근무 교대 직후 촬영된 서버실 CCTV 스틸 이미지입니다.",
+      metadata: [
+        { label: "Camera", value: "CCTV-SV-03" },
+        { label: "Exposure", value: "1/60s • ISO 400" },
+        { label: "Detected", value: "Human silhouette near rack #5" },
+      ],
+    },
+    metadata: [{ label: "Captured", value: "03:00:42 AM" }],
+  },
+  "ev-005": {
+    id: "ev-005",
+    title: "Outbound Transfer Summary",
+    type: "document",
+    detail: {
+      kind: "data",
+      headers: ["Timestamp", "User", "Destination", "Volume", "Flag"],
+      rows: [
+        ["02:58:16", "svc_boundary", "52.18.74.4", "38 GB", "Baseline"],
+        ["03:02:12", "svc_boundary", "178.34.22.9", "480 GB", "Anomaly"],
+        ["03:02:36", "svc_boundary", "178.34.22.9", "512 GB", "Anomaly"],
+        ["03:03:02", "svc_boundary", "178.34.22.9", "540 GB", "Critical"],
+      ],
+      insights: [
+        "동일 사용자 ID가 120초 내에 세 번 이상 고용량 전송을 시도했습니다.",
+        "Destination `178.34.22.9`는 지난 30일간 접속 이력이 없습니다.",
+      ],
+      footnote: "Kastor HyperLog 분석 기준으로 위험 점수 9.4/10을 기록했습니다.",
+    },
+    metadata: [
+      { label: "Generated", value: "Kastor HyperLog" },
+      { label: "Confidence", value: "92%" },
+    ],
+  },
+};
+
 const formatTimestamp = () =>
   new Date().toLocaleTimeString("ko-KR", {
     hour: "2-digit",
@@ -603,6 +722,37 @@ const initialMessages: ChatMessage[] = [
     ],
   },
   {
+    id: "kastor-3",
+    kind: "evidence",
+    author: "kastor",
+    name: "Kastor",
+    avatar: "🦊",
+    timestamp: "03:04",
+    content: "추가로 브리핑 노트, 이메일, CCTV 캡처, 그리고 요약 데이터를 함께 공유할게요!",
+    attachments: [
+      {
+        id: "ev-002",
+        title: "Incident Briefing Notes",
+        type: "document",
+      },
+      {
+        id: "ev-003",
+        title: "SOC Alert Email",
+        type: "email",
+      },
+      {
+        id: "ev-004",
+        title: "Server Room Snapshot",
+        type: "image",
+      },
+      {
+        id: "ev-005",
+        title: "Outbound Transfer Summary",
+        type: "document",
+      },
+    ],
+  },
+  {
     id: "system-2",
     kind: "system",
     author: "system",
@@ -614,6 +764,7 @@ const initialMessages: ChatMessage[] = [
 ];
 
 export function ChatView() {
+  const { addNotification } = useTabContext();
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isAwaitingKastor, setIsAwaitingKastor] = useState(false);
@@ -628,6 +779,9 @@ export function ChatView() {
   const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const [expiredChoiceIds, setExpiredChoiceIds] = useState<string[]>([]);
   const [choiceFeedback, setChoiceFeedback] = useState<string | null>(null);
+  const [isEvidenceModalOpen, setIsEvidenceModalOpen] = useState(false);
+  const [modalEvidenceIds, setModalEvidenceIds] = useState<string[]>([]);
+  const [modalIndex, setModalIndex] = useState(0);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -654,6 +808,44 @@ export function ChatView() {
   useEffect(() => {
     setExpiredChoiceIds([]);
   }, [activeChoices]);
+
+  useEffect(() => {
+    const initialEvidenceIds = initialMessages.flatMap((message) =>
+      message.attachments?.map((attachment) => attachment.id) ?? [],
+    );
+    if (initialEvidenceIds.length === 0) return;
+    setCollectedEvidenceIds((prev) => {
+      const next = [...prev];
+      let hasNew = false;
+      initialEvidenceIds.forEach((id) => {
+        if (!next.includes(id)) {
+          next.push(id);
+          hasNew = true;
+          addNotification("files");
+        }
+      });
+      return hasNew ? next : prev;
+    });
+  }, [addNotification]);
+
+  const modalEvidenceItems = useMemo(
+    () =>
+      modalEvidenceIds
+        .map((id) => evidenceLibrary[id])
+        .filter((item): item is EvidenceModalItem => Boolean(item)),
+    [modalEvidenceIds],
+  );
+
+  useEffect(() => {
+    if (!isEvidenceModalOpen) return;
+    if (modalEvidenceItems.length === 0) {
+      setIsEvidenceModalOpen(false);
+      return;
+    }
+    if (modalIndex >= modalEvidenceItems.length) {
+      setModalIndex(0);
+    }
+  }, [isEvidenceModalOpen, modalEvidenceItems, modalIndex]);
 
   const isSendDisabled = isAwaitingKastor || input.trim().length === 0;
 
@@ -692,6 +884,41 @@ export function ChatView() {
       ]);
       setIsAwaitingKastor(false);
     }, 1800);
+  };
+
+  const handleAddEvidence = (id: string, announcement?: string) => {
+    setCollectedEvidenceIds((prev) => {
+      if (prev.includes(id)) return prev;
+      if (announcement) {
+        setChoiceFeedback(announcement);
+      }
+      addNotification("files");
+      return [...prev, id];
+    });
+  };
+
+  const handleEvidenceCardClick = (attachments: EvidenceAttachment[], attachmentIndex: number) => {
+    const target = attachments[attachmentIndex];
+    if (!target) return;
+    handleAddEvidence(target.id, `📁 '${target.title}' 증거를 확보했습니다.`);
+    const ids = attachments
+      .map((item) => item.id)
+      .filter((id, index, array) => array.indexOf(id) === index && Boolean(evidenceLibrary[id]));
+    if (ids.length === 0) {
+      setChoiceFeedback("🗂️ 아직 상세 정보를 열 수 없는 증거입니다.");
+      return;
+    }
+    const initialIndex = Math.max(0, ids.indexOf(target.id));
+    setModalEvidenceIds(ids);
+    setModalIndex(initialIndex);
+    setIsEvidenceModalOpen(true);
+  };
+
+  const handleModalNavigate = (nextIndex: number) => {
+    const total = modalEvidenceItems.length;
+    if (total === 0) return;
+    const normalized = (nextIndex % total + total) % total;
+    setModalIndex(normalized);
   };
 
   const handleChoiceSelect = (rawChoice: EnhancedChoice) => {
@@ -741,47 +968,42 @@ export function ChatView() {
 
     const responseDelay = choice.variant === "timed" ? 700 : 850;
 
-    window.setTimeout(() => {
-      setSelectedChoiceId(null);
-      setMessages((prev) => {
-        const nextMessages = [...prev];
-        if (choice.response) {
-          nextMessages.push({
-            id: `choice-response-${choice.id}`,
-            kind: choice.response.kind ?? "text",
-            author: choice.response.author ?? "kastor",
-            name: choice.response.name ?? "Kastor",
-            avatar: choice.response.avatar ?? "🦊",
-            timestamp: formatTimestamp(),
-            content: choice.response.content,
-          });
-        }
+      window.setTimeout(() => {
+        setSelectedChoiceId(null);
+        setMessages((prev) => {
+          const nextMessages = [...prev];
+          if (choice.response) {
+            nextMessages.push({
+              id: `choice-response-${choice.id}`,
+              kind: choice.response.kind ?? "text",
+              author: choice.response.author ?? "kastor",
+              name: choice.response.name ?? "Kastor",
+              avatar: choice.response.avatar ?? "🦊",
+              timestamp: formatTimestamp(),
+              content: choice.response.content,
+            });
+          }
+          if (choice.unlocksEvidence) {
+            nextMessages.push({
+              id: `system-evidence-${choice.id}`,
+              kind: "system",
+              author: "system",
+              name: "System",
+              avatar: "ℹ️",
+              timestamp: formatTimestamp(),
+              content: "새로운 증거가 확보되었습니다.",
+            });
+          }
+          return nextMessages;
+        });
+
         if (choice.unlocksEvidence) {
-          nextMessages.push({
-            id: `system-evidence-${choice.id}`,
-            kind: "system",
-            author: "system",
-            name: "System",
-            avatar: "ℹ️",
-            timestamp: formatTimestamp(),
-            content: "새로운 증거가 확보되었습니다.",
-          });
+          handleAddEvidence(choice.unlocksEvidence, "✅ 새로운 증거를 확보했습니다.");
         }
-        return nextMessages;
-      });
 
-      if (choice.unlocksEvidence) {
-        setCollectedEvidenceIds((prev) =>
-          prev.includes(choice.unlocksEvidence as string)
-            ? prev
-            : [...prev, choice.unlocksEvidence as string],
-        );
-        setChoiceFeedback("✅ 새로운 증거를 확보했습니다.");
-      }
-
-      setActiveChoices(choice.followUpChoices ?? []);
-      setExpiredChoiceIds([]);
-    }, responseDelay);
+        setActiveChoices(choice.followUpChoices ?? []);
+        setExpiredChoiceIds([]);
+      }, responseDelay);
   };
 
   const handleChoiceTimeout = (rawChoice: EnhancedChoice) => {
@@ -803,14 +1025,6 @@ export function ChatView() {
       },
     ]);
     setChoiceFeedback(`⏱️ "${choice.text}" 선택지가 만료되었습니다.`);
-  };
-
-  const handleEvidenceAccess = (attachment: EvidenceAttachment) => {
-    setCollectedEvidenceIds((prev) => {
-      if (prev.includes(attachment.id)) return prev;
-      setChoiceFeedback(`📁 '${attachment.title}' 증거를 확보했습니다.`);
-      return [...prev, attachment.id];
-    });
   };
 
   const typingIndicator = useMemo(
@@ -839,88 +1053,84 @@ export function ChatView() {
   );
 
   return (
-    <Wrapper>
-      <Header>
-        <div>
-          <Title>Incident Response Channel</Title>
+    <>
+      <Wrapper>
+        <Header>
+          <div>
+            <Title>Incident Response Channel</Title>
+            <Status>
+              <Clock size={16} />
+              03:05 AM • Active Investigation
+            </Status>
+          </div>
           <Status>
-            <Clock size={16} />
-            03:05 AM • Active Investigation
+            <Lock size={16} />
+            Secured by Kastor Shield
           </Status>
-        </div>
-        <Status>
-          <Lock size={16} />
-          Secured by Kastor Shield
-        </Status>
-      </Header>
+        </Header>
 
-      <ChatShell>
-        <MessageScrollArea ref={scrollAreaRef}>
-          <AnimatePresence initial={false}>
-            {messages.map((message) => {
-              if (message.kind === "system") {
+        <ChatShell>
+          <MessageScrollArea ref={scrollAreaRef}>
+            <AnimatePresence initial={false}>
+              {messages.map((message) => {
+                if (message.kind === "system") {
+                  return (
+                    <MessageItem
+                      key={message.id}
+                      $author="system"
+                      variants={messageVariants}
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      layout
+                    >
+                      <SystemMessage>{message.content}</SystemMessage>
+                    </MessageItem>
+                  );
+                }
+
                 return (
                   <MessageItem
                     key={message.id}
-                    $author="system"
+                    $author={message.author}
                     variants={messageVariants}
                     initial="initial"
                     animate="animate"
                     exit="exit"
                     layout
                   >
-                    <SystemMessage>{message.content}</SystemMessage>
-                  </MessageItem>
-                );
-              }
-
-              return (
-                <MessageItem
-                  key={message.id}
-                  $author={message.author}
-                  variants={messageVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  layout
-                >
-                  <Avatar $author={message.author}>{message.avatar}</Avatar>
-                  <Bubble $author={message.author}>
-                    <BubbleHeader $author={message.author}>
-                      <strong>{message.name}</strong>
-                      <span>{message.timestamp}</span>
-                    </BubbleHeader>
-                    {message.content && (
-                      <BubbleBody>{message.content}</BubbleBody>
-                    )}
-                    {message.attachments && (
+                    <Avatar $author={message.author}>{message.avatar}</Avatar>
+                    <Bubble $author={message.author}>
+                      <BubbleHeader $author={message.author}>
+                        <strong>{message.name}</strong>
+                        <span>{message.timestamp}</span>
+                      </BubbleHeader>
+                      {message.content && <BubbleBody>{message.content}</BubbleBody>}
+                      {message.attachments && (
                         <AttachmentsList>
-                          {message.attachments.map((attachment) => (
+                          {message.attachments.map((attachment, index, array) => (
                             <EvidenceCard
                               key={attachment.id}
                               type="button"
                               onClick={(event) => {
                                 event.stopPropagation();
-                                handleEvidenceAccess(attachment);
+                                handleEvidenceCardClick(array, index);
                               }}
                             >
-                              <EvidenceIcon>
-                                {evidenceIconMap[attachment.type]}
-                              </EvidenceIcon>
+                              <EvidenceIcon>{evidenceIconMap[attachment.type]}</EvidenceIcon>
                               <EvidenceMeta>
-                                <EvidenceTitle>
-                                  {attachment.title}
-                                </EvidenceTitle>
+                                <EvidenceTitle>{attachment.title}</EvidenceTitle>
                                 <EvidenceType>{attachment.type}</EvidenceType>
                               </EvidenceMeta>
+                              <EvidenceAction>열람</EvidenceAction>
                             </EvidenceCard>
                           ))}
                         </AttachmentsList>
-                    )}
-                  </Bubble>
-                </MessageItem>
-              );
-            })}
+                      )}
+                    </Bubble>
+                  </MessageItem>
+                );
+              })}
             </AnimatePresence>
             <AnimatePresence>
               {activeChoices.length > 0 && (
@@ -947,8 +1157,8 @@ export function ChatView() {
                       const disabledReason = evidenceMissing
                         ? "필요한 증거를 확보해야 해요."
                         : isExpired
-                        ? "시간이 초과되었어요."
-                        : null;
+                          ? "시간이 초과되었어요."
+                          : null;
                       return (
                         <ChoiceButton
                           key={choice.id}
@@ -968,34 +1178,45 @@ export function ChatView() {
                 </ChoiceSection>
               )}
             </AnimatePresence>
-          {typingIndicator}
-        </MessageScrollArea>
+            {typingIndicator}
+          </MessageScrollArea>
 
-        <InputBar onSubmit={handleSubmit}>
-          <IconButton type="button" aria-label="첨부 파일 추가" disabled>
-            <Paperclip size={20} />
-          </IconButton>
+          <InputBar onSubmit={handleSubmit}>
+            <IconButton type="button" aria-label="첨부 파일 추가" disabled>
+              <Paperclip size={20} />
+            </IconButton>
 
-          <InputField
-            placeholder="메시지를 입력하세요…"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            disabled={isAwaitingKastor}
-          />
+            <InputField
+              placeholder="메시지를 입력하세요…"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              disabled={isAwaitingKastor}
+            />
 
-          <IconButton
-            type="submit"
-            aria-label="메시지 전송"
-            $variant="primary"
-            disabled={isSendDisabled}
-          >
-            <Send size={20} />
-          </IconButton>
-        </InputBar>
-      </ChatShell>
+            <IconButton type="submit" aria-label="메시지 전송" $variant="primary" disabled={isSendDisabled}>
+              <Send size={20} />
+            </IconButton>
+          </InputBar>
+        </ChatShell>
 
-      <FooterHint>Ctrl + Enter로 빠르게 전송 • 증거 첨부는 곧 지원됩니다</FooterHint>
-    </Wrapper>
+        <FooterHint>Ctrl + Enter로 빠르게 전송 • 증거 카드를 클릭하면 상세 뷰를 열 수 있어요</FooterHint>
+      </Wrapper>
+      <EvidenceModal
+        isOpen={isEvidenceModalOpen && modalEvidenceItems.length > 0}
+        evidenceItems={modalEvidenceItems}
+        activeIndex={
+          modalEvidenceItems.length === 0
+            ? 0
+            : Math.min(modalIndex, Math.max(modalEvidenceItems.length - 1, 0))
+        }
+        onClose={() => {
+          setIsEvidenceModalOpen(false);
+          setModalEvidenceIds([]);
+          setModalIndex(0);
+        }}
+        onNavigate={handleModalNavigate}
+      />
+    </>
   );
 }
 
