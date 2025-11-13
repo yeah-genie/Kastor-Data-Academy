@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'providers/game_state_provider.dart';
+import 'screens/dashboard/dashboard_screen.dart';
 
 void main() {
   runApp(
@@ -97,7 +98,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   icon: Icons.play_arrow,
                   onPressed: () {
                     ref.read(gameStateProvider.notifier).resetGame();
-                    _showSnackBar(context, '새 게임을 시작합니다');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 16),
@@ -106,7 +111,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   icon: Icons.trending_up,
                   onPressed: gameState.currentEpisode != null
                       ? () {
-                          _showSnackBar(context, '게임을 계속합니다');
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const DashboardScreen(),
+                            ),
+                          );
                         }
                       : null,
                 ),
@@ -115,7 +124,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   text: 'Episodes',
                   icon: Icons.list,
                   onPressed: () {
-                    _showSnackBar(context, '에피소드 선택');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 16),
