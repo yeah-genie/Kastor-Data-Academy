@@ -240,7 +240,7 @@ class TeamTab extends ConsumerWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _getStatusColor(character.status)
-                          .withOpacity(0.2),
+                          .withValues(0.2),
                       border: Border.all(
                         color: _getStatusColor(character.status),
                         width: 3,
