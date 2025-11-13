@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { FastForward, SkipForward, History } from "lucide-react";
 
 interface DialogueChoice {
@@ -30,19 +31,24 @@ export default function CinematicDialogue({
   onHistory,
   onSkip
 }: CinematicDialogueProps) {
+  const [isTextComplete, setIsTextComplete] = useState(false);
+
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#1a1a2e]">
+      {/* Background image */}
       {backgroundImage && (
         <div className="absolute inset-0 z-0">
           <div
             className="h-full w-full bg-cover bg-center bg-no-repeat opacity-30"
             style={{ backgroundImage: `url(${backgroundImage})` }}
           />
+          {/* Gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-[#1a1a2e]/90 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a2e]/50 to-transparent" />
         </div>
       )}
 
+      {/* Control buttons (top right) */}
       {showControls && (
         <div className="relative z-20 flex justify-end gap-2 px-4 py-3">
           {onHistory && (
@@ -75,8 +81,10 @@ export default function CinematicDialogue({
         </div>
       )}
 
+      {/* Main content area */}
       <div className="relative z-10 flex h-full w-full flex-1 items-end">
         <div className="flex h-full w-full items-end gap-4 p-4">
+          {/* Character portrait (left side) */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -89,11 +97,14 @@ export default function CinematicDialogue({
                 alt={speakerName}
                 className="h-full w-full object-cover"
               />
+              {/* Glow effect */}
               <div className="absolute inset-0 border-2 border-[#00d9ff]/30 shadow-[0_0_20px_rgba(0,217,255,0.3)]" />
             </div>
           </motion.div>
 
+          {/* Dialogue box and choices */}
           <div className="flex flex-1 flex-col justify-end gap-3 pb-4">
+            {/* Choices (if available) */}
             {choices && choices.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -120,6 +131,7 @@ export default function CinematicDialogue({
               </motion.div>
             )}
 
+            {/* Dialogue box */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -129,6 +141,7 @@ export default function CinematicDialogue({
                 onAdvance ? "cursor-pointer" : ""
               }`}
             >
+              {/* Speaker name */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -141,6 +154,7 @@ export default function CinematicDialogue({
                 </span>
               </motion.div>
 
+              {/* Dialogue text */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -150,6 +164,7 @@ export default function CinematicDialogue({
                 {dialogueText}
               </motion.p>
 
+              {/* Continue indicator */}
               {onAdvance && (
                 <motion.div
                   animate={{ opacity: [0.3, 1, 0.3] }}
@@ -182,6 +197,7 @@ export default function CinematicDialogue({
         </div>
       </div>
 
+      {/* Mobile character portrait (bottom overlay) */}
       <div className="pointer-events-none absolute bottom-0 left-4 h-[200px] w-[150px] md:hidden">
         <motion.div
           initial={{ opacity: 0, y: 50 }}

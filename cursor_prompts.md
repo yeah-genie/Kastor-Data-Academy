@@ -1,28 +1,5 @@
-<<<<<<< Current (Your changes)
-=======
 # Cursor AI Development Prompts
 ## Kastor Data Academy - Investigation Dashboard
-
----
-
-## 📚 목차
-- [🎯 프로젝트 개요](#-프로젝트-개요-먼저-이걸-cursor에게-설명)
-- [📋 Phase 1: 프로젝트 초기 설정](#-phase-1-프로젝트-초기-설정)
-- [📋 Phase 2: 기본 레이아웃 구현](#-phase-2-기본-레이아웃-구현)
-- [📋 Phase 3: Chat View 구현](#-phase-3-chat-view-구현)
-- [📋 Phase 4: Data View 구현](#-phase-4-data-view-구현)
-- [📋 Phase 5: Files View 구현](#-phase-5-files-view-구현)
-- [📋 Phase 6: Team View 구현](#-phase-6-team-view-구현)
-- [📋 Phase 7: 게임 로직 & 상태 관리](#-phase-7-게임-로직--상태-관리)
-- [📋 Phase 8: 에피소드 4 데이터 구조](#-phase-8-에피소드-4-데이터-구조)
-- [📋 Phase 9: 애니메이션 & 폴리쉬](#-phase-9-애니메이션--폴리쉬)
-- [📋 Phase 10: 반응형 & 접근성](#-phase-10-반응형--접근성)
-- [📋 Phase 11: 테스트 & 디버깅](#-phase-11-테스트--디버깅)
-- [📋 Phase 12: 빌드 & 배포](#-phase-12-빌드--배포)
-- [🎯 최종 체크리스트](#-최종-체크리스트)
-- [📝 추가 프롬프트 (필요시)](#-추가-프롬프트-필요시)
-- [🚀 사용 방법](#-사용-방법)
-- [📚 참고 자료](#-참고-자료)
 
 ---
 
@@ -46,32 +23,9 @@ The game uses a "Detective Dashboard" interface with multiple views:
 The gameplay is narrative-driven with interactive puzzles and choices.
 ```
 
-> **🌐 Localization Update (2025-11-12)**  
-> - The live UI and recent components have been converted to English.  
-> - Keep future copy changes i18n-ready so that a full Korean build can be produced later.  
-> - When new UI strings are added, record both the English source and the intended Korean translation keys for Phase 10 localisation tasks.
-
 ---
 
 ## 📋 Phase 1: 프로젝트 초기 설정
-
-> **Development Roadmap Overview**
->
-> | Phase | Estimated Time | Depends On |
-> |-------|----------------|------------|
-> | Phase 1 | 0.5~1일 | - |
-> | Phase 2 | 0.5일 | Phase 1 |
-> | Phase 3 | 0.5~1일 | Phase 1, Phase 2 |
-> | Phase 4 | 1일 | Phase 2 |
-> | Phase 5 | 1일 | Phase 2, Phase 3 |
-> | Phase 6 | 1일 | Phase 3, Phase 5 |
-> | Phase 7 | 1~1.5일 | Phase 3~6 |
-> | Phase 8 | 0.5일 | Phase 7 |
-> | Phase 9 | 0.5일 | Phase 2~8 |
-> | Phase 10 | 0.5일 | Phase 2~9 |
-> | Phase 11 | 0.5일 | Phase 1~10 |
-> | Phase 12 | 0.5일 | Phase 1~11 |
-
 
 ### Prompt 1-1: 프로젝트 생성
 
@@ -168,7 +122,6 @@ interface Evidence {
   relatedTo: string[]; // character IDs
   importance: 'low' | 'medium' | 'high' | 'critical';
   isNew: boolean;
-  unlockedBy?: string;
 }
 
 3. Message Type:
@@ -177,7 +130,7 @@ interface Message {
   sender: string; // character ID or 'player'
   content: string;
   timestamp: string;
-  type: 'text' | 'evidence' | 'system' | 'choice' | 'alert';
+  type: 'text' | 'evidence' | 'system' | 'choice';
   attachments?: Evidence[];
   choices?: Choice[];
 }
@@ -197,9 +150,8 @@ interface Choice {
 5. Scene Type:
 interface Scene {
   id: string;
-  type: 'chat' | 'data' | 'files' | 'team' | 'interactive' | 'cinematic';
+  type: 'chat' | 'data' | 'files' | 'team' | 'interactive';
   title: string;
-  autoPlay?: boolean;
   messages?: Message[];
   dataContent?: any;
   interactiveContent?: any;
@@ -210,15 +162,7 @@ interface Scene {
   };
 }
 
-6. Achievement Type:
-interface Achievement {
-  id: string;
-  title: string;
-  description: string;
-  points: number;
-}
-
-7. Episode Type:
+6. Episode Type:
 interface Episode {
   id: string;
   number: number;
@@ -226,15 +170,13 @@ interface Episode {
   description: string;
   difficulty: 1 | 2 | 3 | 4 | 5;
   estimatedTime: string;
-  thumbnail?: string;
   scenes: Scene[];
   characters: string[]; // character IDs
   evidence: Evidence[];
-  learningObjectives?: string[];
-  achievements?: Achievement[];
+  learningObjectives: string[];
 }
 
-8. GameState Type:
+7. GameState Type:
 interface GameState {
   currentEpisode: string;
   currentScene: string;
@@ -247,72 +189,6 @@ interface GameState {
 }
 
 Export all types and create helper functions for type guards.
-```
-
-### Prompt 1-3: 국제화(i18n) 기본 설정
-
-```
-Set up localisation support so every UI string can be translated between English and Korean.
-
-REQUIREMENTS:
-
-1. INSTALL DEPENDENCIES
-   npm install react-i18next i18next i18next-browser-languagedetector date-fns
-
-2. PROJECT STRUCTURE (src/i18n/)
-   src/i18n/
-   ├── config.ts
-   └── locales/
-       ├── en/translation.json
-       └── ko/translation.json
-
-3. CONFIGURATION (src/i18n/config.ts)
-   import i18n from 'i18next';
-   import { initReactI18next } from 'react-i18next';
-   import LanguageDetector from 'i18next-browser-languagedetector';
-   import enTranslation from '@/i18n/locales/en/translation.json';
-   import koTranslation from '@/i18n/locales/ko/translation.json';
-
-   i18n
-     .use(LanguageDetector)
-     .use(initReactI18next)
-     .init({
-       resources: {
-         en: { translation: enTranslation },
-         ko: { translation: koTranslation },
-       },
-       fallbackLng: 'en',
-       interpolation: { escapeValue: false },
-       detection: {
-         order: ['localStorage', 'navigator'],
-         caches: ['localStorage'],
-       },
-     });
-
-   export default i18n;
-
-4. TRANSLATION KEY GUIDELINES
-   - Use nested keys: common.button.submit, chat.message.sent, evidence.type.document
-   - Add comment for intended Korean phrasing when introducing a new English string
-   - Store date/time formats via date-fns with locale switching
-
-5. LANGUAGE SWITCHER
-   - Add a <LanguageSwitcher /> component to the Settings modal
-   - Options: English (en), 한국어 (ko)
-   - Persist selected language to localStorage
-
-6. COMPONENT USAGE
-   import { useTranslation } from 'react-i18next';
-
-   const Example = () => {
-     const { t } = useTranslation();
-     return <span>{t('chat.message.typing', { name: 'Kastor' })}</span>;
-   };
-
-7. RULES
-   - Never hardcode user-facing strings in JSX
-   - Wrap new components with <Suspense> for lazy translation loading
-   - Localise dates with date-fns: format(date, 'PPP', { locale })
 ```
 
 ---
@@ -591,7 +467,7 @@ REQUIREMENTS:
    - Condensed view (hide less important columns)
    - Tap row to see full details in modal
 
-Use `@tanstack/react-table` (v8) for table functionality (sorting, pagination, column helpers).
+Use react-table or similar library for table functionality.
 Style like a professional data analysis tool.
 Add loading states and empty states.
 ```
@@ -759,7 +635,7 @@ REQUIREMENTS:
    - Notes saved to game state
 
 Create specialized viewer components for each type.
-Use `Prism.js` with light/dark themes for syntax highlighting (JSON, log files, code snippets).
+Use code syntax highlighter (e.g., Prism.js or Highlight.js).
 Make viewers feel like professional investigation tools.
 ```
 
@@ -834,7 +710,7 @@ REQUIREMENTS:
    - Back button to return to list
 
 Style like a professional investigation board.
-Use `react-force-graph-2d` for relationship visualisation (force-directed + radial layouts).
+Use graph library (e.g., react-force-graph) for relationships.
 Make it feel like a detective's case file.
 ```
 
@@ -896,7 +772,7 @@ REQUIREMENTS:
    - Touch gestures for zoom/pan
    - Tap node to select
 
-Use `react-force-graph-2d` and enable layout toggles (force, radial, hierarchical).
+Use react-force-graph-2d or similar library.
 Make it visually striking but not overwhelming.
 Animate transitions between layouts.
 ```
@@ -1140,9 +1016,9 @@ STRUCTURE:
           "text": "Let's check the system logs first",
           "nextScene": "ep4-log-analysis",
           "consequence": {
-              "relationshipChange": {
-                "camille": 1
-              }
+            "relationshipChange": {
+              "camille": +1
+            }
           }
         }
       ]
@@ -1303,38 +1179,6 @@ Keep sounds subtle and non-intrusive.
 Make it optional (can be muted).
 ```
 
-### Prompt 9-3: 다크 모드 & 테마 토글
-
-```
-Implement dark/light theme support aligned with system preferences.
-
-REQUIREMENTS:
-
-1. THEME STRUCTURE
-   - Extend src/styles/theme.ts to export lightTheme and darkTheme palettes
-   - Colours: primary/secondary consistent, background/foreground swapped
-   - Typography remains shared
-
-2. THEME PROVIDER
-   - Add ThemeContext with useTheme hook (toggleTheme, currentTheme)
-   - Respect prefers-color-scheme on initial load
-   - Persist selection in localStorage (key: kastor-theme)
-
-3. UI TOGGLE
-   - Place toggle in Settings modal + top bar quick menu
-   - Icons: Sun (light), Moon (dark)
-   - Provide accessible label (aria-pressed)
-
-4. COMPONENT UPDATES
-   - Replace hard-coded colours with theme tokens
-   - Ensure charts, code blocks, and map overlays detect theme changes
-
-5. TESTING
-   - Snapshot key screens in both themes
-   - Verify contrast ratios remain >= 4.5:1
-   - Confirm animations respect prefers-reduced-motion across both themes
-```
-
 ---
 
 ## 📋 Phase 10: 반응형 & 접근성
@@ -1423,23 +1267,18 @@ REQUIREMENTS:
    - 3:1 for large text
    - Don't rely solely on color
    - Test with color blindness simulator
- 
- 5. REDUCED MOTION:
-    - Respect prefers-reduced-motion
-    - Disable animations if preferred
-    - Keep essential animations only
- 
- 6. TEXT SCALING:
-    - Support browser zoom up to 200%
-    - Use rem/em instead of px for font sizes
-    - Ensure layout doesn't break
- 
- 7. LOCALE FORMATTING:
-    - Format dates/times with date-fns using the active language locale
-    - Centralize helpers in utils/format.ts (formatDate, formatDuration, relativeTime)
-    - Provide screen-reader friendly aria-labels for timestamps
 
-8. ERROR HANDLING:
+5. REDUCED MOTION:
+   - Respect prefers-reduced-motion
+   - Disable animations if preferred
+   - Keep essential animations only
+
+6. TEXT SCALING:
+   - Support browser zoom up to 200%
+   - Use rem/em instead of px for font sizes
+   - Ensure layout doesn't break
+
+7. ERROR HANDLING:
    - Clear error messages
    - Associate errors with form fields
    - Announce errors to screen readers
@@ -1495,44 +1334,6 @@ REQUIREMENTS:
 
 Create DevToolsPanel component (only in dev mode).
 Add keyboard shortcuts for quick testing.
-```
-
-### Prompt 11-2: 자동화 테스트 설정
-
-```
-Stand up automated testing so regressions are caught before release.
-
-REQUIREMENTS:
-
-1. UNIT & COMPONENT TESTS (Vitest + React Testing Library)
-   - Install: npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom
-   - Configure Vitest (vitest.config.ts) with jsdom environment
-   - Create __tests__/ components tests for:
-     * ChatView (message rendering, choice selection handlers)
-     * DataView (filter callbacks, empty/loading states)
-     * FilesView (folder navigation, preview panel)
-   - Use testing-library to mock Zustand store selectors
-
-2. INTEGRATION TESTS (Playwright)
-   - Install: npm install -D @playwright/test
-   - Add playwright.config.ts with fixtures for baseURL=http://localhost:5173
-   - Write specs:
-     * dashboard.e2e.spec.ts (chat to data tab flow)
-     * analytics.e2e.spec.ts (trigger events, verify localStorage analytics payload)
-     * files.e2e.spec.ts (evidence modal + annotation)
-   - Run in CI: npx playwright install --with-deps
-
-3. COVERAGE
-   - Enable Vitest coverage (c8) with threshold: statements 80%, branches 70%
-   - Generate Playwright HTML report on failure
-
-4. SCRIPTS (package.json)
-   "test": "vitest run",
-   "test:watch": "vitest",
-   "test:e2e": "playwright test"
-
-5. CI HOOK
-   - Ensure npm run test && npm run test:e2e executed in GitHub Actions pipeline (see Phase 12-3)
 ```
 
 ---
@@ -1618,56 +1419,6 @@ DEPLOYMENT OPTIONS:
 Create deployment guide in README.md.
 Include environment variable setup.
 Document custom domain configuration.
-```
-
-### Prompt 12-3: CI/CD & 환경 구성
-
-```
-Automate builds/tests and document environment variables.
-
-REQUIREMENTS:
-
-1. GITHUB ACTIONS WORKFLOW ( .github/workflows/ci.yml )
-   name: CI
-   on:
-     pull_request:
-     push:
-       branches: [main]
-   jobs:
-     build-test:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - uses: actions/setup-node@v4
-           with:
-             node-version: 20
-         - name: Install dependencies
-           run: npm ci
-         - name: Run unit tests
-           run: npm run test
-         - name: Run e2e tests
-           run: npm run test:e2e
-         - name: Build
-           run: npm run build
-
-2. ENVIRONMENT FILES
-   - Create `.env.example` at project root
-   - Include:
-     VITE_API_BASE_URL=https://api.example.com
-     VITE_TTS_ENABLED=true
-     TTS_SERVICE_ACCOUNT_JSON=./credentials/google-tts.json
-     SESSION_SECRET=replace-me
-     DATABASE_URL=postgres://user:password@host:5432/db
-   - Document sensitive values in DEPLOYMENT_GUIDE.md (do not commit real secrets)
-
-3. DEPLOYMENT HOOKS
-   - Configure Vercel/Netlify to run npm run build on deploy
-   - Add status badge to README after pipeline succeeds
-
-4. RELEASE CHECKLIST
-   - Update version (package.json) prior to tag
-   - Publish changelog entry
-   - Verify CI pipeline green before merging PR
 ```
 
 ---
@@ -1766,72 +1517,6 @@ Make him endearing, not annoying.
 Balance humor with helpfulness.
 ```
 
-### 추가 캐릭터 성격 가이드
-
-```
-Provide personality cues and dialogue samples for the key Episode 4 characters.
-
-1. Marcus Chen (CTO)
-   TRAITS:
-     - Cold, hyper-logical, rarely emotional
-     - Prefers data over speculation, skeptical of hunches
-     - Protective of team ownership, stresses accountability
-   DIALOGUE EXAMPLES:
-     - "Let's stay grounded in verifiable facts."
-     - "If we can't reproduce the breach path, we don't understand it."
-     - "Own your subsystem. We fall together otherwise."
-
-2. Maya Zhang (Security Analyst)
-   TRAITS:
-     - Intuitive, competitive, adrenaline-driven
-     - Sleep-deprived but razor sharp, obsessed with logs
-     - Pushes others; expects 24/7 vigilance
-   DIALOGUE EXAMPLES:
-     - "I KNEW that midnight alert wasn't noise!"
-     - "Don't blink now; anomalies love complacency."
-     - "Back me up or get out of my queue."
-
-3. Camille Beaumont (Security Chief)
-   TRAITS:
-     - Commanding, diplomatic, reads the room
-     - Balances PR, legal, and tech risks simultaneously
-     - Protects the team but demands transparency
-   DIALOGUE EXAMPLES:
-     - "We operate under scrutiny. Document everything."
-     - "I need mitigation options, not panic."
-     - "Kastor, translate this into an exec-safe brief."
-
-4. Isabella Torres (Data Engineer)
-   TRAITS:
-     - Brilliant but burnt out, hides anxiety with sarcasm
-     - Feels misunderstood; may be scapegoated
-     - Deep systems knowledge, clues buried in her scripts
-   DIALOGUE EXAMPLES:
-     - "You really think I'd siphon terabytes for fun?"
-     - "Check the retention policy—someone amended my cron."
-     - "I'm covering for a larger mess. Trust me or don't."
-
-5. Alex Reeves (Network Operations)
-   TRAITS:
-     - Pragmatic, hands-on problem solver
-     - Loyal to Camille, cautious about leaks
-     - Loves automation; speaks in runbooks
-   DIALOGUE EXAMPLES:
-     - "If it isn't monitored, it isn't production-ready."
-     - "I'll spin up a packet capture—give me five."
-     - "Someone piggybacked on my maintenance window. Again."
-
-6. Olivia Brennan (Incident Response Lead)
-   TRAITS:
-     - Veteran responder, calm under fire
-     - Mentors junior staff, holds the timeline
-     - Evidence-first mindset, meticulous note taker
-   DIALOGUE EXAMPLES:
-     - "Timestamp everything. We'll reconstruct minute by minute."
-     - "We interview when emotions cool, not in the blast radius."
-     - "No theories until we tag every log anomaly."
-```
-
 ---
 
 ## 🚀 사용 방법
@@ -1876,6 +1561,3 @@ Provide personality cues and dialogue samples for the key Episode 4 characters.
 - Behance: Search "investigation interface"
 
 ---
-
-**이 프롬프트로 Cursor와 함께 단계적으로 개발하면 됩니다! 🎮**
->>>>>>> Incoming (Background Agent changes)

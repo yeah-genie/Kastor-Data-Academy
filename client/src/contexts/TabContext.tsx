@@ -127,7 +127,6 @@ export const TabProvider = ({
         Digit2: orderedTabsRef.current[1],
         Digit3: orderedTabsRef.current[2],
         Digit4: orderedTabsRef.current[3],
-        Digit5: orderedTabsRef.current[4],
       };
 
       const mappedTab = keyMap[event.code];

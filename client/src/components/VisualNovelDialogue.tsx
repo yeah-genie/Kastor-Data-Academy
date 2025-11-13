@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { History, Settings, FastForward } from "lucide-react";
 
@@ -10,7 +10,7 @@ interface Character {
   portrait: string;
   position: PortraitPosition;
   expression?: Expression;
-  isActive?: boolean;
+  isActive?: boolean; // Speaking or not
 }
 
 interface Choice {
@@ -30,7 +30,7 @@ interface VisualNovelDialogueProps {
   onHistory?: () => void;
   onSettings?: () => void;
   autoAdvance?: boolean;
-  textSpeed?: number;
+  textSpeed?: number; // 1-3 (slow-fast)
   showSkip?: boolean;
 }
 
@@ -51,6 +51,7 @@ export default function VisualNovelDialogue({
   const [isTextComplete, setIsTextComplete] = useState(false);
   const [skipText, setSkipText] = useState(false);
 
+  // Typewriter effect
   useEffect(() => {
     if (skipText) {
       setDisplayedText(dialogueText);
@@ -62,7 +63,7 @@ export default function VisualNovelDialogue({
     setIsTextComplete(false);
 
     let currentIndex = 0;
-    const speed = [50, 30, 15][Math.min(Math.max(textSpeed, 1), 3) - 1];
+    const speed = [50, 30, 15][textSpeed - 1]; // Convert speed 1-3 to ms
 
     const interval = setInterval(() => {
       if (currentIndex < dialogueText.length) {
@@ -77,6 +78,7 @@ export default function VisualNovelDialogue({
     return () => clearInterval(interval);
   }, [dialogueText, textSpeed, skipText]);
 
+  // Auto-advance
   useEffect(() => {
     if (autoAdvance && isTextComplete && onAdvance && !choices) {
       const timer = setTimeout(onAdvance, 2000);
@@ -103,14 +105,11 @@ export default function VisualNovelDialogue({
     }
   };
 
-  const backgroundStyle =
-    background.startsWith("linear") || background.startsWith("radial")
-      ? { backgroundImage: background }
-      : { backgroundImage: `url(${background})` };
-
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-black">
+      {/* TOP 50%: Character portraits + background */}
       <div className="relative h-1/2 w-full overflow-hidden">
+        {/* Background */}
         <motion.div
           key={background}
           initial={{ opacity: 0 }}
@@ -122,14 +121,15 @@ export default function VisualNovelDialogue({
           <div
             className="h-full w-full bg-cover bg-center"
             style={{
-              ...backgroundStyle,
+              backgroundImage: `url(${background})`,
               filter: "brightness(0.7)"
             }}
           />
         </motion.div>
 
+        {/* Character portraits */}
         <div className="absolute inset-0">
-          {characters.map((character) => (
+          {characters.map((character, index) => (
             <motion.div
               key={`${character.name}-${character.position}`}
               initial={{ opacity: 0, y: 50 }}
@@ -137,7 +137,9 @@ export default function VisualNovelDialogue({
                 opacity: character.isActive ? 1 : 0.5,
                 y: 0,
                 scale: character.isActive ? 1 : 0.95,
-                filter: character.isActive ? "brightness(1)" : "brightness(0.7)"
+                filter: character.isActive
+                  ? "brightness(1)"
+                  : "brightness(0.7)"
               }}
               transition={{ duration: 0.3 }}
               className={`absolute bottom-0 ${getPortraitPosition(
@@ -154,6 +156,7 @@ export default function VisualNovelDialogue({
           ))}
         </div>
 
+        {/* Top UI controls */}
         <div className="absolute right-4 top-4 z-10 flex gap-2">
           {onHistory && (
             <motion.button
@@ -188,8 +191,11 @@ export default function VisualNovelDialogue({
         </div>
       </div>
 
+      {/* BOTTOM 50%: Dialogue box */}
       <div className="relative flex h-1/2 w-full items-end bg-gradient-to-t from-black via-black to-transparent p-6">
+        {/* Dialogue container */}
         <div className="w-full space-y-3">
+          {/* Choices (if available) */}
           {choices && choices.length > 0 && isTextComplete && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -231,6 +237,7 @@ export default function VisualNovelDialogue({
             </motion.div>
           )}
 
+          {/* Dialogue box */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -239,6 +246,7 @@ export default function VisualNovelDialogue({
               !choices || !isTextComplete ? "cursor-pointer" : ""
             }`}
           >
+            {/* Name plate */}
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -249,6 +257,7 @@ export default function VisualNovelDialogue({
               </span>
             </motion.div>
 
+            {/* Dialogue text */}
             <div className="min-h-[80px] pt-2">
               <p className="text-lg leading-relaxed text-white">
                 {displayedText}
@@ -268,6 +277,7 @@ export default function VisualNovelDialogue({
               </p>
             </div>
 
+            {/* Continue indicator */}
             {isTextComplete && onAdvance && !choices && (
               <motion.div
                 animate={{ y: [0, 5, 0] }}

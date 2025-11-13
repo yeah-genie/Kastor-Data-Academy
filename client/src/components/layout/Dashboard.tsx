@@ -244,13 +244,13 @@ const ContentViewport = styled(motion.div)`
   }
 `;
 
-const BottomNav = styled.nav<{ $columns: number }>`
+const BottomNav = styled.nav`
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   display: grid;
-  grid-template-columns: ${({ $columns }) => `repeat(${$columns}, 1fr)`};
+  grid-template-columns: repeat(4, 1fr);
   padding: 0.65rem 0.85rem;
   background: rgba(30, 30, 30, 0.95);
   border-top: 1px solid ${({ theme }) => theme.colors.darkGray};
@@ -408,7 +408,7 @@ export const DashboardLayout = ({
           </ContentArea>
         </ContentWrapper>
 
-        <BottomNav $columns={tabs.length}>
+        <BottomNav>
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab;
           const badgeCount = notificationBadges?.[tab.id];

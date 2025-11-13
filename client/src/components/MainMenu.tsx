@@ -18,6 +18,7 @@ export default function MainMenu({
 }: MainMenuProps) {
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#1a1a2e]">
+      {/* Animated gradient background */}
       <motion.div
         className="absolute inset-0"
         animate={{
@@ -31,6 +32,7 @@ export default function MainMenu({
         style={{ backgroundSize: "400% 400%" }}
       />
 
+      {/* Circuit pattern */}
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -38,6 +40,7 @@ export default function MainMenu({
         }}
       />
 
+      {/* Offline indicator (optional) */}
       <div className="absolute right-4 top-4 flex items-center gap-2 rounded-full bg-black/30 px-3 py-1 text-xs text-white/60 backdrop-blur-sm">
         <span className="relative flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
@@ -46,7 +49,9 @@ export default function MainMenu({
         Offline Mode
       </div>
 
+      {/* Main content */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-stretch gap-6 px-6">
+        {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -64,12 +69,14 @@ export default function MainMenu({
           </p>
         </motion.div>
 
+        {/* Menu buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-col gap-3"
         >
+          {/* New Game - Primary button */}
           <motion.button
             onClick={onNewGame}
             whileHover={{ scale: 1.02 }}
@@ -102,6 +109,7 @@ export default function MainMenu({
             </motion.div>
           </motion.button>
 
+          {/* Continue - Secondary button */}
           <motion.button
             onClick={onContinue}
             disabled={!hasSaveData}
@@ -134,6 +142,7 @@ export default function MainMenu({
             </svg>
           </motion.button>
 
+          {/* Episodes */}
           <motion.button
             onClick={onEpisodes}
             whileHover={{ scale: 1.02 }}
@@ -161,6 +170,7 @@ export default function MainMenu({
             </svg>
           </motion.button>
 
+          {/* Settings */}
           <motion.button
             onClick={onSettings}
             whileHover={{ scale: 1.02 }}
@@ -189,6 +199,7 @@ export default function MainMenu({
           </motion.button>
         </motion.div>
 
+        {/* Footer hint */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
@@ -201,6 +212,7 @@ export default function MainMenu({
         </motion.div>
       </div>
 
+      {/* Version */}
       <div className="absolute bottom-4 text-xs text-white/30">v1.0.0 BETA</div>
     </div>
   );

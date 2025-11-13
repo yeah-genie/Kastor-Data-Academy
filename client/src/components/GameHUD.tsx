@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Settings, Lightbulb, FolderOpen, Star } from "lucide-react";
+import { useState } from "react";
 
 interface GameHUDProps {
   episodeTitle: string;
@@ -31,8 +31,11 @@ export default function GameHUD({
 
   return (
     <>
+      {/* Top bar */}
       <div className="fixed left-0 right-0 top-0 z-40 border-b border-white/10 bg-[#1a1a2e]/95 backdrop-blur-sm">
+        {/* Main bar */}
         <div className="flex items-center justify-between px-3 py-2">
+          {/* Left: Back button */}
           <button
             onClick={onBack}
             className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-white/10"
@@ -40,12 +43,14 @@ export default function GameHUD({
             <ArrowLeft className="h-5 w-5 text-white" />
           </button>
 
+          {/* Center: Episode title */}
           <div className="flex-1 px-2 text-center">
             <h2 className="truncate text-sm font-bold text-white">
               {episodeTitle}
             </h2>
           </div>
 
+          {/* Right: Settings button */}
           <button
             onClick={onSettings}
             className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-white/10"
@@ -54,7 +59,9 @@ export default function GameHUD({
           </button>
         </div>
 
+        {/* Stats bar */}
         <div className="flex items-center justify-around border-t border-white/5 bg-black/20 px-3 py-2 text-xs">
+          {/* Hints */}
           <button
             onClick={onHintsClick}
             className="flex items-center gap-1.5 rounded-lg px-2 py-1 transition-colors hover:bg-white/10"
@@ -69,6 +76,7 @@ export default function GameHUD({
             </span>
           </button>
 
+          {/* Evidence */}
           <button
             onClick={onEvidenceClick}
             className="flex items-center gap-1.5 rounded-lg px-2 py-1 transition-colors hover:bg-white/10"
@@ -79,6 +87,7 @@ export default function GameHUD({
             </span>
           </button>
 
+          {/* Score */}
           <div className="flex items-center gap-1.5 rounded-lg px-2 py-1">
             <Star className="h-4 w-4 text-yellow-400" fill="currentColor" />
             <span className="font-medium text-white">{score}</span>
@@ -86,6 +95,7 @@ export default function GameHUD({
         </div>
       </div>
 
+      {/* Expanded stats panel (optional) */}
       <AnimatePresence>
         {showStats && (
           <motion.div
@@ -115,7 +125,7 @@ export default function GameHUD({
                   <div
                     className="h-full rounded-full bg-amber-400"
                     style={{
-                      width: `${((maxHints - hintsUsed) / Math.max(maxHints, 1)) * 100}%`
+                      width: `${((maxHints - hintsUsed) / maxHints) * 100}%`
                     }}
                   />
                 </div>
@@ -131,7 +141,7 @@ export default function GameHUD({
                   <div
                     className="h-full rounded-full bg-blue-400"
                     style={{
-                      width: `${(totalEvidence === 0 ? 0 : evidenceCollected / totalEvidence) * 100}%`
+                      width: `${(evidenceCollected / totalEvidence) * 100}%`
                     }}
                   />
                 </div>

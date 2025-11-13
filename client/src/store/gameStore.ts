@@ -19,8 +19,8 @@ export interface GameSnapshot {
 }
 
 interface GameState extends GameSnapshot {
-  autoSaveSlot: SaveSlotId;
-  saveSlots: Record<SaveSlotId, GameSnapshot | null>;
+  autoSaveSlot: string;
+  saveSlots: Record<string, GameSnapshot>;
   currentTab: string;
 }
 
@@ -32,9 +32,9 @@ interface GameActions {
   updateRelationship: (characterId: string, change: number) => void;
   unlockScene: (sceneId: string) => void;
   setCurrentTab: (tab: string) => void;
-  saveProgress: (slotId?: SaveSlotId) => void;
-  loadProgress: (slotId: SaveSlotId) => void;
-  setAutoSaveSlot: (slotId: SaveSlotId) => void;
+  saveProgress: (slotId?: string) => void;
+  loadProgress: (slotId: string) => void;
+  setAutoSaveSlot: (slotId: string) => void;
   resetGame: () => void;
   getAvailableScenes: () => string[];
   getCharacterTrustLevel: (characterId: string) => number;
@@ -59,33 +59,14 @@ const emptySnapshot: GameSnapshot = {
   lastSavedAt: null,
 };
 
-export const MANUAL_SAVE_SLOTS = ["SAVE_SLOT_1", "SAVE_SLOT_2", "SAVE_SLOT_3"] as const;
-type ManualSaveSlotId = (typeof MANUAL_SAVE_SLOTS)[number];
-const AUTO_SAVE_SLOT_ID = "AUTO_SAVE";
-export type SaveSlotId = ManualSaveSlotId | typeof AUTO_SAVE_SLOT_ID;
-
-const ALL_SAVE_SLOTS: SaveSlotId[] = [AUTO_SAVE_SLOT_ID, ...MANUAL_SAVE_SLOTS];
-
-const createEmptySaveSlots = (): Record<SaveSlotId, GameSnapshot | null> =>
-  ALL_SAVE_SLOTS.reduce(
-    (acc, slotId) => {
-      acc[slotId] = null;
-      return acc;
-    },
-    {} as Record<SaveSlotId, GameSnapshot | null>,
-  );
-
-const isValidSlotId = (slotId: SaveSlotId | string): slotId is SaveSlotId =>
-  ALL_SAVE_SLOTS.includes(slotId as SaveSlotId);
-
-const getStorageKey = (slotId: SaveSlotId) => `kastor-game-save:${slotId}`;
-
 const initialState: GameState = {
   ...emptySnapshot,
-  autoSaveSlot: AUTO_SAVE_SLOT_ID,
-  saveSlots: createEmptySaveSlots(),
+  autoSaveSlot: "slot-1",
+  saveSlots: {},
   currentTab: "chat",
 };
+
+const STORAGE_KEY = "kastor-game-active-slot";
 
 export const useGameStore = create<GameStore>()(
   devtools(
@@ -163,8 +144,7 @@ export const useGameStore = create<GameStore>()(
           });
         },
         setCurrentTab: (tab) => set({ currentTab: tab }),
-        saveProgress: (providedSlotId = get().autoSaveSlot) => {
-          const slotId = isValidSlotId(providedSlotId) ? providedSlotId : AUTO_SAVE_SLOT_ID;
+        saveProgress: (slotId = get().autoSaveSlot) => {
           const snapshot: GameSnapshot = {
             currentEpisode: get().currentEpisode,
             currentScene: get().currentScene,
@@ -186,45 +166,32 @@ export const useGameStore = create<GameStore>()(
           }));
           if (typeof window !== "undefined") {
             try {
-              window.localStorage.setItem(getStorageKey(slotId), JSON.stringify(snapshot));
+              window.localStorage.setItem(`${STORAGE_KEY}-${slotId}`, JSON.stringify(snapshot));
             } catch {
               // ignore storage errors
             }
           }
         },
         loadProgress: (slotId) => {
-          if (!isValidSlotId(slotId)) return;
-          let snapshot = get().saveSlots[slotId] ?? null;
+          let snapshot = get().saveSlots[slotId];
           if (!snapshot && typeof window !== "undefined") {
-            const raw = window.localStorage.getItem(getStorageKey(slotId));
+            const raw = window.localStorage.getItem(`${STORAGE_KEY}-${slotId}`);
             if (raw) {
               try {
                 snapshot = JSON.parse(raw) as GameSnapshot;
               } catch {
-                snapshot = null;
+                snapshot = undefined;
               }
             }
           }
           if (!snapshot) return;
-          set((state) => ({
-            ...state,
+          set({
             ...snapshot,
             autoSaveSlot: slotId,
-            saveSlots: {
-              ...state.saveSlots,
-              [slotId]: snapshot ?? null,
-            },
-          }));
+          });
         },
-        setAutoSaveSlot: (slotId) => {
-          if (!isValidSlotId(slotId)) return;
-          set({ autoSaveSlot: slotId });
-        },
-        resetGame: () =>
-          set({
-            ...initialState,
-            saveSlots: createEmptySaveSlots(),
-          }),
+        setAutoSaveSlot: (slotId) => set({ autoSaveSlot: slotId }),
+        resetGame: () => set({ ...initialState }),
         getAvailableScenes: () => Array.from(new Set(get().unlockedScenes)),
         getCharacterTrustLevel: (characterId) => get().characterRelationships[characterId] ?? 0,
         hasEvidence: (evidenceId) => get().collectedEvidence.some((evidence) => evidence.id === evidenceId),

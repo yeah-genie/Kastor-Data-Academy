@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import ChatView, { ParticipantProfile } from "@/components/chat/ChatView";
 import type { Message, Evidence, Choice } from "@/types";
 import type { ChoiceMetadata } from "@/components/chat/ChoiceButton";
 import { useGameStore } from "@/store/gameStore";
-import { trackEvent } from "@/utils/analytics";
 
 type RichChoice = Choice & { metadata?: ChoiceMetadata };
 
@@ -126,17 +125,6 @@ export const ChatTab = () => {
   const [isWaitingResponse, setIsWaitingResponse] = useState(false);
   const addEvidenceToStore = useGameStore((state) => state.addEvidence);
   const recordChoice = useGameStore((state) => state.makeChoice);
-  const currentSceneId = useGameStore((state) => state.currentScene);
-  const lastTrackedSceneRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (!currentSceneId) return;
-    if (lastTrackedSceneRef.current === currentSceneId) return;
-    lastTrackedSceneRef.current = currentSceneId;
-    trackEvent("scene_start", {
-      sceneId: currentSceneId,
-    });
-  }, [currentSceneId]);
-
 
   const participants = useMemo<Record<string, ParticipantProfile>>(
     () => ({
@@ -162,7 +150,7 @@ export const ChatTab = () => {
   );
 
   const pushMessage = (message: Message) => {
-    setMessages((prev: Message[]) => [...prev, message]);
+    setMessages((prev) => [...prev, message]);
   };
 
   const simulateKastorReply = (content: string, extraMessages: Message[] = []) => {
@@ -175,16 +163,10 @@ export const ChatTab = () => {
         timestamp: new Date().toISOString(),
         type: "text",
       });
-      extraMessages.forEach((message) => {
-        pushMessage(message);
-        (message.attachments ?? []).forEach((attachment) => {
-          addEvidenceToStore(attachment);
-          trackEvent("evidence_collected", {
-            sceneId: currentSceneId ?? "unknown-scene",
-            evidenceId: attachment.id,
-          });
+        extraMessages.forEach((message) => {
+          pushMessage(message);
+          (message.attachments ?? []).forEach((attachment) => addEvidenceToStore(attachment));
         });
-      });
       setTypingIndicator(undefined);
       setIsWaitingResponse(false);
     }, 1500);
@@ -219,10 +201,6 @@ export const ChatTab = () => {
     setIsWaitingResponse(true);
 
     recordChoice(choice);
-    trackEvent("choice_made", {
-      sceneId: currentSceneId ?? "unknown-scene",
-      choiceId: choice.id,
-    });
 
     simulateKastorReply(
       choice.id === "choice-investigate-logs"

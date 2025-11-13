@@ -172,7 +172,7 @@ export const ChoiceButton = ({ choice, disabled, onSelect }: ChoiceButtonProps) 
     if (remaining <= 0) return;
 
     const interval = window.setInterval(() => {
-      setRemaining((prev: number | null) => {
+      setRemaining((prev) => {
         if (prev === null) return null;
         return prev > 0 ? prev - 1 : 0;
       });

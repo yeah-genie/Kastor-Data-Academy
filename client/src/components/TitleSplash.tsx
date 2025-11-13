@@ -9,6 +9,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
   const [showTapToStart, setShowTapToStart] = useState(false);
 
   useEffect(() => {
+    // Show "Tap to Start" after 2 seconds
     const timer = setTimeout(() => {
       setShowTapToStart(true);
     }, 2000);
@@ -24,6 +25,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
       onClick={showTapToStart ? onComplete : undefined}
       style={{ cursor: showTapToStart ? "pointer" : "default" }}
     >
+      {/* Circuit background pattern */}
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -35,6 +37,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
         }}
       />
 
+      {/* Animated gradient overlay */}
       <motion.div
         className="absolute inset-0"
         animate={{
@@ -47,13 +50,16 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
 
+      {/* Logo container */}
       <div className="relative z-10 flex flex-col items-center gap-8">
+        {/* Logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative"
         >
+          {/* Glow effect */}
           <motion.div
             className="absolute inset-0 blur-2xl"
             animate={{
@@ -65,6 +71,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
             }}
           />
 
+          {/* Logo image placeholder - replace with actual logo */}
           <div className="relative flex flex-col items-center gap-2">
             <motion.div
               animate={{
@@ -86,6 +93,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
           </div>
         </motion.div>
 
+        {/* Tap to Start */}
         {showTapToStart && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -123,6 +131,7 @@ export default function TitleSplash({ onComplete }: TitleSplashProps) {
         )}
       </div>
 
+      {/* Version number */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.3 }}

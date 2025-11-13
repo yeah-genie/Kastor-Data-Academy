@@ -1,13 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ReactNode } from "react";
 
-type TransitionType =
-  | "fade"
-  | "slide-left"
-  | "slide-right"
-  | "slide-up"
-  | "slide-down"
-  | "zoom";
+type TransitionType = "fade" | "slide-left" | "slide-right" | "slide-up" | "slide-down" | "zoom";
 
 interface SceneTransitionProps {
   children: ReactNode;
@@ -74,6 +68,8 @@ export default function SceneTransition({
     </AnimatePresence>
   );
 }
+
+// Special effect components
 
 interface EvidenceRevealProps {
   evidenceName: string;
@@ -165,6 +161,7 @@ export function CharacterCloseup({
         />
       </motion.div>
 
+      {/* Expression indicator */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: [0, 1.2, 1] }}

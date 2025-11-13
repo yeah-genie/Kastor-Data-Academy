@@ -11,9 +11,6 @@ import ChatTab from "./pages/dashboard/ChatTab";
 import DataTab from "./pages/dashboard/DataTab";
 import FilesTab from "./pages/dashboard/FilesTab";
 import TeamTab from "./pages/dashboard/TeamTab";
-import ProgressTab from "./pages/dashboard/ProgressTab";
-import BetaLanding from "./pages/BetaLanding";
-import LandingPage from "./pages/LandingPage";
 import DevToolsPanel from "@/components/devtools/DevToolsPanel";
 
 export const AppRouter = () => {
@@ -21,16 +18,13 @@ export const AppRouter = () => {
     <BrowserRouter>
       <Suspense fallback={null}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/app" element={<AppNew />} />
-          <Route path="/beta" element={<BetaLanding />} />
+          <Route path="/" element={<AppNew />} />
           <Route path="/dashboard" element={<DashboardPage />}>
             <Route index element={<DashboardIndexRedirect />} />
             <Route path="chat" element={<ChatTab />} />
             <Route path="data" element={<DataTab />} />
             <Route path="files" element={<FilesTab />} />
             <Route path="team" element={<TeamTab />} />
-            <Route path="progress" element={<ProgressTab />} />
             <Route path="*" element={<Navigate to="chat" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

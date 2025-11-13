@@ -1,6 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BarChart2, Database, FolderKanban, MessageCircle, Users } from "lucide-react";
+import {
+  Database,
+  FolderKanban,
+  MessageCircle,
+  Users,
+} from "lucide-react";
 import { DashboardLayout, DashboardTab } from "@/components/layout";
 import {
   TabProvider,
@@ -29,11 +34,6 @@ const dashboardTabs: DashboardTab[] = [
     label: "Team",
     icon: <Users size={18} />,
   },
-  {
-    id: "progress",
-    label: "Progress",
-    icon: <BarChart2 size={18} />,
-  },
 ];
 
 const TAB_IDS = dashboardTabs.map((tab) => tab.id);
@@ -42,7 +42,6 @@ const pathToTab = (pathname: string): DashboardTab["id"] => {
   if (pathname.includes("/dashboard/data")) return "data";
   if (pathname.includes("/dashboard/files")) return "files";
   if (pathname.includes("/dashboard/team")) return "team";
-  if (pathname.includes("/dashboard/progress")) return "progress";
   return "chat";
 };
 
@@ -51,8 +50,6 @@ const DashboardContent = () => {
   const navigate = useNavigate();
   const { currentTab, setTab, newNotifications } = useTabContext();
   const setCurrentTabPersisted = useGameStore((state) => state.setCurrentTab);
-  const globalProgress = useGameStore((state) => state.gameProgress);
-  const currentEpisode = useGameStore((state) => state.currentEpisode);
 
   const activeTabFromRoute = useMemo(
     () => pathToTab(location.pathname),
@@ -75,8 +72,8 @@ const DashboardContent = () => {
 
   return (
     <DashboardLayout
-      currentCaseTitle={currentEpisode ? `Active Episode · ${currentEpisode}` : "Kastor Investigation Hub"}
-      progress={globalProgress}
+      currentCaseTitle="Episode 4 · The Data Breach"
+      progress={42}
       tabs={dashboardTabs}
       activeTab={currentTab}
       onTabChange={handleTabChange}

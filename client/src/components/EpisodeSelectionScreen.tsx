@@ -4,8 +4,8 @@ import { ArrowLeft, Lock, Play } from "lucide-react";
 interface Episode {
   id: number;
   title: string;
-  difficulty: number;
-  duration: string;
+  difficulty: number; // 1-5 stars
+  duration: string; // e.g., "30-40 min"
   thumbnail: string;
   isLocked: boolean;
   isDemo?: boolean;
@@ -24,6 +24,7 @@ export default function EpisodeSelectionScreen({
 }: EpisodeSelectionScreenProps) {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#1a1a2e] text-white overflow-auto">
+      {/* Circuit background pattern */}
       <div
         className="fixed inset-0 opacity-5"
         style={{
@@ -31,6 +32,7 @@ export default function EpisodeSelectionScreen({
         }}
       />
 
+      {/* Header */}
       <header className="sticky top-0 z-20 flex items-center justify-between bg-[#1a1a2e]/80 p-4 backdrop-blur-sm">
         <button
           onClick={onBack}
@@ -39,9 +41,10 @@ export default function EpisodeSelectionScreen({
           <ArrowLeft className="h-6 w-6" />
         </button>
         <h1 className="flex-1 text-center text-xl font-bold">Case Files</h1>
-        <div className="h-12 w-12" />
+        <div className="h-12 w-12" /> {/* Spacer */}
       </header>
 
+      {/* Episode cards */}
       <main className="relative z-10 flex flex-col gap-6 p-4 pt-6">
         {episodes.map((episode, index) => (
           <motion.div
@@ -51,24 +54,28 @@ export default function EpisodeSelectionScreen({
             transition={{ delay: index * 0.1 }}
             className="relative overflow-hidden rounded-xl border border-white/10 shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-[#00d9ff]/20"
           >
+            {/* Background image with gradient overlay */}
             <div
               className="relative flex h-[200px] flex-col justify-between bg-cover bg-center p-4"
               style={{
                 backgroundImage: `linear-gradient(to top, rgba(26, 26, 46, 0.95) 0%, rgba(26, 26, 46, 0.3) 50%), url(${episode.thumbnail})`
               }}
             >
+              {/* Lock overlay */}
               {episode.isLocked && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm backdrop-saturate-50">
                   <Lock className="h-16 w-16 text-white/50" />
                 </div>
               )}
 
+              {/* Demo badge */}
               {episode.isDemo && (
                 <div className="absolute right-0 top-0 rounded-bl-lg bg-orange-500/90 px-3 py-1 text-xs font-bold text-white">
                   DEMO
                 </div>
               )}
 
+              {/* Episode number */}
               <div
                 className={`text-sm font-medium ${
                   episode.isLocked ? "text-white/60" : "text-white/80"
@@ -77,6 +84,7 @@ export default function EpisodeSelectionScreen({
                 EP {episode.id.toString().padStart(2, "0")}
               </div>
 
+              {/* Bottom section */}
               <div className="flex w-full items-end justify-between gap-4">
                 <div className="flex flex-col gap-1">
                   <h2
@@ -93,12 +101,15 @@ export default function EpisodeSelectionScreen({
                   >
                     Difficulty:{" "}
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <span key={i}>{i < episode.difficulty ? "⭐" : "☆"}</span>
+                      <span key={i}>
+                        {i < episode.difficulty ? "⭐" : "☆"}
+                      </span>
                     ))}{" "}
                     | {episode.duration}
                   </p>
                 </div>
 
+                {/* Action button */}
                 {episode.isLocked ? (
                   <button
                     disabled
@@ -120,6 +131,7 @@ export default function EpisodeSelectionScreen({
               </div>
             </div>
 
+            {/* Progress bar (if unlocked and started) */}
             {!episode.isLocked && episode.id === 1 && (
               <div className="h-1 w-full bg-black/30">
                 <div className="h-full w-[35%] bg-[#00d9ff]" />
@@ -129,6 +141,7 @@ export default function EpisodeSelectionScreen({
         ))}
       </main>
 
+      {/* Coming soon hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.5 }}
