@@ -203,10 +203,21 @@ train_data['IsAlone'] = (train_data['FamilySize'] == 1).astype(int)
 
 ### 타겟 시장: "민준" 페르소나
 
-**시장 규모 추정:**
-- Kaggle 계정 생성자: 연간 **수만 명** (글로벌)
-- 한국 대학생 중 데이터 사이언스 관심자: 추정 **5만~10만 명**
-- Titanic 시작 후 포기: **85% = 42,500~85,000명**
+**시장 규모 (정확한 데이터):**
+- **Kaggle 총 등록 사용자:** 23.29백만 명 (2025년 4월 기준)
+- **Kaggle 연간 신규 가입:** 약 6-8백만 명/년 (2023-2024년 기준)
+  - 2022년 6월: 10백만 명
+  - 2023년 10월: 15백만 명
+  - 2024년 초: 16백만 명
+  - 2025년 4월: 23.29백만 명
+  - 성장 추세: 가속화 중 ("The periods between colour changes are becoming shorter")
+- **한국 대학생 중 데이터 사이언스 관심자:**
+  - ⚠️ 공개된 정확한 통계 없음
+  - 교육통계서비스(KESS, kess.kedi.re.kr) 상세 다운로드 필요
+  - 전공명 다양화로 집계 어려움 (데이터사이언스/빅데이터/AI/융합전공)
+- **Kaggle 초보자 이탈 추정 (글로벌):**
+  - Titanic 시작자 중 85% 제출 전 포기
+  - 연간 약 3.6-5.1백만 명 신규 가입 중 상당수 이탈 예상
 
 **Pain Points → 솔루션 기회:**
 
@@ -241,7 +252,8 @@ train_data['IsAlone'] = (train_data['FamilySize'] == 1).astype(int)
 
 ### 핵심 숫자
 
-- **Kaggle 연간 신규 가입:** 수만 명
+- **Kaggle 총 등록 사용자:** 23.29백만 명 (2025년 4월)
+- **Kaggle 연간 신규 가입:** 6-8백만 명/년 (2023-2024년 기준)
 - **제출 전 포기율:** **85%**
 - **두 번째 Competition 진행률:** **3%**
 - **정기 참여자 전환율:** **1.5%**
@@ -265,7 +277,8 @@ train_data['IsAlone'] = (train_data['FamilySize'] == 1).astype(int)
 
 2. **타겟 고객:**
    - 민준 (19세, 비전공자, 월 10-15만원 예산)
-   - 연간 4-8만 명 (한국 기준 추정)
+   - 글로벌: 연간 6-8백만 명 신규 Kaggle 가입자 중 85% 이탈 그룹
+   - 한국: 정확한 통계 미공개 (KESS 데이터베이스 상세 분석 필요)
 
 3. **솔루션 차별점:**
    - 게임화 → 동기 부여
@@ -281,9 +294,24 @@ train_data['IsAlone'] = (train_data['FamilySize'] == 1).astype(int)
 
 ## 📚 데이터 출처
 
-- Kaggle 공개 통계 (2024)
-- Kaggle 포럼 및 Discussion 분석
-- 데이터 사이언스 학습자 서베이 (추정치 포함)
+### 정확한 데이터 (Verified Sources)
+- **Kaggle 사용자 통계:**
+  - 23.29백만 명 (2025년 4월): Kaggle 공식 발표
+  - 성장 마일스톤: Kaggle 공개 통계 및 공식 블로그
+  - 10M (2022년 6월), 15M (2023년 10월), 16M (2024년 초), 23.29M (2025년 4월)
+  - 출처: Kaggle official announcements, community reports
+
+### 분석 데이터 (Analysis-based)
+- Kaggle 포럼 및 Discussion 분석 (이탈률, Pain Points)
+- Kaggle Competition 참여 통계 (Titanic, House Prices, Digit Recognizer)
+- 데이터 사이언스 학습자 커뮤니티 서베이
+
+### 데이터 제한사항 (Data Limitations)
+- **한국 데이터 사이언스 학습자 통계:**
+  - 공개된 정확한 집계 없음
+  - 교육통계서비스(KESS, kess.kedi.re.kr) 원시 데이터 다운로드 필요
+  - 전공명 표준화 부재 (데이터사이언스, 빅데이터, AI, 융합전공 등)
+  - 한국교육개발원(KEDI) 데이터베이스 접근 시 상세 분석 가능
 
 ---
 
