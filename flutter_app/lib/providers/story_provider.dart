@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../utils/text_utils.dart';
 import './settings_provider.dart';
+import '../services/audio_service.dart';
 
 // Story message for chat display
 class StoryMessage {
@@ -49,6 +50,7 @@ class StoryState {
   final String? detectiveName;
   final bool waitingForInput;
   final String? inputPrompt;
+  final int pendingMessages; // Number of messages queued for auto mode
 
   StoryState({
     required this.messages,
@@ -58,6 +60,7 @@ class StoryState {
     this.detectiveName,
     this.waitingForInput = false,
     this.inputPrompt,
+    this.pendingMessages = 0,
   });
 
   StoryState copyWith({
@@ -68,6 +71,7 @@ class StoryState {
     String? detectiveName,
     bool? waitingForInput,
     String? inputPrompt,
+    int? pendingMessages,
   }) {
     return StoryState(
       messages: messages ?? this.messages,
@@ -77,6 +81,7 @@ class StoryState {
       detectiveName: detectiveName ?? this.detectiveName,
       waitingForInput: waitingForInput ?? this.waitingForInput,
       inputPrompt: inputPrompt ?? this.inputPrompt,
+      pendingMessages: pendingMessages ?? this.pendingMessages,
     );
   }
 }
@@ -118,11 +123,17 @@ class StoryNotifier extends Notifier<StoryState> {
 
   void _scheduleMessage(Duration delay, VoidCallback callback) {
     _messageQueue++;
+
+    // Update pending messages count
+    state = state.copyWith(pendingMessages: _messageQueue);
+
     Timer? timer;
     timer = Timer(delay, () {
       if (mounted) {
         callback();
         _timers.remove(timer);
+        _messageQueue--;
+        state = state.copyWith(pendingMessages: _messageQueue);
       }
     });
     _timers.add(timer);
@@ -208,6 +219,30 @@ class StoryNotifier extends Notifier<StoryState> {
     state = state.copyWith(
       messages: [...state.messages, message],
     );
+
+    // Play notification sound if enabled
+    _playMessageSound(speaker);
+  }
+
+  void _playMessageSound(String speaker) {
+    final settings = ref.read(settingsProvider);
+
+    // Only play sound if enabled in settings
+    if (!settings.soundEnabled) return;
+
+    final audioService = AudioService();
+
+    // Different sounds for different message types
+    if (speaker == 'system') {
+      // System messages (emails, notifications) use achievement sound
+      audioService.playSFX(SoundEffect.achievementUnlocked);
+    } else if (speaker == 'narrator') {
+      // Narrator messages are softer, use notification
+      audioService.playSFX(SoundEffect.notification);
+    } else {
+      // Regular character messages use notification
+      audioService.playSFX(SoundEffect.notification);
+    }
   }
 
   // Manual mode: advance to next message

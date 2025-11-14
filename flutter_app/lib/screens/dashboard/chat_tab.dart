@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/story_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/typing_text.dart';
 
 class ChatTab extends ConsumerStatefulWidget {
   const ChatTab({super.key});
@@ -47,10 +48,23 @@ class _ChatTabState extends ConsumerState<ChatTab> {
             itemCount: storyState.messages.length,
             itemBuilder: (context, index) {
               final message = storyState.messages[index];
-              return _buildMessageBubble(message);
+              final prevMessage =
+                  index > 0 ? storyState.messages[index - 1] : null;
+              final nextMessage = index < storyState.messages.length - 1
+                  ? storyState.messages[index + 1]
+                  : null;
+              return _buildMessageBubble(
+                message,
+                prevMessage: prevMessage,
+                nextMessage: nextMessage,
+              );
             },
           ),
         ),
+
+        // Progress indicator for auto mode
+        if (settings.autoTextMode && storyState.pendingMessages > 0)
+          _buildProgressIndicator(storyState.pendingMessages),
 
         // Choice buttons (if available)
         if (storyState.currentChoices != null)
@@ -74,10 +88,33 @@ class _ChatTabState extends ConsumerState<ChatTab> {
     );
   }
 
-  Widget _buildMessageBubble(StoryMessage message) {
+  Widget _buildMessageBubble(
+    StoryMessage message, {
+    StoryMessage? prevMessage,
+    StoryMessage? nextMessage,
+  }) {
+    final storyState = ref.watch(storyProvider);
+    final settings = ref.watch(settingsProvider);
     final isDetective = message.speaker == 'detective';
     final isNarrator = message.speaker == 'narrator';
     final isSystem = message.speaker == 'system';
+
+    // Check if this is the latest message (for typing animation)
+    final isLatestMessage = storyState.messages.isNotEmpty &&
+        storyState.messages.last.id == message.id;
+    final shouldAnimate = isLatestMessage &&
+        settings.autoTextMode &&
+        !isDetective; // Don't animate detective messages
+
+    // Check message grouping
+    final isSameAsPrev = prevMessage != null &&
+        prevMessage.speaker == message.speaker &&
+        !prevMessage.isNarration &&
+        !message.isNarration;
+    final isSameAsNext = nextMessage != null &&
+        nextMessage.speaker == message.speaker &&
+        !nextMessage.isNarration &&
+        !message.isNarration;
 
     // Narrator and system messages - centered
     if (isNarrator || isSystem) {
@@ -94,15 +131,24 @@ class _ChatTabState extends ConsumerState<ChatTab> {
                 width: 1,
               ),
             ),
-            child: Text(
-              message.text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isSystem ? const Color(0xFF6366F1) : Colors.white70,
-                fontSize: 13,
-                fontStyle: isNarrator ? FontStyle.italic : FontStyle.normal,
-              ),
-            ),
+            child: shouldAnimate
+                ? TypingText(
+                    text: message.text,
+                    style: TextStyle(
+                      color: isSystem ? const Color(0xFF6366F1) : Colors.white70,
+                      fontSize: 13,
+                      fontStyle: isNarrator ? FontStyle.italic : FontStyle.normal,
+                    ),
+                  )
+                : Text(
+                    message.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSystem ? const Color(0xFF6366F1) : Colors.white70,
+                      fontSize: 13,
+                      fontStyle: isNarrator ? FontStyle.italic : FontStyle.normal,
+                    ),
+                  ),
           ),
         ),
       );
@@ -114,15 +160,74 @@ class _ChatTabState extends ConsumerState<ChatTab> {
     }
 
     // Regular chat message
+    // Adjust spacing for grouped messages
+    final bottomPadding = isSameAsNext ? 4.0 : 16.0;
+    final topPadding = isSameAsPrev ? 4.0 : 0.0;
+
+    // Adjust border radius for grouped messages
+    BorderRadius getBorderRadius() {
+      if (isDetective) {
+        if (isSameAsPrev && isSameAsNext) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            topRight: Radius.circular(4),
+            bottomRight: Radius.circular(4),
+          );
+        } else if (isSameAsPrev) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            topRight: Radius.circular(4),
+            bottomRight: Radius.circular(12),
+          );
+        } else if (isSameAsNext) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+            bottomRight: Radius.circular(4),
+          );
+        }
+      } else {
+        if (isSameAsPrev && isSameAsNext) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            bottomLeft: Radius.circular(4),
+            topRight: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          );
+        } else if (isSameAsPrev) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(4),
+            bottomLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          );
+        } else if (isSameAsNext) {
+          return const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            bottomLeft: Radius.circular(4),
+            topRight: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          );
+        }
+      }
+      return BorderRadius.circular(12);
+    }
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: bottomPadding, top: topPadding),
       child: Row(
         mainAxisAlignment:
             isDetective ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isDetective) ...[
-            _buildAvatar(message.speaker),
+            if (!isSameAsPrev)
+              _buildAvatar(message.speaker)
+            else
+              const SizedBox(width: 36),
             const SizedBox(width: 8),
           ],
           Flexible(
@@ -132,7 +237,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
                 color: isDetective
                     ? const Color(0xFF6366F1)
                     : Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: getBorderRadius(),
                 border: Border.all(
                   color: isDetective
                       ? const Color(0xFF6366F1)
@@ -143,7 +248,7 @@ class _ChatTabState extends ConsumerState<ChatTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!isDetective)
+                  if (!isDetective && !isSameAsPrev)
                     Text(
                       _getSpeakerName(message.speaker),
                       style: const TextStyle(
@@ -152,14 +257,22 @@ class _ChatTabState extends ConsumerState<ChatTab> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  if (!isDetective) const SizedBox(height: 4),
-                  Text(
-                    message.text,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
+                  if (!isDetective && !isSameAsPrev) const SizedBox(height: 4),
+                  shouldAnimate
+                      ? TypingText(
+                          text: message.text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        )
+                      : Text(
+                          message.text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
                   // Show reaction if present
                   if (message.reaction != null) ...[
                     const SizedBox(height: 4),
@@ -176,10 +289,13 @@ class _ChatTabState extends ConsumerState<ChatTab> {
           ),
           if (isDetective) ...[
             const SizedBox(width: 8),
-            const CircleAvatar(
-              backgroundColor: Color(0xFF10B981),
-              child: Icon(Icons.person, color: Colors.white, size: 20),
-            ),
+            if (!isSameAsPrev)
+              const CircleAvatar(
+                backgroundColor: Color(0xFF10B981),
+                child: Icon(Icons.person, color: Colors.white, size: 20),
+              )
+            else
+              const SizedBox(width: 36),
           ],
         ],
       ),
@@ -438,6 +554,36 @@ class _ChatTabState extends ConsumerState<ChatTab> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProgressIndicator(int pendingMessages) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.2),
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withOpacity(0.05),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          const TypingIndicator(color: Color(0xFF6366F1)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '$pendingMessages more message${pendingMessages > 1 ? 's' : ''} coming...',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.6),
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
