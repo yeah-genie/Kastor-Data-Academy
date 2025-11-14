@@ -1,0 +1,162 @@
+
+name: Flutter Tests
+
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Run Flutter widget & integration tests
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache pub packages and dart tool
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            flutter_app/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('flutter_app/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('flutter_app/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Disable analytics
+        run: flutter config --no-analytics
+
+      - name: Get Flutter packages
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Run widget tests and save machine output
+        working-directory: flutter_app
+        run: |
+          mkdir -p test-results
+          flutter test --machine > test-results/widget_test_machine.json || true
+
+      - name: Upload widget test results (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget-test-results
+          path: flutter_app/test-results
+
+      - name: Install Chrome for web testing
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
+          echo "Chrome version: $CHROME_VERSION"
+
+          # Download and install matching ChromeDriver
+          CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION")
+          echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
+
+          curl -Lo /tmp/chromedriver-linux64.zip "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
+          unzip -q /tmp/chromedriver-linux64.zip -d /tmp
+          sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+          chromedriver --version
+
+      - name: Run integration tests on web
+        working-directory: flutter_app
+        run: |
+          mkdir -p ../web-integration-test-results
+
+          # Start ChromeDriver in background
+          chromedriver --port=4444 &
+          CHROMEDRIVER_PID=$!
+
+          # Wait for ChromeDriver to start
+          sleep 3
+
+          # Run integration tests on web
+          flutter test integration_test/app_test.dart -d web-server --machine > ../web-integration-test-results/web_integration_test_machine.json || true
+
+          # Kill ChromeDriver
+          kill $CHROMEDRIVER_PID || true
+
+      - name: Upload web integration test results (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-integration-test-results
+          path: web-integration-test-results
+
+      - name: Run integration tests on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: google_apis
+          # disable snapshots (can cause stop/kill issues) and avoid boot animation to speed up
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -no-snapshot-load -no-snapshot-save -wipe-data
+          script: |
+            echo "Devices before boot:"
+            flutter devices || true
+            # ensure packages are available and run integration tests in a single shell
+            bash -lc "cd flutter_app && flutter pub get && mkdir -p ../integration-test-results && flutter test integration_test/app_test.dart --machine > ../integration-test-results/integration_test_machine.json || true"
+
+      - name: Shutdown emulator (graceful then force)
+        if: always()
+        run: |
+          set -e
+          EMU=emulator-5554
+          echo "Attempting graceful shutdown of $EMU"
+          adb -s $EMU emu kill || echo "adb emu kill failed or emulator not connected"
+          # wait and retry a few times
+          for i in 1 2 3; do
+            sleep 5
+            if adb devices | grep -q "$EMU"; then
+              echo "Emulator still running; retrying kill ($i)"
+              adb -s $EMU emu kill || true
+            else
+              echo "Emulator stopped"
+              break
+            fi
+          done
+          # if still running, try to kill qemu processes as fallback
+          if adb devices | grep -q "$EMU"; then
+            echo "Fallback: killing emulator qemu processes"
+            pids=$(ps aux | grep -i qemu-system | grep emulator | awk '{print $2}' || true)
+            if [ -n "$pids" ]; then
+              echo "Killing pids: $pids"
+              echo $pids | xargs -r kill -9 || true
+            else
+              echo "No qemu processes found; attempting to find emulator process"
+              pids2=$(ps aux | grep -i emulator | grep -v grep | awk '{print $2}' || true)
+              echo $pids2 | xargs -r kill -9 || true
+            fi
+            sleep 3
+          fi
+
+      - name: Upload integration test results (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: integration-test-results
