@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/game_state_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/episode/episode_selection_screen.dart';
 import 'screens/settings/settings_screen.dart';
+import 'screens/tutorial/tutorial_screen.dart';
 
 void main() {
   runApp(
@@ -49,9 +51,25 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     // Load saved game state and settings on app start
-    Future.microtask(() {
+    Future.microtask(() async {
       ref.read(gameStateProvider.notifier).loadGameState();
       ref.read(settingsProvider.notifier).loadSettings();
+
+      // Check if tutorial has been completed
+      final prefs = await SharedPreferences.getInstance();
+      final tutorialCompleted = prefs.getBool('tutorial_completed') ?? false;
+
+      if (!tutorialCompleted && mounted) {
+        // Show tutorial on first launch
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const TutorialScreen(),
+            ),
+          );
+        }
+      }
     });
   }
 
