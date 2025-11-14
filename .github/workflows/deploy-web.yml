@@ -4,62 +4,75 @@ on:
   push:
     branches:
       - main
-      - 'claude/**'
     paths:
       - 'flutter_app/**'
       - '.github/workflows/deploy-web.yml'
-  workflow_dispatch:
+  workflow_dispatch:  # Allow manual trigger
 
-# GitHub Pages에 배포하기 위한 권한 설정
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# 동시에 하나의 배포만 허용
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  contents: write
 
 jobs:
-  build:
-    name: Build Web
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🦋 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.38.1'
+          flutter-version: '3.24.5'
           channel: 'stable'
           cache: true
 
-      - name: Get dependencies
+      - name: 📦 Get Dependencies
         working-directory: flutter_app
         run: flutter pub get
 
-      - name: Build Web
+      - name: 🔍 Verify Setup
         working-directory: flutter_app
-        run: flutter build web --release --base-href /Kastor-Data-Academy/
+        run: |
+          flutter --version
+          flutter doctor -v
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: 🏗️ Build Web App
+        working-directory: flutter_app
+        run: |
+          flutter build web \
+            --release \
+            --web-renderer canvaskit \
+            --base-href /Kastor-Data-Academy/
+
+      - name: 📝 Add .nojekyll
+        working-directory: flutter_app/build/web
+        run: touch .nojekyll
+
+      - name: 📄 Create CNAME (optional)
+        working-directory: flutter_app/build/web
+        run: |
+          # Uncomment and add your custom domain if you have one
+          # echo "your-domain.com" > CNAME
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: flutter_app/build/web
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./flutter_app/build/web
+          publish_branch: gh-pages
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy: ${{ github.event.head_commit.message }}'
 
-  deploy:
-    name: Deploy to GitHub Pages
-    runs-on: ubuntu-latest
-    needs: build
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: ✅ Deployment Complete
+        run: |
+          echo "🎉 Deployment successful!"
+          echo "🌐 Your app is live at: https://yeah-genie.github.io/Kastor-Data-Academy/"
+          echo "⏰ Build time: $(date)"

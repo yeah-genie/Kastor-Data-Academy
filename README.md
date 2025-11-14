@@ -2,6 +2,20 @@
 
 사이버 수사 게임 Flutter 모바일 애플리케이션
 
+## 🌐 웹 버전 (자동 배포)
+
+**라이브 데모**: https://yeah-genie.github.io/Kastor-Data-Academy/
+
+✨ **자동 배포 활성화**: main 브랜치에 푸시하면 자동으로 GitHub Pages에 배포됩니다!
+
+- 📱 모바일, 태블릿, 데스크톱 모두 지원
+- 🇰🇷🇺🇸 한국어/영어 전환 기능
+- 🎨 캐릭터 아바타 및 채팅 UI
+- 📊 인터랙티브 데이터 시각화
+- 🚀 PWA 지원 (설치 가능)
+
+자세한 내용: [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md)
+
 ## 프로젝트 구조
 
 ```
