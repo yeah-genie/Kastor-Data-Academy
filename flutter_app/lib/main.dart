@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'providers/game_state_provider.dart';
+import 'providers/settings_provider.dart';
 import 'screens/dashboard/dashboard_screen.dart';
 import 'screens/episode/episode_selection_screen.dart';
+import 'screens/settings/settings_screen.dart';
 
 void main() {
   runApp(
@@ -46,9 +48,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Load saved game state on app start
+    // Load saved game state and settings on app start
     Future.microtask(() {
       ref.read(gameStateProvider.notifier).loadGameState();
+      ref.read(settingsProvider.notifier).loadSettings();
     });
   }
 
@@ -137,7 +140,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                   text: 'Settings',
                   icon: Icons.settings,
                   onPressed: () {
-                    _showSnackBar(context, '설정');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
                   },
                 ),
 
