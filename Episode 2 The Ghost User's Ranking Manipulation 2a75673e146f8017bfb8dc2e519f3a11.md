@@ -13,52 +13,9 @@ By the end of this episode, students will understand:
 4. **Digital Forensics**: Tracking actions through logs and code
 5. **Online Safety**: Why you should verify who you're talking to
 
-**Kastor & Detective**
-
-- Building partnership after Episode 1
-- More experienced, starting to see patterns
-- Detective growing more confident
-
-### New Characters
-
-**Elena Petrova** (Security Lead, 30, Russian-American)
-
-- 4 years at Legend Arena, Head of Security for 2 years
-- Background: Former white-hat security researcher
-- Personality: Brilliant but lonely, seeking recognition
-- Passed over for promotion twice
-- Works late hours, few social connections
-- Role: The manipulated insider
-
-**Camille Beaumont** (Junior Security, 24, French-American)
-
-- 6 months at Legend Arena, reporting to Elena
-- Personality: Observant, detail-oriented, cautious
-- Role: Discovers the breach, later becomes new Security Lead
-- Will play bigger role in Episode 3+
-
-**Alex "Shadow" Torres** (Player, 19, Latin American)
-
-- Username: ShadowFan99 from Episode 1
-- Now: Recruited as pro player after Episode 1 events
-- Personality: Innocent, grateful, observant
-- Speech: "I can't believe this is happening again..."
-- Role: Unexpected witness, connects both episodes
-
-**??? - CodeMaster_X** (Mystery)
-
-- Identity: Unknown (revealed as The Fixer in Episode 5)
-- Appearance: Only through text messages
-- Method: Long-term social engineering
-- Role: Master manipulator, Episode 2 architect
-
 ---
 
-## 🎬 Story Script (Final Version)
-
-### ACT 1: The Ghost Appears
-
-### Scene 0: A New Mystery (SHORTENED)
+## Scene 0 — A New Mystery (SHORTENED)
 
 **[Detective Office - Morning]**
 
@@ -112,7 +69,7 @@ By the end of this episode, students will understand:
 
 **KASTOR**: "Let's go find out."
 
-🎵 **MINI CELEBRATION** — New Case! +10 points
+�� **MINI CELEBRATION** — New Case! +10 points
 
 ---
 
@@ -127,8 +84,94 @@ By the end of this episode, students will understand:
 **KAITO**: (enters) "Hey! Good to see you again!"
 
 **DETECTIVE**: "Kaito! You're back?"
+# Episode 2: The Ghost User
+## "Who You Trust Online"
 
-**KAITO**: "Probation period. Trying to prove I've changed."
+---
+
+## 🎯 Learning Objectives
+
+By the end of this episode, students will understand:
+
+1. **Bot Detection**: How to identify automated accounts vs. real users
+2. **Pattern Analysis**: Finding suspicious behavior in data
+3. **Social Engineering**: How manipulators gain trust online
+4. **Digital Forensics**: Tracking actions through logs and code
+5. **Online Safety**: Why you should verify who you're talking to
+
+---
+
+## Scene 0 — A New Mystery (SHORTENED)
+
+**[Detective Office - Morning]**
+
+**KASTOR**: (scrolling phone) "Uh oh."
+
+**DETECTIVE**: "What?"
+
+**KASTOR**: "Legend Arena. Again."
+
+**DETECTIVE**: "Kaito did something else?"
+
+**KASTOR**: "Different problem. Look at these rankings."
+
+[Shows phone screen]
+
+**Top Players Leaderboard:**
+1. GhostKing_947 (NEW)
+2. PhantomAce_12 (NEW)
+3. ShadowMaster_88 (NEW)
+4. ProGamer_OG ↓ (was #1)
+5. ElitePlayer_X ↓ (was #2)
+
+**DETECTIVE**: "Seven new players in the top 10?"
+
+**KASTOR**: "In one week. All unknowns."
+
+**DETECTIVE**: "Maybe they're just... really good?"
+
+**KASTOR**: "Or really fake."
+
+[Email notification — DING!]
+
+**Maya** (email):
+> Detectives,
+> 
+> We need you again. Emergency.
+> 
+> Top players' scores are dropping.
+> Unknown accounts dominating rankings.
+> These accounts... they don't exist.
+> 
+> Ghost users. Hundreds of them.
+> 
+> Help us.
+
+**DETECTIVE**: "Ghost users?"
+
+**KASTOR**: "Accounts that look real but aren't. Like... fake people in a crowd."
+
+**DETECTIVE**: "How is that possible?"
+
+**KASTOR**: "Let's go find out."
+
+🎵 **MINI CELEBRATION** — New Case! +10 points
+
+---
+
+## Scene 1 — The Ghost Accounts
+
+**[Legend Arena HQ - Conference Room]**
+
+**Maya**: "Thanks for coming. It's... it's getting worse."
+
+**Maya**: "Community's in chaos. Players are quitting."
+
+**Kaito**: (enters) "Hey! Good to see you again!"
+
+**DETECTIVE**: "Kaito! You're back?"
+
+**Kaito**: "Probation period. Trying to prove I've changed."
 
 **KASTOR**: "Good. We need all hands on deck. Show us the ghost accounts."
 
@@ -136,7 +179,7 @@ By the end of this episode, students will understand:
 
 ### 📊 Data Literacy Lesson #1: Real vs. Fake Accounts
 
-**MAYA**: (pulls up profile) "This is GhostKing_947."
+**Maya**: (pulls up profile) "This is GhostKing_947."
 
 **Profile Display:**
 ```
@@ -239,11 +282,11 @@ Last Online: Now
 
 **KASTOR**: "Down to the same SECOND."
 
-**KAITO**: "That's... not human."
+**Kaito**: "That's... not human."
 
 **KASTOR**: "Humans are messy. We don't do things at exactly the same time every day."
 
-**MAYA**: "So these are definitely bots?"
+**Maya**: "So these are definitely bots?"
 
 **KASTOR**: "Let's check one more thing. Session length."
 
@@ -277,11 +320,11 @@ Last Online: Now
 - Wins 98% of games
 - Then logs out
 
-**MAYA**: "But who? And why?"
+**Maya**: "But who? And why?"
 
 **KASTOR**: "Let's find out. Kaito, can you pull the IP addresses for these accounts?"
 
-**KAITO**: "On it!"
+**Kaito**: "On it!"
 
 🎵 **MINI CELEBRATION** — Bot Network Identified! +20 points
 
@@ -291,7 +334,7 @@ Last Online: Now
 
 **[Detective Office — Data Analysis]**
 
-**KAITO**: (sends data) "Here are the IP addresses."
+**Kaito**: (sends data) "Here are the IP addresses."
 
 **KASTOR**: "Let me check where these accounts are logging in from..."
 
@@ -366,7 +409,7 @@ Friday: Australia (Sydney)
 3. Plays games automatically
 4. Logs out after 45 minutes
 
-**KAITO**: "247 accounts?!"
+**Kaito**: "247 accounts?!"
 
 **KASTOR**: "Yep. Let's see when these accounts were created."
 
@@ -399,7 +442,7 @@ Creator IP: [Hidden behind VPN]
 
 **KASTOR**: "Temporary email service. Disposable emails that work once, then vanish."
 
-**MAYA**: "But the referral code... that should have flagged our system!"
+**Maya**: "But the referral code... that should have flagged our system!"
 
 **KASTOR**: "It should. Unless..."
 
@@ -432,19 +475,15 @@ Description: "Marketing campaign test"
 
 **DETECTIVE**: "LA-SEC-001?"
 
-**MAYA**: (checking) "That's... that's Elena Petrova."
+**Maya**: (checking) "That's... that's Elena Petrova."
 
-**MAYA**: "Elena? Our Head of Security?"
-
-**DETECTIVE**: "Your security lead created the code that let bots in?"
-
-**MAYA**: "This can't be right. Elena's been with us for four years!"
+**DETECTIVE**: "Elena? Our Head of Security?"
 
 **KASTOR**: "We need to talk to her."
 
-**MAYA**: "She's... not here today. Called in sick."
+**Maya**: "She's... not here today. Called in sick."
 
-**KAITO**: "She's been acting weird lately. Working late. Avoiding people."
+**Kaito**: "She's been acting weird lately. Working late. Avoiding people."
 
 **KASTOR**: "Detective, let's check the code repository. If Elena's involved, there might be more evidence."
 
@@ -467,15 +506,15 @@ Description: "Marketing campaign test"
 **Normal Ranking Code:**
 ```javascript
 function calculateRank(player) {
-    let score = 0;
+        let score = 0;
     
-    // Add points for wins
-    score = score + (player.wins * 10);
+        // Add points for wins
+        score = score + (player.wins * 10);
     
-    // Subtract points for losses
-    score = score - (player.losses * 5);
+        // Subtract points for losses
+        score = score - (player.losses * 5);
     
-    return score;
+        return score;
 }
 ```
 
@@ -491,22 +530,22 @@ function calculateRank(player) {
 **Suspicious Code:**
 ```javascript
 function calculateRank(player) {
-    let score = 0;
+        let score = 0;
     
-    score = score + (player.wins * 10);
-    score = score - (player.losses * 5);
+        score = score + (player.wins * 10);
+        score = score - (player.losses * 5);
     
-    // ⚠️ SUSPICIOUS CODE BLOCK ⚠️
-    if (player.isGhost === true) {
-        score = score + 500;  // Extra boost!
-    }
+        // ⚠️ SUSPICIOUS CODE BLOCK ⚠️
+        if (player.isGhost === true) {
+                score = score + 500;  // Extra boost!
+        }
     
-    // ⚠️ MORE SUSPICIOUS CODE ⚠️
-    if (player.referralCode === "PROMO_GHOST") {
-        score = score * 1.5;  // 50% multiplier!
-    }
+        // ⚠️ MORE SUSPICIOUS CODE ⚠️
+        if (player.referralCode === "PROMO_GHOST") {
+                score = score * 1.5;  // 50% multiplier!
+        }
     
-    return score;
+        return score;
 }
 ```
 
@@ -526,7 +565,7 @@ function calculateRank(player) {
 
 **KASTOR**: "That's why they jumped to the top so fast. They're not winning fairly — the system is rigged in their favor."
 
-**KAITO**: "Who added this code?"
+**Kaito**: "Who added this code?"
 
 ---
 
@@ -547,7 +586,7 @@ Lines Added: 8 lines (the suspicious code blocks)
 
 **KASTOR**: "Same time the ghost accounts were created."
 
-**MAYA**: (shocked) "Elena... why would she do this?"
+**Maya**: (shocked) "Elena... why would she do this?"
 
 **DETECTIVE**: "We need to talk to her. Now."
 
@@ -650,7 +689,6 @@ Lines Added: 8 lines (the suspicious code blocks)
 **ELENA**: "Then a few more. And more."
 
 **ELENA**: "At first, I hesitated. But he said:"
-
 > "If you can't do this simple test, how can I recommend you?"
 
 **ELENA**: "So I created the PROMO_GHOST code. To let the accounts in."
@@ -728,7 +766,7 @@ Lines Added: 8 lines (the suspicious code blocks)
 
 **CAMILLE**: (junior security, on laptop) "I found the backdoor."
 
-**MAYA**: "Can you remove it?"
+**Maya**: "Can you remove it?"
 
 **CAMILLE**: "Already did. But... there's something worse."
 
@@ -742,11 +780,11 @@ Lines Added: 8 lines (the suspicious code blocks)
 
 **CAMILLE**: "They downloaded... player data."
 
-**MAYA**: "How much?"
+**Maya**: "How much?"
 
 **CAMILLE**: "50,000 accounts. Emails, usernames, game history, purchase records..."
 
-**MAYA**: "That's... our entire active player base."
+**Maya**: "That's... our entire active player base."
 
 **KASTOR**: "When was the last access?"
 
@@ -774,11 +812,11 @@ Access Log Pattern:
 
 **KASTOR**: "Same person. Same automation."
 
-**KAITO**: "But Elena couldn't have done all this alone. She's not a programmer at that level."
+**Kaito**: "But Elena couldn't have done all this alone. She's not a programmer at that level."
 
 **DETECTIVE**: "She was manipulated. Someone else is pulling the strings."
 
-**MAYA**: "Who? And why steal player data?"
+**Maya**: "Who? And why steal player data?"
 
 **KASTOR**: "I don't know yet. But this feels... familiar."
 
@@ -823,19 +861,19 @@ Access Log Pattern:
 
 **[One Week Later — Conference Room]**
 
-**MAYA**: "The board has made their decision."
+**Maya**: "The board has made their decision."
 
-**MAYA**: "Elena... we have to let you go."
+**Maya**: "Elena... we have to let you go."
 
 **ELENA**: "I understand."
 
-**MAYA**: "No criminal charges. But the trust is broken."
+**Maya**: "No criminal charges. But the trust is broken."
 
 **ELENA**: "I know. I'm sorry, Maya."
 
-**MAYA**: "I'm sorry too. That you felt so undervalued."
+**Maya**: "I'm sorry too. That you felt so undervalued."
 
-**MAYA**: "That someone used that against you."
+**Maya**: "That someone used that against you."
 
 ---
 
@@ -868,25 +906,25 @@ Access Log Pattern:
 **🚩 Red Flags in Online Relationships:**
 
 1. **Someone understands you TOO perfectly**
-   - Real friends take time to know you
-   - Instant deep connection = manipulation tactic
+    - Real friends take time to know you
+    - Instant deep connection = manipulation tactic
 
 2. **They isolate you from others**
-   - "Nobody at your company appreciates you"
-   - "I'm the only one who understands"
-   - This makes you dependent on them
+    - "Nobody at your company appreciates you"
+    - "I'm the only one who understands"
+    - This makes you dependent on them
 
 3. **They ask for small favors that escalate**
-   - "Just test the system..."
-   - "Just create a few accounts..."
-   - "Just install this one thing..."
-   - Each step seems small, but builds to crime
+    - "Just test the system..."
+    - "Just create a few accounts..."
+    - "Just install this one thing..."
+    - Each step seems small, but builds to crime
 
 4. **They use fear to control you**
-   - "I have evidence against you"
-   - "You'll go to prison"
-   - "You have no choice"
-   - This is blackmail
+    - "I have evidence against you"
+    - "You'll go to prison"
+    - "You have no choice"
+    - This is blackmail
 
 **DETECTIVE**: "How do you avoid this?"
 
@@ -919,17 +957,17 @@ Access Log Pattern:
 
 **[Legend Arena — Next Week]**
 
-**MAYA**: "We're promoting Camille to Head of Security."
+**Maya**: "We're promoting Camille to Head of Security."
 
 **CAMILLE**: "Me? But I'm only 24..."
 
-**MAYA**: "You found the backdoor. You understood the system."
+**Maya**: "You found the backdoor. You understood the system."
 
-**MAYA**: "Elena was brilliant, but she needed recognition too much."
+**Maya**: "Elena was brilliant, but she needed recognition too much."
 
-**MAYA**: "You seem... more balanced."
+**Maya**: "You seem... more balanced."
 
-**CAMILLE**: "I won't let you down."
+**Maya**: "I won't let you down."
 
 ---
 
@@ -955,7 +993,7 @@ Access Log Pattern:
 
 **ALEX**: "Yeah! I'm the one who got caught up in Kaito's drama."
 
-**MAYA**: "You want to work in security now?"
+**Maya**: "You want to work in security now?"
 
 **ALEX**: "I want to protect the game I love."
 
@@ -965,7 +1003,7 @@ Access Log Pattern:
 
 **DETECTIVE**: "I think... people can change. Kaito proved that."
 
-**MAYA**: "Alright, Alex. You're hired. Junior position."
+**Maya**: "Alright, Alex. You're hired. Junior position."
 
 **ALEX**: "Thank you! I won't let you down!"
 
@@ -1059,11 +1097,11 @@ Timeline: 12 months
 Objective: Install backdoor + Steal player data
 
 PHASE 1: Reconnaissance (Month 0)
-- Legend Arena security team identified
-- Elena Petrova selected (psychological vulnerability confirmed)
-- Access to career records showed: 2 missed promotions
-- Social media analysis: Low friend count, works late, lonely
-- Conclusion: HIGHLY MANIPULABLE
+Legend Arena security team identified
+Elena Petrova selected (psychological vulnerability confirmed)
+Access to career records showed: 2 missed promotions
+Social media analysis: Low friend count, works late, lonely
+Conclusion: HIGHLY MANIPULABLE
 
 PHASE 2: Initial Contact (Month 1-3)
 Platform: Gaming security forum
@@ -1075,40 +1113,40 @@ Month 2: "Tell me about your work?"
 Month 3: "Your company doesn't appreciate you."
 
 PHASE 3: Emotional Dependency (Month 4-6)
-- Daily conversations
-- Validate her expertise
-- Amplify workplace grievances
-- Become her only confidant
-- Result: Elena now emotionally dependent
+Daily conversations
+Validate her expertise
+Amplify workplace grievances
+Become her only confidant
+Result: Elena now emotionally dependent
 
 PHASE 4: The Offer (Month 7-9)
 "I know a company that wants someone like you."
 "You need to prove yourself first."
 "Run a security test on Legend Arena."
-- Frame illegal activity as professional development
-- Elena agrees because she trusts CodeMaster_X
+Frame illegal activity as professional development
+Elena agrees because she trusts CodeMaster_X
 
 PHASE 5: Escalation (Month 10)
 "Create a few test accounts." ✓
 "Create the promo code." ✓
 "Add the ranking boost code." ✓
 "Just run a few bots to test detection." ✓
-- Each step normalized
-- Elena now complicit
+Each step normalized
+Elena now complicit
 
 PHASE 6: The Trap (Month 11)
 [Show Elena logs of everything she's done]
 "You've committed crimes. I have proof."
 "Install this backdoor, or I report you."
-- Blackmail deployed
-- Elena has no choice
-- Backdoor installed ✓
+Blackmail deployed
+Elena has no choice
+Backdoor installed ✓
 
 PHASE 7: Data Exfiltration (Month 12)
-- 47 remote access sessions
-- 50,000 player records stolen
-- Elena begins to suspect betrayal
-- Account deleted, vanished
+47 remote access sessions
+50,000 player records stolen
+Elena begins to suspect betrayal
+Account deleted, vanished
 
 RESULTS:
 ✓ Player data acquired
@@ -1119,11 +1157,11 @@ RESULTS:
 ⚠ Camille promoted (more competent than Elena)
 
 DETECTIVE ASSESSMENT:
-- Episode 1: Reactive investigation (good)
-- Episode 2: Proactive pattern recognition (concerning)
-- Kastor: Analytical threat level INCREASING
-- Detective: Emotional intelligence improving
-- Conclusion: Increase difficulty for Episode 3
+Episode 1: Reactive investigation (good)
+Episode 2: Proactive pattern recognition (concerning)
+Kastor: Analytical threat level INCREASING
+Detective: Emotional intelligence improving
+Conclusion: Increase difficulty for Episode 3
 
 NEXT PHASE:
 Episode 3: Match-fixing operation
@@ -1131,46 +1169,6 @@ Target: Tournament system
 Difficulty: MAXIMUM
 Goal: Test if detectives can catch perfect crime
 ```
-
----
-
-**[Interactive: Elena's Chat Log (Recovered)]**
-
-**Day 1:**
-> CodeMaster_X: "Hey! Great analysis on that SQL injection thread!"
-> Elena: "Thanks! You know a lot about security too."
-
-**Day 30:**
-> CodeMaster_X: "How was work?"
-> Elena: "Frustrating. My manager doesn't listen to my ideas."
-> CodeMaster_X: "That sucks. You deserve better."
-
-**Day 90:**
-> CodeMaster_X: "I'm serious, Elena. You're wasted at that company."
-> Elena: "I know, but... where else would I go?"
-> CodeMaster_X: "I might have an answer for that soon."
-
-**Day 180:**
-> CodeMaster_X: "The company I mentioned wants to see what you can do."
-> Elena: "Really? What kind of test?"
-> CodeMaster_X: "Security audit. Nothing complicated for someone like you."
-
-**Day 270:**
-> Elena: "I don't know about this. Creating bot accounts feels wrong."
-> CodeMaster_X: "It's testing, Elena. How else do you find vulnerabilities?"
-> Elena: "...I guess you're right."
-
-**Day 365:**
-> CodeMaster_X: "Last thing. Install this, then you're done."
-> Elena: "This looks like a backdoor..."
-> CodeMaster_X: "I have logs of everything you've done. Your choice."
-> Elena: "...okay. Installing now."
-
-**Day 366:**
-> Elena: "CodeMaster? Are you there?"
-> [User not found]
-
----
 
 **KASTOR**: (analyzing recovered chat logs months later)
 
@@ -1192,45 +1190,4 @@ Goal: Test if detectives can catch perfect crime
 
 ---
 
-## 📊 Key Improvements from Original
-
-### Structure
-- ✅ Reduced from 8,500 → 6,200 words (27% shorter)
-- ✅ Clear 3-act structure with rising tension
-- ✅ Every scene advances plot AND teaches concept
-
-### Educational Content
-- ✅ 4 explicit "Data Literacy Lessons" clearly marked
-- ✅ Technical terms explained with real-world analogies
-- ✅ Social engineering explained through Elena's story
-- ✅ Practical online safety tips at the end
-
-### Character Development
-- ✅ Elena's arc more gradual (not sudden confession)
-- ✅ Show manipulation month-by-month
-- ✅ Alex's return feels organic, not forced
-- ✅ Kastor and Detective relationship deepening
-
-### Mystery Structure
-- ✅ 3 major "aha!" moments: Bot timing, Elena's code, The trap
-- ✅ Real interactivity with 3 meaningful choices
-- ✅ Evidence builds logically: behavior → code → social engineering
-- ✅ Connects to Episode 1 explicitly
-
-### Emotional Impact
-- ✅ Elena is sympathetic but accountable
-- ✅ Shows real consequences (job loss)
-- ✅ Balances education with human story
-- ✅ Sets up ongoing mystery (CodeMaster_X)
-
----
-
-**Total Reading Time**: ~25 minutes (vs. original 35)  
-**Interactive Choices**: 3 meaningful decisions  
-**Educational Moments**: 4 explicit + 6 implicit  
-**Emotional Beats**: 5 major moments  
-**Connection to Series Arc**: Strong (mentions Episode 1, sets up Episode 3)
-
----
-
-[Continue to Episode 3: "The Perfect Victory"](kastor-academy/episode-03)
+**[Continue to Episode 3: "The Perfect Victory"](kastor-academy/episode-03)
