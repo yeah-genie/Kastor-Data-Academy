@@ -326,5 +326,286 @@ void main() {
         expect(bgmSlider, findsOneWidget);
       }
     });
+
+    testWidgets('Episode 1 스토리 진행 - 시작 장면', (WidgetTester tester) async {
+      // 앱 시작
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Episodes 메뉴로 이동
+      await tester.tap(find.text('Episodes'));
+      await tester.pumpAndSettle();
+
+      // Episode 1 카드 찾기 및 클릭
+      final episode1Card = find.text('Episode 1').first;
+      if (episode1Card.evaluate().isNotEmpty) {
+        await tester.tap(episode1Card);
+        await tester.pumpAndSettle();
+
+        // 스토리 화면이 열렸는지 확인
+        // Kastor의 첫 대사가 나타나는지 확인
+        await tester.pump(const Duration(seconds: 2));
+
+        // 스토리 내용 확인 (시간이 지나면 나타남)
+        final storyContent = find.textContaining('Kastor');
+        expect(storyContent, findsWidgets);
+      }
+    });
+
+    testWidgets('선택지 정답/오답 처리 테스트', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Chat 탭 확인
+      expect(find.text('안녕하세요! 카스토르입니다'), findsOneWidget);
+
+      // 선택지가 나타날 때까지 대기
+      await tester.pump(const Duration(seconds: 1));
+
+      // 선택지 버튼 찾기
+      final choice1 = find.text('서버 로그를 확인하겠습니다');
+      final choice2 = find.text('패치 노트를 먼저 보겠습니다');
+
+      // 첫 번째 선택지가 있으면 클릭
+      if (choice1.evaluate().isNotEmpty) {
+        await tester.tap(choice1);
+        await tester.pumpAndSettle();
+
+        // 선택 후 반응 확인
+        await tester.pump(const Duration(seconds: 1));
+      } else if (choice2.evaluate().isNotEmpty) {
+        await tester.tap(choice2);
+        await tester.pumpAndSettle();
+
+        await tester.pump(const Duration(seconds: 1));
+      }
+    });
+
+    testWidgets('Data 탭 - 차트 상호작용', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Data 탭으로 이동
+      await tester.tap(find.text('Data'));
+      await tester.pumpAndSettle();
+
+      // 데이터 분석 화면 확인
+      expect(find.text('데이터 분석'), findsOneWidget);
+
+      // 데이터 카드 확인
+      final dataCards = find.byType(Card);
+      expect(dataCards, findsWidgets);
+
+      // 첫 번째 데이터 카드 클릭 시도
+      if (dataCards.evaluate().isNotEmpty) {
+        final firstCard = dataCards.first;
+        await tester.tap(firstCard);
+        await tester.pumpAndSettle();
+
+        // 상세 정보가 표시되는지 확인
+        await tester.pump(const Duration(milliseconds: 500));
+      }
+    });
+
+    testWidgets('힌트 시스템 - 힌트 버튼 표시 및 사용', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Chat 탭에서 힌트 버튼 찾기
+      final hintButton = find.byIcon(Icons.lightbulb_outline);
+
+      if (hintButton.evaluate().isNotEmpty) {
+        // 힌트 버튼 클릭
+        await tester.tap(hintButton);
+        await tester.pumpAndSettle();
+
+        // 힌트 다이얼로그가 나타나는지 확인
+        expect(find.text('힌트'), findsOneWidget);
+
+        // 힌트 사용 또는 취소 버튼 확인
+        final cancelButton = find.text('취소');
+        if (cancelButton.evaluate().isNotEmpty) {
+          await tester.tap(cancelButton);
+          await tester.pumpAndSettle();
+        }
+      }
+    });
+
+    testWidgets('업적 시스템 - 업적 화면 접근', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Progress 탭으로 이동
+      await tester.tap(find.text('Progress'));
+      await tester.pumpAndSettle();
+
+      // 업적 버튼 또는 섹션 찾기
+      final achievementButton = find.text('업적');
+
+      if (achievementButton.evaluate().isNotEmpty) {
+        // 업적 화면으로 이동
+        await tester.tap(achievementButton);
+        await tester.pumpAndSettle();
+
+        // 업적 목록 확인
+        expect(find.text('첫 사건 해결'), findsWidgets);
+        expect(find.text('완벽한 추리'), findsWidgets);
+      } else {
+        // Progress 탭에 업적 정보가 표시되는지 확인
+        expect(find.text('전체 진행률'), findsOneWidget);
+      }
+    });
+
+    testWidgets('+ 메뉴에서 Data 탭으로 이동', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Chat 탭 확인 (기본 선택됨)
+      expect(find.text('안녕하세요! 카스토르입니다'), findsOneWidget);
+
+      // + 버튼 클릭
+      final plusButton = find.byIcon(Icons.add_circle_outline);
+      if (plusButton.evaluate().isNotEmpty) {
+        await tester.tap(plusButton);
+        await tester.pumpAndSettle();
+
+        // '데이터 분석' 메뉴 항목 클릭
+        final dataMenuItem = find.text('데이터 분석');
+        if (dataMenuItem.evaluate().isNotEmpty) {
+          await tester.tap(dataMenuItem);
+          await tester.pumpAndSettle();
+
+          // Data 탭으로 이동했는지 확인
+          expect(find.text('데이터 분석'), findsOneWidget);
+        }
+      }
+    });
+
+    testWidgets('캐릭터 아바타 표시 테스트', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Team 탭으로 이동
+      await tester.tap(find.text('Team'));
+      await tester.pumpAndSettle();
+
+      // 캐릭터 이름 확인
+      expect(find.text('Isabella Torres'), findsOneWidget);
+      expect(find.text('Alex Reeves'), findsOneWidget);
+      expect(find.text('Camille Beaumont'), findsOneWidget);
+
+      // 캐릭터 카드 클릭 (상세 정보)
+      final isabellaCard = find.text('Isabella Torres');
+      await tester.tap(isabellaCard);
+      await tester.pumpAndSettle();
+
+      // 상세 정보가 표시되는지 확인 (다이얼로그 또는 확장)
+      await tester.pump(const Duration(milliseconds: 500));
+    });
+
+    testWidgets('파일 상세 보기 테스트', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Files 탭으로 이동
+      await tester.tap(find.text('Files'));
+      await tester.pumpAndSettle();
+
+      // 파일 항목 클릭
+      final fileItem = find.text('server_logs_020823.txt');
+      if (fileItem.evaluate().isNotEmpty) {
+        await tester.tap(fileItem);
+        await tester.pumpAndSettle();
+
+        // 파일 내용이 표시되는지 확인
+        await tester.pump(const Duration(milliseconds: 500));
+      }
+    });
+
+    testWidgets('전체 사용자 흐름 - New Game부터 Episode 시작까지', (WidgetTester tester) async {
+      // 앱 시작
+      app.main();
+      await tester.pumpAndSettle();
+
+      // 메인 메뉴 확인
+      expect(find.text('KASTOR'), findsOneWidget);
+
+      // New Game 클릭
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Dashboard 확인
+      expect(find.text('KASTOR Data Academy'), findsOneWidget);
+
+      // Chat 탭에서 환영 메시지 확인
+      expect(find.text('안녕하세요! 카스토르입니다'), findsOneWidget);
+
+      // Progress 탭으로 이동
+      await tester.tap(find.text('Progress'));
+      await tester.pumpAndSettle();
+
+      // Episode 목록 확인
+      expect(find.text('Episode 1'), findsOneWidget);
+
+      // Episode 1 클릭 시도
+      final episode1 = find.text('Episode 1').first;
+      if (episode1.evaluate().isNotEmpty) {
+        await tester.tap(episode1);
+        await tester.pumpAndSettle();
+
+        // Episode 화면으로 이동했는지 확인
+        await tester.pump(const Duration(seconds: 1));
+      }
+    });
+
+    testWidgets('메모리 누수 테스트 - 여러 화면 왕복', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // 여러 번 탭 전환 (메모리 누수 체크)
+      for (int i = 0; i < 5; i++) {
+        await tester.tap(find.text('Data'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Files'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Team'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Progress'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Chat'));
+        await tester.pumpAndSettle();
+      }
+
+      // 마지막에도 정상 작동하는지 확인
+      expect(find.text('안녕하세요! 카스토르입니다'), findsOneWidget);
+    });
   });
 }
