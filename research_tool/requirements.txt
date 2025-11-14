@@ -1,0 +1,27 @@
+# Kastor Data Academy - 사업계획서 자료 수집 도구
+# Reddit API & Data Analysis Dependencies
+
+# Reddit API
+praw==7.7.1
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.2
+
+# Data Visualization
+matplotlib==3.8.2
+seaborn==0.13.0
+wordcloud==1.9.3
+
+# Sentiment Analysis
+vaderSentiment==3.3.2
+textblob==0.17.1
+
+# Report Generation
+jinja2==3.1.2
+markdown==3.5.1
+plotly==5.18.0
+
+# Utilities
+python-dotenv==1.0.0
+tqdm==4.66.1
