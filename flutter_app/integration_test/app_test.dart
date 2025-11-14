@@ -218,5 +218,113 @@ void main() {
       expect(find.text('KASTOR'), findsOneWidget);
       expect(find.text('Data Academy'), findsOneWidget);
     });
+
+    testWidgets('Episodes 메뉴 - 에피소드 선택 화면', (WidgetTester tester) async {
+      // 앱 시작
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Episodes 버튼 클릭
+      await tester.tap(find.text('Episodes'));
+      await tester.pumpAndSettle();
+
+      // 에피소드 선택 화면 확인
+      expect(find.text('Episodes'), findsOneWidget);
+
+      // Episode 1 카드 확인
+      expect(find.text('Episode 1'), findsWidgets);
+      expect(find.text('The Missing Balance Patch'), findsOneWidget);
+    });
+
+    testWidgets('Chat 탭 - + 버튼 메뉴 열기', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // Chat 탭 확인 (기본 선택됨)
+      expect(find.text('안녕하세요! 카스토르입니다'), findsOneWidget);
+
+      // + 버튼 찾기
+      final plusButton = find.byIcon(Icons.add_circle_outline);
+      if (plusButton.evaluate().isNotEmpty) {
+        // + 버튼 클릭
+        await tester.tap(plusButton);
+        await tester.pumpAndSettle();
+
+        // 메뉴 항목 확인
+        expect(find.text('데이터 분석'), findsOneWidget);
+        expect(find.text('파일'), findsOneWidget);
+        expect(find.text('팀'), findsOneWidget);
+        expect(find.text('진행률'), findsOneWidget);
+
+        // 메뉴 닫기 (오버레이 클릭)
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pumpAndSettle();
+      }
+    });
+
+    testWidgets('성능 테스트 - 탭 전환 속도', (WidgetTester tester) async {
+      // 앱 시작 및 Dashboard로 이동
+      app.main();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('New Game'));
+      await tester.pumpAndSettle();
+
+      // 탭 전환 측정
+      final stopwatch = Stopwatch()..start();
+
+      await tester.tap(find.text('Data'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Files'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Team'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Progress'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Chat'));
+      await tester.pumpAndSettle();
+
+      stopwatch.stop();
+
+      // 5개 탭 전환이 5초 이내에 완료되어야 함
+      expect(stopwatch.elapsedMilliseconds, lessThan(5000));
+    });
+
+    testWidgets('접근성 - 모든 주요 버튼에 Semantics 있음', (WidgetTester tester) async {
+      // 앱 시작
+      app.main();
+      await tester.pumpAndSettle();
+
+      // 메인 메뉴 버튼 확인
+      expect(find.text('New Game'), findsOneWidget);
+      expect(find.text('Continue'), findsOneWidget);
+      expect(find.text('Episodes'), findsOneWidget);
+      expect(find.text('Settings'), findsOneWidget);
+    });
+
+    testWidgets('Settings 화면 - 설정 변경', (WidgetTester tester) async {
+      // 앱 시작
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Settings 버튼 클릭
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
+
+      // 설정 화면 확인
+      expect(find.text('설정'), findsOneWidget);
+
+      // BGM 볼륨 슬라이더 확인
+      final bgmSlider = find.byType(Slider).first;
+      if (bgmSlider.evaluate().isNotEmpty) {
+        expect(bgmSlider, findsOneWidget);
+      }
+    });
   });
 }

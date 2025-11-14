@@ -1,0 +1,98 @@
+name: Web E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+    paths:
+      - 'flutter_app/**'
+      - '.github/workflows/web-e2e-test.yml'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Web E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.1'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@latest
+
+      - name: Get dependencies
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: Run Web E2E Tests
+        working-directory: flutter_app
+        run: |
+          # ChromeDriver 시작
+          chromedriver --port=4444 &
+          CHROMEDRIVER_PID=$!
+
+          # 웹 서버 시작 및 테스트 실행
+          flutter drive \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/app_test.dart \
+            -d web-server \
+            --web-port=8080 \
+            --browser-name=chrome
+
+          # ChromeDriver 종료
+          kill $CHROMEDRIVER_PID
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: flutter_app/test-results/
+          retention-days: 7
+
+      - name: Create test report
+        if: always()
+        run: |
+          echo "# Web E2E Test Results" > test-report.md
+          echo "" >> test-report.md
+          echo "**Date:** $(date '+%Y-%m-%d %H:%M:%S')" >> test-report.md
+          echo "**Commit:** ${{ github.sha }}" >> test-report.md
+          echo "**Branch:** ${{ github.ref_name }}" >> test-report.md
+          echo "" >> test-report.md
+          echo "## Test Summary" >> test-report.md
+          echo "웹 E2E 테스트가 실행되었습니다." >> test-report.md
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report.md
+          retention-days: 7
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('test-report.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
