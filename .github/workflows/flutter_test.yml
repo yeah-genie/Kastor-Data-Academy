@@ -10,6 +10,8 @@ jobs:
   tests:
     name: Run Flutter widget & integration tests
     runs-on: ubuntu-latest
+    env:
+      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -64,16 +66,46 @@ jobs:
           api-level: 30
           arch: x86_64
           target: google_apis
-          emulator-options: -no-window -no-audio -no-boot-anim
+          # disable snapshots (can cause stop/kill issues) and avoid boot animation to speed up
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -no-snapshot-load -no-snapshot-save -wipe-data
           script: |
             echo "Devices before boot:"
             flutter devices || true
-            # ensure packages are available inside emulator step
-            cd flutter_app
-            flutter pub get
-            mkdir -p ../integration-test-results
-            # Run integration_test; output machine JSON
-            flutter test integration_test/app_test.dart --machine > ../integration-test-results/integration_test_machine.json || true
+            # ensure packages are available and run integration tests in a single shell
+            bash -lc "cd flutter_app && flutter pub get && mkdir -p ../integration-test-results && flutter test integration_test/app_test.dart --machine > ../integration-test-results/integration_test_machine.json || true"
+
+      - name: Shutdown emulator (graceful then force)
+        if: always()
+        run: |
+          set -e
+          EMU=emulator-5554
+          echo "Attempting graceful shutdown of $EMU"
+          adb -s $EMU emu kill || echo "adb emu kill failed or emulator not connected"
+          # wait and retry a few times
+          for i in 1 2 3; do
+            sleep 5
+            if adb devices | grep -q "$EMU"; then
+              echo "Emulator still running; retrying kill ($i)"
+              adb -s $EMU emu kill || true
+            else
+              echo "Emulator stopped"
+              break
+            fi
+          done
+          # if still running, try to kill qemu processes as fallback
+          if adb devices | grep -q "$EMU"; then
+            echo "Fallback: killing emulator qemu processes"
+            pids=$(ps aux | grep -i qemu-system | grep emulator | awk '{print $2}' || true)
+            if [ -n "$pids" ]; then
+              echo "Killing pids: $pids"
+              echo $pids | xargs -r kill -9 || true
+            else
+              echo "No qemu processes found; attempting to find emulator process"
+              pids2=$(ps aux | grep -i emulator | grep -v grep | awk '{print $2}' || true)
+              echo $pids2 | xargs -r kill -9 || true
+            fi
+            sleep 3
+          fi
 
       - name: Upload integration test results (artifact)
         uses: actions/upload-artifact@v4
