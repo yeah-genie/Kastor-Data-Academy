@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// 디스코드 스타일의 "is typing..." 인디케이터
-class TypingIndicator extends StatefulWidget {
+class CharacterTypingIndicator extends StatefulWidget {
   final String name;
   final String? avatarUrl;
   final Color accentColor;
 
-  const TypingIndicator({
+  const CharacterTypingIndicator({
     super.key,
     required this.name,
     this.avatarUrl,
@@ -14,10 +14,10 @@ class TypingIndicator extends StatefulWidget {
   });
 
   @override
-  State<TypingIndicator> createState() => _TypingIndicatorState();
+  State<CharacterTypingIndicator> createState() => _CharacterTypingIndicatorState();
 }
 
-class _TypingIndicatorState extends State<TypingIndicator>
+class _CharacterTypingIndicatorState extends State<CharacterTypingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 

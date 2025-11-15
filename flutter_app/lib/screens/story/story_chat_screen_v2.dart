@@ -7,6 +7,7 @@ import '../../widgets/notification_overlay.dart';
 import '../../widgets/screen_effects.dart';
 import '../../widgets/email_fullscreen.dart';
 import '../../widgets/typing_text.dart';
+import '../../widgets/typing_indicator.dart';
 import '../../widgets/realistic_notification.dart';
 
 class StoryChatScreenV2 extends ConsumerStatefulWidget {
@@ -956,7 +957,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
   Widget _buildTypingIndicator(StoryMessage message, AppSettings settings) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: TypingIndicator(
+      child: CharacterTypingIndicator(
         name: message.typingUser ?? 'Kastor',
         accentColor: _getSpeakerColor(message.typingUser ?? 'kastor'),
       ),
