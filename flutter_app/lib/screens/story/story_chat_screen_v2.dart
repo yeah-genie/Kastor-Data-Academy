@@ -11,6 +11,7 @@ import '../../widgets/typing_indicator.dart';
 import '../../widgets/realistic_notification.dart';
 import '../../widgets/emoji_reaction_picker.dart';
 import '../../widgets/hologram_loading.dart';
+import 'episode_ending_screen.dart';
 
 class StoryChatScreenV2 extends ConsumerStatefulWidget {
   const StoryChatScreenV2({super.key});
@@ -37,8 +38,46 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
     // Listen to story state changes and auto-scroll
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listen(storyProviderV2, (previous, next) {
+        // 메시지 추가 시 스크롤
         if (previous?.messages.length != next.messages.length) {
           _scrollToBottom();
+        }
+        
+        // 에피소드 완료 시 자동으로 EpisodeEndingScreen 표시
+        if (previous?.episodeCompleted == false && next.episodeCompleted == true) {
+          print('🎉 Episode completed - navigating to ending screen');
+          
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => EpisodeEndingScreen(
+                    episodeTitle: 'Episode 1: The Missing Balance Patch',
+                    totalScore: next.totalScore,
+                    investigationPoints: next.investigationPoints,
+                    choicesMade: next.choicesMade,
+                    detectiveName: next.detectiveName ?? 'Detective',
+                    onReplay: () {
+                      ref.read(storyProviderV2.notifier).restartEpisode();
+                      Navigator.of(context).pop();
+                    },
+                    onNextEpisode: () {
+                      // TODO: Episode 2 구현 시 추가
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Episode 2 coming soon! 🚀'),
+                        ),
+                      );
+                    },
+                    onHome: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                  ),
+                ),
+              );
+            }
+          });
         }
       });
     });

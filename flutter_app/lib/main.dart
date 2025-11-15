@@ -10,8 +10,11 @@ import 'screens/settings/settings_screen.dart';
 import 'screens/tutorial/tutorial_screen.dart';
 import 'screens/demo/episode1_demo_screen.dart';
 import 'screens/inventory/inventory_screen.dart';
+import 'screens/story/story_chat_screen_v2.dart';
 import 'theme/academy_theme.dart';
 import 'services/notification_service.dart';
+import 'services/save_load_service.dart';
+import 'providers/story_provider_v2.dart';
 import 'widgets/hologram_loading.dart';
 
 void main() async {
@@ -50,6 +53,8 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   bool _isLoading = true;
   bool _isNavigating = false;
+  bool _hasSavedProgress = false;
+  DateTime? _lastSavedTime;
 
   @override
   void initState() {
@@ -63,6 +68,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       ref.read(gameStateProvider.notifier).loadGameState(),
       ref.read(settingsProvider.notifier).loadSettings(),
     ]);
+
+    // 저장된 진행 상황 확인
+    _hasSavedProgress = await SaveLoadService.hasSavedProgress();
+    if (_hasSavedProgress) {
+      _lastSavedTime = await SaveLoadService.getLastSavedTime();
+    }
 
     setState(() {
       _isLoading = false;
@@ -279,20 +290,60 @@ class _HomePageState extends ConsumerState<HomePage> {
                     text: settings.language == 'ko' ? '📖 이어하기' : '📖 Continue',
                     icon: Icons.trending_up,
                     isLoading: _isNavigating,
-                    tooltip: gameState.currentEpisode == null
+                    subtitle: _hasSavedProgress && _lastSavedTime != null
+                        ? _formatLastSaved(_lastSavedTime!, settings.language)
+                        : null,
+                    tooltip: !_hasSavedProgress
                         ? (settings.language == 'ko'
                             ? '저장된 진행 상황이 없습니다'
                             : 'No saved progress')
                         : null,
-                    onPressed: gameState.currentEpisode != null && !_isNavigating
-                        ? () {
-                            _navigateWithDebounce(() {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const DashboardScreen(),
-                                ),
+                    onPressed: _hasSavedProgress && !_isNavigating
+                        ? () async {
+                            // 저장된 진행 상황 확인
+                            final hasSaved = await SaveLoadService.hasSavedProgress();
+                            
+                            if (hasSaved && mounted) {
+                              setState(() {
+                                _isNavigating = true;
+                              });
+                              
+                              try {
+                                // 저장된 진행 상황 불러오기
+                                await ref.read(storyProviderV2.notifier).loadSavedProgress();
+                                
+                                if (mounted) {
+                                  // StoryChatScreenV2로 이동
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const StoryChatScreenV2(),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  _showSnackBar(
+                                    context,
+                                    settings.language == 'ko'
+                                        ? '진행 상황을 불러올 수 없습니다: $e'
+                                        : 'Failed to load progress: $e',
+                                  );
+                                }
+                              } finally {
+                                if (mounted) {
+                                  setState(() {
+                                    _isNavigating = false;
+                                  });
+                                }
+                              }
+                            } else if (mounted) {
+                              _showSnackBar(
+                                context,
+                                settings.language == 'ko'
+                                    ? '저장된 진행 상황이 없습니다'
+                                    : 'No saved progress found',
                               );
-                            });
+                            }
                           }
                         : null,
                   ),
@@ -367,10 +418,30 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
+
+  String _formatLastSaved(DateTime time, String language) {
+    final now = DateTime.now();
+    final diff = now.difference(time);
+
+    if (language == 'ko') {
+      if (diff.inMinutes < 1) return '방금 전 저장';
+      if (diff.inHours < 1) return '${diff.inMinutes}분 전 저장';
+      if (diff.inDays < 1) return '${diff.inHours}시간 전 저장';
+      if (diff.inDays < 7) return '${diff.inDays}일 전 저장';
+      return '${time.month}/${time.day} 저장';
+    } else {
+      if (diff.inMinutes < 1) return 'Saved just now';
+      if (diff.inHours < 1) return 'Saved ${diff.inMinutes}m ago';
+      if (diff.inDays < 1) return 'Saved ${diff.inHours}h ago';
+      if (diff.inDays < 7) return 'Saved ${diff.inDays}d ago';
+      return 'Saved ${time.month}/${time.day}';
+    }
+  }
 }
 
 class _MenuButton extends StatefulWidget {
   final String text;
+  final String? subtitle;
   final IconData icon;
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -378,6 +449,7 @@ class _MenuButton extends StatefulWidget {
 
   const _MenuButton({
     required this.text,
+    this.subtitle,
     required this.icon,
     this.onPressed,
     this.isLoading = false,
@@ -438,18 +510,46 @@ class _MenuButtonState extends State<_MenuButton> {
                         ),
                       )
                     : Center(
-                        child: Text(
-                          widget.text,
-                          style: TextStyle(
-                            fontFamily: 'Space Grotesk',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                            color: widget.onPressed != null
-                                ? (_isHovered ? AcademyColors.creamPaper : AcademyColors.neonCyan)
-                                : AcademyColors.slate,
-                          ),
-                        ),
+                        child: widget.subtitle != null
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    widget.text,
+                                    style: TextStyle(
+                                      fontFamily: 'Space Grotesk',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                      color: widget.onPressed != null
+                                          ? (_isHovered ? AcademyColors.creamPaper : AcademyColors.neonCyan)
+                                          : AcademyColors.slate,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    widget.subtitle!,
+                                    style: TextStyle(
+                                      fontFamily: 'JetBrains Mono',
+                                      fontSize: 11,
+                                      color: AcademyColors.slate.withOpacity(0.7),
+                                      letterSpacing: 0.3,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                widget.text,
+                                style: TextStyle(
+                                  fontFamily: 'Space Grotesk',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                  color: widget.onPressed != null
+                                      ? (_isHovered ? AcademyColors.creamPaper : AcademyColors.neonCyan)
+                                      : AcademyColors.slate,
+                                ),
+                              ),
                       ),
               ),
             ),

@@ -260,8 +260,22 @@ class StoryNotifierV2 extends Notifier<StoryState> {
 
     final nodes = _episodeLoader.getSceneNodes(_currentScene!);
     if (state.currentNodeIndex >= nodes.length) {
-      // Scene complete
+      // Scene complete - 에피소드 완료 처리
       print('Scene ${state.currentSceneId} complete');
+      
+      // 마지막 씬인 경우 에피소드 완료
+      final sceneId = state.currentSceneId;
+      if (sceneId.contains('ending') || sceneId.contains('final') || sceneId.startsWith('scene_9')) {
+        print('🎉 Episode completed!');
+        completeEpisode();
+        
+        // 에피소드 완료 알림
+        NotificationService().showEpisodeCompleteNotification(
+          episodeTitle: 'Episode 1',
+          score: state.totalScore,
+        );
+      }
+      
       return;
     }
 
