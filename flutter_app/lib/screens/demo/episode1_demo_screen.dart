@@ -39,6 +39,10 @@ class _Episode1DemoScreenState extends ConsumerState<Episode1DemoScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
           settings.language == 'ko'
               ? '캐스터 데이터 아카데미'
@@ -58,71 +62,82 @@ class _Episode1DemoScreenState extends ConsumerState<Episode1DemoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Welcome card
+            // Simplified Mission Card
             Card(
               color: const Color(0xFF6366F1).withOpacity(0.2),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      settings.language == 'ko'
-                          ? '🎮 에피소드 1: 사라진 밸런스 패치'
-                          : '🎮 Episode 1: The Missing Balance Patch',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFBBF24).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.assignment,
+                            color: Color(0xFFFBBF24),
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                settings.language == 'ko'
+                                    ? '새로운 의뢰'
+                                    : 'New Mission',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFFFBBF24),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                settings.language == 'ko'
+                                    ? '사라진 밸런스 패치'
+                                    : 'The Missing Balance Patch',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      settings.language == 'ko'
-                          ? '셰도우 캐릭터의 승률이 하루 만에 50%에서 85%로 급등했습니다! 캐스터와 함께 이 미스터리를 풀어보세요.'
-                          : 'Shadow\'s win rate jumped from 50% to 85% in just one day! Solve this mystery with Kastor.',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        height: 1.5,
-                      ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        _buildInfoChip(
+                          Icons.timer_outlined,
+                          settings.language == 'ko' ? '40분' : '40 min',
+                        ),
+                        const SizedBox(width: 12),
+                        _buildInfoChip(
+                          Icons.stars,
+                          '⭐⭐⭐',
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Icon(Icons.language, size: 20, color: Color(0xFFFBBF24)),
-                        const SizedBox(width: 8),
-                        Text(
-                          settings.language == 'ko'
-                              ? '언어 전환 기능 지원'
-                              : 'Language switching supported',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.chat_bubble_outline, size: 20, color: Color(0xFFFBBF24)),
-                        const SizedBox(width: 8),
-                        Text(
-                          settings.language == 'ko'
-                              ? '채팅 방식 스토리 진행'
-                              : 'Chat-based story progression',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.insert_chart, size: 20, color: Color(0xFFFBBF24)),
-                        const SizedBox(width: 8),
-                        Text(
-                          settings.language == 'ko'
-                              ? '실시간 데이터 시각화'
-                              : 'Real-time data visualization',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
+                    Text(
+                      settings.language == 'ko'
+                          ? '🕵️ Shadow의 승률이 급등했습니다!\n데이터 탐정 Kastor와 함께 진실을 밝혀보세요.'
+                          : '🕵️ Shadow\'s win rate skyrocketed!\nUncover the truth with data detective Kastor.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
                     ),
                   ],
                 ),
@@ -433,27 +448,55 @@ class _Episode1DemoScreenState extends ConsumerState<Episode1DemoScreen> {
     );
   }
 
+  Widget _buildInfoChip(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: const Color(0xFF00D9FF)),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showInfoDialog(BuildContext context, String language) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1B4B),
         title: Text(
           language == 'ko' ? '정보' : 'Information',
+          style: const TextStyle(color: Colors.white),
         ),
         content: Text(
           language == 'ko'
-              ? '이것은 캐스터 데이터 아카데미 에피소드 1의 개선된 버전입니다.\n\n'
-                  '• 한국어/영어 지원\n'
-                  '• 캐릭터 아바타\n'
-                  '• 채팅 인터페이스\n'
-                  '• 데이터 시각화\n\n'
+              ? '캐스터 데이터 아카데미 EP1\n\n'
+                  '• 대화형 스토리\n'
+                  '• 실시간 데이터 분석\n'
+                  '• 한/영 언어 지원\n\n'
                   '즐거운 학습 되세요!'
-              : 'This is the improved version of Kastor Data Academy Episode 1.\n\n'
-                  '• Korean/English support\n'
-                  '• Character avatars\n'
-                  '• Chat interface\n'
-                  '• Data visualization\n\n'
+              : 'Kastor Data Academy EP1\n\n'
+                  '• Interactive story\n'
+                  '• Real-time data analysis\n'
+                  '• KR/EN language support\n\n'
                   'Enjoy learning!',
+          style: const TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(

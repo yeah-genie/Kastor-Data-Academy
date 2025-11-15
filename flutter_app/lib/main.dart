@@ -197,27 +197,36 @@ class _HomePageState extends ConsumerState<HomePage> {
                   
                   const SizedBox(height: 20),
                   
-                  // Academy Title (Serif)
-                  const Text(
-                    'KASTOR DATA',
-                    style: TextStyle(
-                      fontFamily: 'Playfair Display',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 4,
-                      color: AcademyColors.creamPaper,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    'ACADEMY',
-                    style: TextStyle(
-                      fontFamily: 'Cinzel',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 6,
-                      color: AcademyColors.creamPaper,
-                    ),
+                  // Academy Title (Serif) - Responsive
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isMobile = constraints.maxWidth < 600;
+                      return Column(
+                        children: [
+                          Text(
+                            'KASTOR DATA',
+                            style: TextStyle(
+                              fontFamily: 'Playfair Display',
+                              fontSize: isMobile ? 28 : 32,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 4,
+                              color: AcademyColors.creamPaper,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'ACADEMY',
+                            style: TextStyle(
+                              fontFamily: 'Cinzel',
+                              fontSize: isMobile ? 20 : 24,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 6,
+                              color: AcademyColors.creamPaper,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   
                   const SizedBox(height: 6),
@@ -466,7 +475,8 @@ class _MenuButtonState extends State<_MenuButton> {
             child: InkWell(
               onTap: widget.isLoading ? null : widget.onPressed,
               borderRadius: BorderRadius.circular(8),
-              child: Padding(
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 56),
                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
                 child: widget.isLoading
                     ? const Center(

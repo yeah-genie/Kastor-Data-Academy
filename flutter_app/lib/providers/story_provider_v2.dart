@@ -173,6 +173,10 @@ class StoryNotifierV2 extends Notifier<StoryState> {
       // Load episode data
       final episodeData = await _episodeLoader.loadEpisode('episode1', language);
 
+      if (episodeData == null) {
+        throw Exception('Failed to load episode data');
+      }
+
       state = state.copyWith(
         episodeData: episodeData,
         isLoading: false,
@@ -182,7 +186,16 @@ class StoryNotifierV2 extends Notifier<StoryState> {
       _loadScene('scene_0');
     } catch (e) {
       print('Error initializing story: $e');
-      state = state.copyWith(isLoading: false);
+      final errorMessage = StoryMessage(
+        id: 'error_${DateTime.now().millisecondsSinceEpoch}',
+        speaker: 'system',
+        text: '❌ 에피소드 로드 실패. 다시 시도해주세요.',
+        timestamp: DateTime.now(),
+      );
+      state = state.copyWith(
+        isLoading: false,
+        messages: [errorMessage],
+      );
     }
   }
 
@@ -304,6 +317,12 @@ class StoryNotifierV2 extends Notifier<StoryState> {
   void _advanceNode() {
     state = state.copyWith(currentNodeIndex: state.currentNodeIndex + 1);
     _processNextNode();
+  }
+
+  // Trigger scroll to bottom (called from UI)
+  void triggerScroll() {
+    // UI will listen to message changes and scroll automatically
+    state = state.copyWith();
   }
 
   void _addMessage(String speaker, String text, {String? email, Map<String, dynamic>? emailData}) {

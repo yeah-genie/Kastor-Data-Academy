@@ -28,6 +28,19 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    // Listen to story state changes and auto-scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listen(storyProviderV2, (previous, next) {
+        if (previous?.messages.length != next.messages.length) {
+          _scrollToBottom();
+        }
+      });
+    });
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -170,7 +183,24 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
         ],
       ),
       body: storyState.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(
+                    color: Color(0xFF00D9FF),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    settings.language == 'ko' ? '에피소드 로딩 중...' : 'Loading Episode...',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            )
           : Column(
               children: [
                 // Message list
@@ -567,12 +597,15 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                             ],
                           )
                         : ElevatedButton(
-                            onPressed: () {
+                            onPressed: storyState.isLoading ? null : () {
                               ref.read(storyProviderV2.notifier).continueStory();
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                _scrollToBottom();
+                              });
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: const Color(0xFF00D9FF),
+                              backgroundColor: storyState.isLoading ? Colors.grey : const Color(0xFF00D9FF),
                               foregroundColor: const Color(0xFF0A0E1A),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -580,20 +613,29 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                               elevation: 8,
                               shadowColor: const Color(0xFF00D9FF).withOpacity(0.5),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  settings.language == 'ko' ? 'Continue' : 'Continue',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                            child: storyState.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        settings.language == 'ko' ? 'Continue' : 'Continue',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(Icons.arrow_forward, size: 20, color: Color(0xFF0A0E1A)),
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward, size: 20, color: Color(0xFF0A0E1A)),
-                              ],
-                            ),
                           ),
                   ),
 
@@ -1008,6 +1050,14 @@ class _ChoiceButtonState extends State<_ChoiceButton> {
               : () {
                   setState(() => _isPressed = true);
                   widget.onPressed();
+                  // 스크롤 트리거
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    final context = this.context;
+                    if (mounted && context.mounted) {
+                      final state = context.findAncestorStateOfType<_StoryChatScreenV2State>();
+                      state?._scrollToBottom();
+                    }
+                  });
                   Future.delayed(const Duration(milliseconds: 500), () {
                     if (mounted) {
                       setState(() => _isPressed = false);
@@ -1017,8 +1067,9 @@ class _ChoiceButtonState extends State<_ChoiceButton> {
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
-              vertical: 16,
+              vertical: 18,
             ),
+            minimumSize: const Size(double.infinity, 56),
             backgroundColor: _isPressed
                 ? const Color(0xFF6366F1).withOpacity(0.4)
                 : (_isHovered
