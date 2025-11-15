@@ -222,7 +222,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
 
                       // Regular chat message
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: isPlayerMessage
@@ -429,45 +429,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                               ),
                             ),
 
-                            // Avatar for player (right side)
-                            if (isPlayerMessage && !hideAvatar) ...[
-                              const SizedBox(width: 12),
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: const LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Color(0xFF00D9FF),
-                                      Color(0xFF00A3CC),
-                                    ],
-                                  ),
-                                  border: Border.all(
-                                    color: const Color(0xFF00D9FF),
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF00D9FF).withOpacity(0.5),
-                                      blurRadius: 15,
-                                      spreadRadius: 3,
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SvgPicture.asset(
-                                    _getAvatarPath('detective'),
-                                    width: 44,
-                                    height: 44,
-                                  ),
-                                ),
-                              ),
-                            ] else if (isPlayerMessage && hideAvatar) ...[
-                              const SizedBox(width: 72), // Space for hidden avatar
+                            // Avatar for player (right side) - REMOVED
                             ],
                           ],
                         ),
@@ -581,10 +543,10 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                               const SizedBox(width: 8),
                               ElevatedButton(
                                 onPressed: () {
-                                  if (_inputController.text.isNotEmpty) {
+                                  if (_inputController.text.trim().isNotEmpty) {
                                     ref
                                         .read(storyProviderV2.notifier)
-                                        .submitDetectiveName(_inputController.text);
+                                        .submitDetectiveName(_inputController.text.trim());
                                     _inputController.clear();
                                   }
                                 },

@@ -168,7 +168,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   
                   // 🎓 Logo with Hologram Glow
                   TweenAnimationBuilder<double>(
@@ -179,15 +179,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                       return Transform.scale(
                         scale: value,
                         child: Container(
-                          width: 150,
-                          height: 150,
+                          width: 100,
+                          height: 100,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             boxShadow: NeonGlow.hologram(),
                           ),
                           child: const Text(
                             '🎓',
-                            style: TextStyle(fontSize: 100),
+                            style: TextStyle(fontSize: 70),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -195,32 +195,32 @@ class _HomePageState extends ConsumerState<HomePage> {
                     },
                   ),
                   
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   
                   // Academy Title (Serif)
                   const Text(
                     'KASTOR DATA',
                     style: TextStyle(
                       fontFamily: 'Playfair Display',
-                      fontSize: 42,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 6,
+                      letterSpacing: 4,
                       color: AcademyColors.creamPaper,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   const Text(
                     'ACADEMY',
                     style: TextStyle(
                       fontFamily: 'Cinzel',
-                      fontSize: 32,
+                      fontSize: 24,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 8,
+                      letterSpacing: 6,
                       color: AcademyColors.creamPaper,
                     ),
                   ),
                   
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   
                   // Established year (Vintage detail)
                   Container(
@@ -242,7 +242,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                   
                   // Motto (Academic Latin style)
                   Padding(
@@ -262,7 +262,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   
                   // Language toggle (Cyber UI)
                   TextButton.icon(
@@ -284,7 +284,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   ),
                   
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
 
                   // Menu Options
                   _MenuButton(
@@ -302,7 +302,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       });
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _MenuButton(
                     text: settings.language == 'ko' ? '📖 이어하기' : '📖 Continue',
                     icon: Icons.trending_up,
@@ -324,7 +324,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           }
                         : null,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _MenuButton(
                     text: settings.language == 'ko' ? '📚 에피소드 목록' : '📚 Episodes',
                     icon: Icons.list,
@@ -339,7 +339,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       });
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _MenuButton(
                     text: settings.language == 'ko' ? '📦 증거 보관함' : '📦 Evidence Vault',
                     icon: Icons.inventory_2,
@@ -354,7 +354,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       });
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _MenuButton(
                     text: settings.language == 'ko' ? '⚙️ 설정' : '⚙️ Settings',
                     icon: Icons.settings,
@@ -479,30 +479,19 @@ class _MenuButtonState extends State<_MenuButton> {
                           ),
                         ),
                       )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            widget.icon,
-                            size: 20,
+                    : Center(
+                        child: Text(
+                          widget.text,
+                          style: TextStyle(
+                            fontFamily: 'Space Grotesk',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
                             color: widget.onPressed != null
                                 ? (_isHovered ? AcademyColors.creamPaper : AcademyColors.neonCyan)
                                 : AcademyColors.slate,
                           ),
-                          const SizedBox(width: 12),
-                          Text(
-                            widget.text,
-                            style: TextStyle(
-                              fontFamily: 'Space Grotesk',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                              color: widget.onPressed != null
-                                  ? (_isHovered ? AcademyColors.creamPaper : AcademyColors.neonCyan)
-                                  : AcademyColors.slate,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
               ),
             ),

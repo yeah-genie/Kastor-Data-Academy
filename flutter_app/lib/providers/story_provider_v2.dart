@@ -360,6 +360,7 @@ class StoryNotifierV2 extends Notifier<StoryState> {
 
   void submitDetectiveName(String name) {
     if (!state.waitingForInput) return;
+    if (name.trim().isEmpty) return; // 빈 값 방지
 
     state = state.copyWith(
       detectiveName: name,
@@ -373,6 +374,9 @@ class StoryNotifierV2 extends Notifier<StoryState> {
       _scheduleMessage(_getDelay(1), () {
         _advanceNode();
       });
+    } else {
+      // Manual 모드에서도 자동으로 다음 노드로 진행
+      _advanceNode();
     }
   }
 
@@ -402,6 +406,9 @@ class StoryNotifierV2 extends Notifier<StoryState> {
       _scheduleMessage(_getDelay(1), () {
         _advanceNode();
       });
+    } else {
+      // Manual 모드에서도 선택 후 자동 진행
+      _advanceNode();
     }
   }
 
