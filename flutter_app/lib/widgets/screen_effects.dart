@@ -197,6 +197,3 @@ class _FadeOverlayState extends State<_FadeOverlay>
     );
   }
 }
-
-// Import for blur effect
-import 'dart:ui';
