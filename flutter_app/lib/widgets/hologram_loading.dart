@@ -232,7 +232,7 @@ class _HologramLoadingScreenState extends State<HologramLoadingScreen>
                           Container(
                             height: 4,
                             decoration: BoxDecoration(
-                              gradient: AcademyColors.cyberGradient,
+                              gradient: AcademyColors.hologramGradient,
                               borderRadius: BorderRadius.circular(2),
                               boxShadow: [
                                 BoxShadow(
