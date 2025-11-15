@@ -5,6 +5,9 @@ import '../utils/text_utils.dart';
 import './settings_provider.dart';
 import '../services/audio_service.dart';
 import '../services/episode_loader_service.dart';
+import '../widgets/notification_overlay.dart';
+import '../widgets/screen_effects.dart';
+import '../widgets/email_fullscreen.dart';
 
 // Story message for chat display
 class StoryMessage {
@@ -420,6 +423,30 @@ class StoryNotifierV2 extends Notifier<StoryState> {
     );
 
     _loadScene('scene_0');
+  }
+
+  // Interactive effects (to be called from UI)
+  // These methods expose BuildContext-dependent widgets
+  // Usage: ref.read(storyProviderV2.notifier).showNotificationEffect(context, ...)
+  
+  void showNotificationEffect(BuildContext context, NotificationData data) {
+    NotificationOverlay.show(context, data);
+  }
+
+  void showFlashEffect(BuildContext context) {
+    ScreenEffects.flash(context);
+  }
+
+  void showFadeEffect(BuildContext context, {Color? color}) {
+    ScreenEffects.fade(context, color: color);
+  }
+
+  void vibrateEffect(VibrationPattern pattern) {
+    ScreenEffects.vibrate(pattern);
+  }
+
+  void showEmailFullscreen(BuildContext context, EmailData email) {
+    EmailFullScreen.show(context, email);
   }
 }
 

@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../providers/story_provider_v2.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/notification_overlay.dart';
+import '../../widgets/screen_effects.dart';
+import '../../widgets/email_fullscreen.dart';
+import '../../widgets/typing_text.dart';
 
 class StoryChatScreenV2 extends ConsumerStatefulWidget {
   const StoryChatScreenV2({super.key});
@@ -581,20 +585,39 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
   // Email card widget
   Widget _buildEmailCard(StoryMessage message, AppSettings settings) {
     final emailData = message.emailData!;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return InkWell(
+      onTap: () {
+        // 진동 피드백
+        ScreenEffects.vibrate(VibrationPattern.light);
+        
+        // 전체화면 이메일 표시
+        EmailFullScreen.show(
+          context,
+          EmailData(
+            from: emailData['from'] ?? 'Unknown',
+            fromEmail: emailData['fromEmail'] ?? '',
+            subject: emailData['subject'] ?? '',
+            body: emailData['body'] ?? '',
+            time: message.storyTime ?? message.timestamp.toString(),
+            isRead: true,
+            avatarPath: _getAvatarPath(emailData['fromAvatar'] ?? ''),
           ),
-        ],
-      ),
-      child: Column(
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Email header
@@ -676,6 +699,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
           ),
         ],
       ),
+    ),
     );
   }
 
