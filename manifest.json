@@ -1,24 +1,46 @@
 {
-    "name": "Kastor Data Academy",
+    "name": "Kastor Data Academy - Learn Data Science Through Stories",
     "short_name": "Kastor DA",
     "start_url": ".",
+    "scope": ".",
     "display": "standalone",
+    "display_override": ["standalone", "fullscreen", "minimal-ui"],
     "background_color": "#1E1B4B",
     "theme_color": "#6366F1",
-    "description": "Learn data science through interactive detective stories. Solve mysteries with Kastor!",
+    "description": "🎮 Master data science through interactive detective stories! Join Kastor and solve cyber investigation cases while learning data analysis. Available in Korean and English.",
+    "lang": "en",
+    "dir": "ltr",
     "orientation": "any",
     "prefer_related_applications": false,
-    "categories": ["education", "games"],
+    "categories": ["education", "games", "entertainment"],
+    "screenshots": [],
+    "related_applications": [],
+    "shortcuts": [
+        {
+            "name": "Start Episode 1",
+            "short_name": "Episode 1",
+            "description": "Begin the Missing Balance Patch mystery",
+            "url": ".",
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
             "src": "icons/Icon-512.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
             "src": "icons/Icon-maskable-192.png",
