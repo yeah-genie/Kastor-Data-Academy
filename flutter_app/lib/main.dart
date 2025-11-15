@@ -26,9 +26,22 @@ class KastorDataAcademyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Kastor Data Academy',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6366F1), // Indigo
-          brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xFF00D9FF), // Cyan
+          secondary: const Color(0xFF00F5FF), // Bright Cyan
+          background: const Color(0xFF1A1D2E), // Dark Navy
+          surface: const Color(0xFF252A3E), // Card Background
+          error: const Color(0xFFFF006E), // Neon Pink
+        ),
+        scaffoldBackgroundColor: const Color(0xFF1A1D2E),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1A1D2E),
+          elevation: 0,
+        ),
+        cardTheme: CardTheme(
+          color: const Color(0xFF252A3E),
+          elevation: 4,
+          shadowColor: const Color(0xFF00D9FF).withOpacity(0.2),
         ),
         textTheme: GoogleFonts.interTextTheme(
           ThemeData.dark().textTheme,
@@ -351,9 +364,9 @@ class _MenuButtonState extends State<_MenuButton> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             backgroundColor: widget.onPressed != null && !widget.isLoading
                 ? (_isHovered
-                    ? Colors.white.withOpacity(0.15)
-                    : Colors.white.withOpacity(0.1))
-                : Colors.white.withOpacity(0.05),
+                    ? const Color(0xFF00D9FF).withOpacity(0.2)
+                    : const Color(0xFF252A3E))
+                : const Color(0xFF252A3E).withOpacity(0.5),
             foregroundColor:
                 widget.onPressed != null && !widget.isLoading ? Colors.white : Colors.white38,
             shape: RoundedRectangleBorder(
@@ -361,12 +374,14 @@ class _MenuButtonState extends State<_MenuButton> {
               side: BorderSide(
                 color: widget.onPressed != null && !widget.isLoading
                     ? (_isHovered
-                        ? const Color(0xFF6366F1).withOpacity(0.8)
-                        : const Color(0xFF6366F1).withOpacity(0.5))
+                        ? const Color(0xFF00D9FF)
+                        : const Color(0xFF00D9FF).withOpacity(0.5))
                     : Colors.white12,
                 width: _isHovered ? 2 : 1,
               ),
             ),
+            elevation: _isHovered ? 8 : 0,
+            shadowColor: const Color(0xFF00D9FF).withOpacity(0.3),
           ),
           child: widget.isLoading
               ? const SizedBox(

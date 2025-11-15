@@ -95,10 +95,17 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFF1A1D2E),
       appBar: AppBar(
+        backgroundColor: const Color(0xFF1A1D2E),
+        elevation: 0,
         title: Text(
           settings.language == 'ko' ? 'EP1: 사라진 밸런스 패치' : 'EP1: The Missing Balance Patch',
-          style: const TextStyle(fontSize: 16),
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           // Language switcher
@@ -291,27 +298,36 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: isPlayerMessage
-                                                ? const Color(0xFF3B82F6) // Blue color
-                                                : Colors.white,
+                                                ? const Color(0xFF00D9FF) // Cyan neon
+                                                : const Color(0xFF2D3348), // Dark card
                                             borderRadius: BorderRadius.only(
                                               topLeft: const Radius.circular(18),
                                               topRight: const Radius.circular(18),
                                               bottomLeft: Radius.circular(isPlayerMessage ? 18 : 4),
                                               bottomRight: Radius.circular(isPlayerMessage ? 4 : 18),
                                             ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.05),
-                                                blurRadius: 2,
-                                                offset: const Offset(0, 1),
-                                              ),
-                                            ],
+                                            boxShadow: isPlayerMessage
+                                                ? [
+                                                    BoxShadow(
+                                                      color: const Color(0xFF00D9FF).withOpacity(0.3),
+                                                      blurRadius: 10,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ]
+                                                : [
+                                                    BoxShadow(
+                                                      color: Colors.black.withOpacity(0.3),
+                                                      blurRadius: 4,
+                                                      offset: const Offset(0, 2),
+                                                    ),
+                                                  ],
                                           ),
                                           child: Text(
                                             message.text,
                                             style: TextStyle(
                                               fontSize: 15,
-                                              color: isPlayerMessage ? Colors.white : Colors.black87,
+                                              color: isPlayerMessage ? const Color(0xFF0A0E1A) : Colors.white,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
@@ -455,26 +471,26 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                       borderSide: const BorderSide(
-                                        color: Color(0xFF6366F1),
+                                        color: Color(0xFF00D9FF),
                                         width: 2,
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                       borderSide: BorderSide(
-                                        color: const Color(0xFF6366F1).withOpacity(0.5),
+                                        color: const Color(0xFF00D9FF).withOpacity(0.5),
                                         width: 2,
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
                                       borderSide: const BorderSide(
-                                        color: Color(0xFF6366F1),
+                                        color: Color(0xFF00D9FF),
                                         width: 2,
                                       ),
                                     ),
                                     filled: true,
-                                    fillColor: Colors.white.withOpacity(0.05),
+                                    fillColor: const Color(0xFF252A3E),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 16,
@@ -501,8 +517,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF6366F1),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: const Color(0xFF00D9FF),
+                                  foregroundColor: const Color(0xFF0A0E1A),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 24,
                                     vertical: 18,
@@ -510,8 +526,10 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
+                                  elevation: 8,
+                                  shadowColor: const Color(0xFF00D9FF).withOpacity(0.5),
                                 ),
-                                child: const Icon(Icons.send, size: 20),
+                                child: const Icon(Icons.send, size: 20, weight: 700),
                               ),
                             ],
                           )
@@ -521,10 +539,13 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                             },
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
-                              backgroundColor: const Color(0xFF6366F1),
+                              backgroundColor: const Color(0xFF00D9FF),
+                              foregroundColor: const Color(0xFF0A0E1A),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
+                              elevation: 8,
+                              shadowColor: const Color(0xFF00D9FF).withOpacity(0.5),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -533,7 +554,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                   settings.language == 'ko' ? 'Continue' : 'Continue',
                                   style: const TextStyle(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(width: 8),
