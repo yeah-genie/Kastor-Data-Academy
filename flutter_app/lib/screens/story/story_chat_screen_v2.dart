@@ -167,18 +167,56 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                     itemCount: storyState.messages.length,
                     itemBuilder: (context, index) {
                       final message = storyState.messages[index];
+                      final prevMessage = index > 0 ? storyState.messages[index - 1] : null;
                       final isPlayerMessage = message.speaker == 'detective';
+                      
+                      // Check if we should hide avatar (same speaker consecutive messages)
+                      final hideAvatar = prevMessage != null && 
+                          prevMessage.speaker == message.speaker &&
+                          !message.isNarration &&
+                          !prevMessage.isNarration;
+                      
+                      // Check if we should hide time (within 1 minute of previous message)
+                      final hideTime = prevMessage != null &&
+                          prevMessage.speaker == message.speaker &&
+                          message.storyTime == prevMessage.storyTime;
 
+                      // Typing indicator
+                      if (message.isTypingIndicator) {
+                        return _buildTypingIndicator(message, settings);
+                      }
+
+                      // Narration (centered box)
+                      if (message.speaker == 'narrator') {
+                        return _buildNarrationWidget(message, settings);
+                      }
+
+                      // System message (centered notification)
+                      if (message.speaker == 'system') {
+                        return _buildSystemWidget(message, settings);
+                      }
+
+                      // Email card
+                      if (message.isEmail) {
+                        return _buildEmailCard(message, settings);
+                      }
+
+                      // Data log card
+                      if (message.isDataLog) {
+                        return _buildDataLogCard(message, settings);
+                      }
+
+                      // Regular chat message
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: isPlayerMessage
                               ? MainAxisAlignment.end
                               : MainAxisAlignment.start,
                           children: [
-                            if (!isPlayerMessage) ...[
-                              // Avatar for non-player messages
+                            // Avatar (hide if consecutive message from same person)
+                            if (!isPlayerMessage && !hideAvatar) ...[
                               Container(
                                 width: 40,
                                 height: 40,
@@ -196,6 +234,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                 ),
                               ),
                               const SizedBox(width: 12),
+                            ] else if (!isPlayerMessage && hideAvatar) ...[
+                              const SizedBox(width: 52), // Space for hidden avatar
                             ],
 
                             // Message bubble
@@ -205,8 +245,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                     ? CrossAxisAlignment.end
                                     : CrossAxisAlignment.start,
                                 children: [
-                                  // Speaker name
-                                  if (!isPlayerMessage)
+                                  // Speaker name (only if not hidden)
+                                  if (!isPlayerMessage && !hideAvatar)
                                     Padding(
                                       padding: const EdgeInsets.only(bottom: 4, left: 12),
                                       child: Text(
@@ -219,115 +259,90 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                       ),
                                     ),
 
-                                  // Message content
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isPlayerMessage
-                                          ? const Color(0xFF10B981).withOpacity(0.2)
-                                          : _getSpeakerColor(message.speaker).withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: isPlayerMessage
-                                            ? const Color(0xFF10B981).withOpacity(0.3)
-                                            : _getSpeakerColor(message.speaker).withOpacity(0.3),
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        // Email header if present
-                                        if (message.emailData != null) ...[
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF3B82F6).withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons.email,
-                                                      size: 16,
-                                                      color: Color(0xFF3B82F6),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        message.emailData!['from'] ?? 'Unknown',
-                                                        style: const TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  message.emailData!['subject'] ?? '',
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                                if (message.emailData!['body'] != null) ...[
-                                                  const SizedBox(height: 8),
-                                                  Text(
-                                                    message.emailData!['body'],
-                                                    style: const TextStyle(fontSize: 13),
-                                                  ),
-                                                ],
-                                              ],
+                                  // Message content with KakaoTalk-style bubble
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      // Time on left for others' messages
+                                      if (!isPlayerMessage && !hideTime && message.storyTime != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 6, bottom: 2),
+                                          child: Text(
+                                            message.storyTime!,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.grey[600],
                                             ),
                                           ),
-                                          const SizedBox(height: 8),
-                                        ],
-
-                                        // Message text
-                                        Text(
-                                          message.text,
-                                          style: const TextStyle(fontSize: 15),
                                         ),
-
-                                        // Reaction emoji if present
-                                        if (message.reaction != null)
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8),
-                                            child: Text(
-                                              message.reaction!,
-                                              style: const TextStyle(fontSize: 20),
+                                      
+                                      // Bubble
+                                      Flexible(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isPlayerMessage
+                                                ? const Color(0xFFFEE500) // KakaoTalk yellow
+                                                : Colors.white,
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: const Radius.circular(18),
+                                              topRight: const Radius.circular(18),
+                                              bottomLeft: Radius.circular(isPlayerMessage ? 18 : 4),
+                                              bottomRight: Radius.circular(isPlayerMessage ? 4 : 18),
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.05),
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Text(
+                                            message.text,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: isPlayerMessage ? Colors.black87 : Colors.black87,
                                             ),
                                           ),
-                                      ],
-                                    ),
+                                        ),
+                                      ),
+
+                                      // Time on right for player messages
+                                      if (isPlayerMessage && !hideTime && message.storyTime != null)
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 6, bottom: 2),
+                                          child: Text(
+                                            message.storyTime!,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
 
-                                  // Timestamp
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 4, left: 12, right: 12),
-                                    child: Text(
-                                      '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey[600],
+                                  // Reaction emoji if present
+                                  if (message.reaction != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4, left: 12),
+                                      child: Text(
+                                        message.reaction!,
+                                        style: const TextStyle(fontSize: 18),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
 
-                            if (isPlayerMessage) ...[
+                            // Avatar for player (right side)
+                            if (isPlayerMessage && !hideAvatar) ...[
                               const SizedBox(width: 12),
-                              // Avatar for player messages
                               Container(
                                 width: 40,
                                 height: 40,
@@ -344,6 +359,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                   ),
                                 ),
                               ),
+                            ] else if (isPlayerMessage && hideAvatar) ...[
+                              const SizedBox(width: 52), // Space for hidden avatar
                             ],
                           ],
                         ),
@@ -376,28 +393,15 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ...storyState.currentChoices!.map((choice) {
+                        ...storyState.currentChoices!.asMap().entries.map((entry) {
+                          final choice = entry.value;
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
-                            child: ElevatedButton(
+                            child: _ChoiceButton(
+                              choice: choice,
                               onPressed: () {
                                 ref.read(storyProviderV2.notifier).makeChoice(choice.id);
                               },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
-                                ),
-                                backgroundColor: const Color(0xFF6366F1).withOpacity(0.2),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                choice.text,
-                                style: const TextStyle(fontSize: 15),
-                              ),
                             ),
                           );
                         }),
@@ -508,6 +512,442 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                   ),
               ],
             ),
+    );
+  }
+
+  // Narration widget (centered, no bubble)
+  Widget _buildNarrationWidget(StoryMessage message, AppSettings settings) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          message.text,
+          style: TextStyle(
+            fontSize: 13,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[400],
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  // System message widget (centered notification)
+  Widget _buildSystemWidget(StoryMessage message, AppSettings settings) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: const Color(0xFF3B82F6).withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: const Color(0xFF3B82F6).withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.info_outline,
+              size: 16,
+              color: Color(0xFF3B82F6),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message.text,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF3B82F6),
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Email card widget
+  Widget _buildEmailCard(StoryMessage message, AppSettings settings) {
+    final emailData = message.emailData!;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Email header
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF3B82F6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.email, color: Colors.white, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        settings.language == 'ko' ? '새 이메일' : 'New Email',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        emailData['from'] ?? 'Unknown',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (message.storyTime != null)
+                  Text(
+                    message.storyTime!,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Email body
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  emailData['subject'] ?? '',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                if (emailData['body'] != null) ...[
+                  const SizedBox(height: 12),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  Text(
+                    emailData['body'],
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Data log/chart card widget
+  Widget _buildDataLogCard(StoryMessage message, AppSettings settings) {
+    final dataLog = message.dataLog!;
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(Icons.bar_chart, color: Colors.white, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        settings.language == 'ko' ? '데이터 로그' : 'Data Log',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        dataLog['title'] ?? 'Data Analysis',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (message.storyTime != null)
+                  Text(
+                    message.storyTime!,
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          // Data content
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (dataLog['description'] != null)
+                  Text(
+                    dataLog['description'],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                if (dataLog['data'] != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    dataLog['data'].toString(),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'Courier',
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Typing indicator
+  Widget _buildTypingIndicator(StoryMessage message, AppSettings settings) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 52),
+      child: Row(
+        children: [
+          Text(
+            '${message.typingUser} ${settings.language == 'ko' ? '이(가) 입력중' : 'is typing'}',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 40,
+            child: Row(
+              children: List.generate(
+                3,
+                (index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: _TypingDot(delay: index * 200),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Typing dot animation
+class _TypingDot extends StatefulWidget {
+  final int delay;
+  const _TypingDot({required this.delay});
+
+  @override
+  State<_TypingDot> createState() => _TypingDotState();
+}
+
+class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    Future.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey[600]!.withOpacity(0.3 + (_controller.value * 0.7)),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Choice button widget with hover effect and debouncing
+class _ChoiceButton extends StatefulWidget {
+  final dynamic choice;
+  final VoidCallback onPressed;
+
+  const _ChoiceButton({
+    required this.choice,
+    required this.onPressed,
+  });
+
+  @override
+  State<_ChoiceButton> createState() => _ChoiceButtonState();
+}
+
+class _ChoiceButtonState extends State<_ChoiceButton> {
+  bool _isHovered = false;
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedScale(
+        scale: _isHovered ? 1.02 : 1.0,
+        duration: const Duration(milliseconds: 150),
+        child: ElevatedButton(
+          onPressed: _isPressed
+              ? null
+              : () {
+                  setState(() => _isPressed = true);
+                  widget.onPressed();
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    if (mounted) {
+                      setState(() => _isPressed = false);
+                    }
+                  });
+                },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 16,
+            ),
+            backgroundColor: _isPressed
+                ? const Color(0xFF6366F1).withOpacity(0.4)
+                : (_isHovered
+                    ? const Color(0xFF6366F1).withOpacity(0.3)
+                    : const Color(0xFF6366F1).withOpacity(0.2)),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color: _isHovered
+                    ? const Color(0xFF6366F1).withOpacity(0.8)
+                    : const Color(0xFF6366F1).withOpacity(0.5),
+                width: _isHovered ? 2 : 1,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.choice.text,
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+              if (_isPressed)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              else if (_isHovered)
+                const Icon(Icons.arrow_forward, size: 18),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

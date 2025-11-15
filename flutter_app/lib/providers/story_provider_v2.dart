@@ -12,21 +12,30 @@ class StoryMessage {
   final String speaker; // 'kastor', 'detective', 'maya', 'narrator', 'system'
   final String text;
   final DateTime timestamp;
+  final String? storyTime; // Time in story (e.g., "09:30", "14:45")
   final String? email; // Email content if this is an email message
   final Map<String, dynamic>? emailData; // Full email data
+  final Map<String, dynamic>? dataLog; // Data log/chart content
   final String? reaction; // Emoji reaction from other characters
+  final String? typingUser; // Who is typing (for typing indicator)
 
   StoryMessage({
     required this.id,
     required this.speaker,
     required this.text,
     required this.timestamp,
+    this.storyTime,
     this.email,
     this.emailData,
+    this.dataLog,
     this.reaction,
+    this.typingUser,
   });
 
   bool get isNarration => speaker == 'narrator' || speaker == 'system';
+  bool get isEmail => emailData != null;
+  bool get isDataLog => dataLog != null;
+  bool get isTypingIndicator => typingUser != null;
 }
 
 // Story choice for interactive decisions

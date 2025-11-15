@@ -48,28 +48,56 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  bool _isLoading = true;
+  bool _isNavigating = false;
+
   @override
   void initState() {
     super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
     // Load saved game state and settings on app start
-    Future.microtask(() async {
-      ref.read(gameStateProvider.notifier).loadGameState();
-      ref.read(settingsProvider.notifier).loadSettings();
+    await Future.wait([
+      ref.read(gameStateProvider.notifier).loadGameState(),
+      ref.read(settingsProvider.notifier).loadSettings(),
+    ]);
 
-      // Check if tutorial has been completed
-      final prefs = await SharedPreferences.getInstance();
-      final tutorialCompleted = prefs.getBool('tutorial_completed') ?? false;
+    setState(() {
+      _isLoading = false;
+    });
 
-      if (!tutorialCompleted && mounted) {
-        // Show tutorial on first launch
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
+    // Check if tutorial has been completed
+    final prefs = await SharedPreferences.getInstance();
+    final tutorialCompleted = prefs.getBool('tutorial_completed') ?? false;
+
+    if (!tutorialCompleted && mounted) {
+      // Show tutorial on first launch
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) {
+        _navigateWithDebounce(() {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const TutorialScreen(),
             ),
           );
-        }
+        });
+      }
+    }
+  }
+
+  void _navigateWithDebounce(VoidCallback callback) {
+    if (_isNavigating) return;
+    setState(() {
+      _isNavigating = true;
+    });
+    callback();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _isNavigating = false;
+        });
       }
     });
   }
@@ -77,6 +105,40 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final gameState = ref.watch(gameStateProvider);
+    final settings = ref.watch(settingsProvider);
+
+    if (_isLoading) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF1E1B4B),
+                Color(0xFF312E81),
+                Color(0xFF4C1D95),
+              ],
+            ),
+          ),
+          child: const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Loading...',
+                  style: TextStyle(color: Colors.white70, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: Container(
@@ -113,69 +175,103 @@ class _HomePageState extends ConsumerState<HomePage> {
                         color: Colors.white70,
                       ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 16),
+                // Welcome message for first-time users
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    settings.language == 'ko'
+                        ? '🎮 데이터 과학을 스토리로 배우세요!'
+                        : '🎮 Learn Data Science Through Stories!',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFFFBBF24),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Language toggle
+                TextButton.icon(
+                  onPressed: () {
+                    final newLang = settings.language == 'ko' ? 'en' : 'ko';
+                    ref.read(settingsProvider.notifier).setLanguage(newLang);
+                  },
+                  icon: const Icon(Icons.language, size: 18, color: Colors.white70),
+                  label: Text(
+                    settings.language == 'ko' ? 'English 🇺🇸' : '한국어 🇰🇷',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+                const SizedBox(height: 32),
 
                 // Menu Options
                 _MenuButton(
-                  text: 'New Game',
+                  text: settings.language == 'ko' ? '🎮 시작하기' : '🎮 Start Game',
                   icon: Icons.play_arrow,
+                  isLoading: _isNavigating,
                   onPressed: () {
-                    ref.read(gameStateProvider.notifier).resetGame();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Episode1DemoScreen(),
-                      ),
-                    );
+                    _navigateWithDebounce(() {
+                      ref.read(gameStateProvider.notifier).resetGame();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const Episode1DemoScreen(),
+                        ),
+                      );
+                    });
                   },
                 ),
                 const SizedBox(height: 16),
                 _MenuButton(
-                  text: 'Continue',
+                  text: settings.language == 'ko' ? '📖 이어하기' : '📖 Continue',
                   icon: Icons.trending_up,
-                  onPressed: gameState.currentEpisode != null
+                  isLoading: _isNavigating,
+                  tooltip: gameState.currentEpisode == null
+                      ? (settings.language == 'ko'
+                          ? '저장된 진행 상황이 없습니다'
+                          : 'No saved progress')
+                      : null,
+                  onPressed: gameState.currentEpisode != null && !_isNavigating
                       ? () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const DashboardScreen(),
-                            ),
-                          );
+                          _navigateWithDebounce(() {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const DashboardScreen(),
+                              ),
+                            );
+                          });
                         }
                       : null,
                 ),
                 const SizedBox(height: 16),
                 _MenuButton(
-                  text: 'Episode 1 Demo (New!)',
-                  icon: Icons.new_releases,
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const Episode1DemoScreen(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                _MenuButton(
-                  text: 'Episodes',
+                  text: settings.language == 'ko' ? '📚 에피소드 목록' : '📚 Episodes',
                   icon: Icons.list,
+                  isLoading: _isNavigating,
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const EpisodeSelectionScreen(),
-                      ),
-                    );
+                    _navigateWithDebounce(() {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const EpisodeSelectionScreen(),
+                        ),
+                      );
+                    });
                   },
                 ),
                 const SizedBox(height: 16),
                 _MenuButton(
-                  text: 'Settings',
+                  text: settings.language == 'ko' ? '⚙️ 설정' : '⚙️ Settings',
                   icon: Icons.settings,
+                  isLoading: _isNavigating,
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(),
-                      ),
-                    );
+                    _navigateWithDebounce(() {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    });
                   },
                 ),
 
@@ -220,55 +316,93 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-class _MenuButton extends StatelessWidget {
+class _MenuButton extends StatefulWidget {
   final String text;
   final IconData icon;
   final VoidCallback? onPressed;
+  final bool isLoading;
+  final String? tooltip;
 
   const _MenuButton({
     required this.text,
     required this.icon,
     this.onPressed,
+    this.isLoading = false,
+    this.tooltip,
   });
 
   @override
+  State<_MenuButton> createState() => _MenuButtonState();
+}
+
+class _MenuButtonState extends State<_MenuButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    final button = SizedBox(
       width: 280,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          backgroundColor: onPressed != null
-              ? Colors.white.withOpacity(0.1)
-              : Colors.white.withOpacity(0.05),
-          foregroundColor: onPressed != null ? Colors.white : Colors.white38,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: onPressed != null
-                  ? const Color(0xFF6366F1).withOpacity(0.5)
-                  : Colors.white12,
-              width: 1,
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 20),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: ElevatedButton(
+          onPressed: widget.isLoading ? null : widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            backgroundColor: widget.onPressed != null && !widget.isLoading
+                ? (_isHovered
+                    ? Colors.white.withOpacity(0.15)
+                    : Colors.white.withOpacity(0.1))
+                : Colors.white.withOpacity(0.05),
+            foregroundColor:
+                widget.onPressed != null && !widget.isLoading ? Colors.white : Colors.white38,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(
+                color: widget.onPressed != null && !widget.isLoading
+                    ? (_isHovered
+                        ? const Color(0xFF6366F1).withOpacity(0.8)
+                        : const Color(0xFF6366F1).withOpacity(0.5))
+                    : Colors.white12,
+                width: _isHovered ? 2 : 1,
               ),
             ),
-          ],
+          ),
+          child: widget.isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white70,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(widget.icon, size: 20),
+                    const SizedBox(width: 12),
+                    Text(
+                      widget.text,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
+
+    if (widget.tooltip != null) {
+      return Tooltip(
+        message: widget.tooltip!,
+        child: button,
+      );
+    }
+
+    return button;
   }
 }

@@ -230,10 +230,12 @@ class WinRateData {
 // Example usage widget for Shadow character win rate
 class ShadowWinRateChart extends StatelessWidget {
   final String language;
+  final double? width;
 
   const ShadowWinRateChart({
     super.key,
     this.language = 'en',
+    this.width,
   });
 
   @override
@@ -261,11 +263,13 @@ class ShadowWinRateChart extends StatelessWidget {
 class CharacterComparisonChart extends StatelessWidget {
   final List<CharacterWinRate> characters;
   final String title;
+  final double? width;
 
   const CharacterComparisonChart({
     super.key,
     required this.characters,
     required this.title,
+    this.width,
   });
 
   @override

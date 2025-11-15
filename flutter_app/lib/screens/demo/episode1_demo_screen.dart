@@ -9,11 +9,32 @@ import '../../providers/settings_provider.dart';
 /// - Character avatars
 /// - Chat UI
 /// - Data visualization
-class Episode1DemoScreen extends ConsumerWidget {
+class Episode1DemoScreen extends ConsumerStatefulWidget {
   const Episode1DemoScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Episode1DemoScreen> createState() => _Episode1DemoScreenState();
+}
+
+class _Episode1DemoScreenState extends ConsumerState<Episode1DemoScreen> {
+  bool _isLoadingChart = true;
+  bool _isNavigating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simulate chart loading
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) {
+        setState(() {
+          _isLoadingChart = false;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
 
     return Scaffold(
@@ -122,85 +143,164 @@ class Episode1DemoScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
 
-            ShadowWinRateChart(language: settings.language),
-
-            const SizedBox(height: 16),
-
-            CharacterComparisonChart(
-              title: settings.language == 'ko'
-                  ? '캐릭터별 승률 비교'
-                  : 'Character Win Rate Comparison',
-              characters: [
-                CharacterWinRate(
-                  name: 'Shadow',
-                  winRate: 85.0,
-                  color: const Color(0xFFEF4444), // Red - suspicious
+            // Chart loading indicator
+            if (_isLoadingChart)
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                CharacterWinRate(
-                  name: 'Luna',
-                  winRate: 52.0,
-                  color: const Color(0xFF3B82F6), // Blue
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(
+                        settings.language == 'ko'
+                            ? '차트를 불러오는 중...'
+                            : 'Loading chart...',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                    ],
+                  ),
                 ),
-                CharacterWinRate(
-                  name: 'Striker',
-                  winRate: 49.5,
-                  color: const Color(0xFF10B981), // Green
-                ),
-                CharacterWinRate(
-                  name: 'Mage',
-                  winRate: 51.2,
-                  color: const Color(0xFF8B5CF6), // Purple
-                ),
-              ],
-            ),
+              )
+            else ..[
+              // Responsive chart container
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return ShadowWinRateChart(
+                    language: settings.language,
+                    width: constraints.maxWidth,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return CharacterComparisonChart(
+                    title: settings.language == 'ko'
+                        ? '캐릭터별 승률 비교'
+                        : 'Character Win Rate Comparison',
+                    characters: [
+                      CharacterWinRate(
+                        name: 'Shadow',
+                        winRate: 85.0,
+                        color: const Color(0xFFEF4444), // Red - suspicious
+                      ),
+                      CharacterWinRate(
+                        name: 'Luna',
+                        winRate: 52.0,
+                        color: const Color(0xFF3B82F6), // Blue
+                      ),
+                      CharacterWinRate(
+                        name: 'Striker',
+                        winRate: 49.5,
+                        color: const Color(0xFF10B981), // Green
+                      ),
+                      CharacterWinRate(
+                        name: 'Mage',
+                        winRate: 51.2,
+                        color: const Color(0xFF8B5CF6), // Purple
+                      ),
+                    ],
+                    width: constraints.maxWidth,
+                  );
+                },
+              ),
+            ],
 
             const SizedBox(height: 32),
 
-            // Start button
+            // Start button with loading state
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const StoryChatScreenV2(),
-                  ),
-                );
-              },
+              onPressed: _isNavigating || _isLoadingChart
+                  ? null
+                  : () {
+                      setState(() {
+                        _isNavigating = true;
+                      });
+                      Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                          builder: (context) => const StoryChatScreenV2(),
+                        ),
+                      )
+                          .then((_) {
+                        if (mounted) {
+                          setState(() {
+                            _isNavigating = false;
+                          });
+                        }
+                      });
+                    },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                backgroundColor: const Color(0xFF6366F1),
+                backgroundColor: _isNavigating || _isLoadingChart
+                    ? const Color(0xFF6366F1).withOpacity(0.5)
+                    : const Color(0xFF6366F1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.play_arrow, size: 28),
-                  const SizedBox(width: 12),
-                  Text(
-                    settings.language == 'ko'
-                        ? '에피소드 시작하기'
-                        : 'Start Episode',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              child: _isNavigating
+                  ? const SizedBox(
+                      height: 28,
+                      width: 28,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.play_arrow, size: 28),
+                        const SizedBox(width: 12),
+                        Text(
+                          settings.language == 'ko'
+                              ? '에피소드 시작하기'
+                              : 'Start Episode',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
 
             const SizedBox(height: 16),
 
             // Language switch button
             OutlinedButton(
-              onPressed: () {
-                final newLang = settings.language == 'ko' ? 'en' : 'ko';
-                ref.read(settingsProvider.notifier).setLanguage(newLang);
-              },
+              onPressed: _isNavigating
+                  ? null
+                  : () async {
+                      final newLang = settings.language == 'ko' ? 'en' : 'ko';
+                      // Show loading indicator during language change
+                      setState(() {
+                        _isLoadingChart = true;
+                      });
+                      await ref.read(settingsProvider.notifier).setLanguage(newLang);
+                      // Simulate chart reload
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      if (mounted) {
+                        setState(() {
+                          _isLoadingChart = false;
+                        });
+                      }
+                    },
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                side: const BorderSide(color: Color(0xFF6366F1), width: 2),
+                side: BorderSide(
+                  color: _isNavigating
+                      ? const Color(0xFF6366F1).withOpacity(0.5)
+                      : const Color(0xFF6366F1),
+                  width: 2,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

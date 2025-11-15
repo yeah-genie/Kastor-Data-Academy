@@ -1,4 +1,5 @@
-# 🧪 Kastor Data Academy - 웹 E2E 테스트 체크리스트
+cd flutter_app
+flutter test integration_test/e2e_hello_test.dart# 🧪 Kastor Data Academy - 웹 E2E 테스트 체크리스트
 
 **테스트 URL**: https://yeah-genie.github.io/Kastor-Data-Academy/
 
