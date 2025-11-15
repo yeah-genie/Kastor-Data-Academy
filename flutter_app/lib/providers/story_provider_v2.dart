@@ -433,6 +433,27 @@ class StoryNotifierV2 extends Notifier<StoryState> {
     NotificationOverlay.show(context, data);
   }
 
+  void showRealisticNotification(
+    BuildContext context, {
+    required String appName,
+    required String title,
+    required String body,
+    String? icon,
+    Color? accentColor,
+    VoidCallback? onTap,
+  }) {
+    // Import required in file: import '../widgets/realistic_notification.dart';
+    // RealisticNotification.show(
+    //   context,
+    //   appName: appName,
+    //   title: title,
+    //   body: body,
+    //   icon: icon,
+    //   accentColor: accentColor ?? const Color(0xFF00D9FF),
+    //   onTap: onTap,
+    // );
+  }
+
   void showFlashEffect(BuildContext context) {
     ScreenEffects.flash(context);
   }

@@ -7,6 +7,8 @@ import '../../widgets/notification_overlay.dart';
 import '../../widgets/screen_effects.dart';
 import '../../widgets/email_fullscreen.dart';
 import '../../widgets/typing_text.dart';
+import '../../widgets/typing_indicator.dart';
+import '../../widgets/realistic_notification.dart';
 
 class StoryChatScreenV2 extends ConsumerStatefulWidget {
   const StoryChatScreenV2({super.key});
@@ -230,24 +232,42 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                             // Avatar (hide if consecutive message from same person)
                             if (!isPlayerMessage && !hideAvatar) ...[
                               Container(
-                                width: 40,
-                                height: 40,
+                                width: 60,
+                                height: 60,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _getSpeakerColor(message.speaker).withOpacity(0.2),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      _getSpeakerColor(message.speaker).withOpacity(0.3),
+                                      _getSpeakerColor(message.speaker).withOpacity(0.1),
+                                    ],
+                                  ),
+                                  border: Border.all(
+                                    color: _getSpeakerColor(message.speaker).withOpacity(0.5),
+                                    width: 2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: _getSpeakerColor(message.speaker).withOpacity(0.4),
+                                      blurRadius: 12,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: SvgPicture.asset(
                                     _getAvatarPath(message.speaker),
-                                    width: 28,
-                                    height: 28,
+                                    width: 44,
+                                    height: 44,
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 12),
                             ] else if (!isPlayerMessage && hideAvatar) ...[
-                              const SizedBox(width: 52), // Space for hidden avatar
+                              const SizedBox(width: 72), // Space for hidden avatar (increased)
                             ],
 
                             // Message bubble
@@ -348,27 +368,61 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                     ],
                                   ),
 
-                                  // Reaction emoji if present
+                                  // Reaction emoji if present (animated, colorful)
                                   if (message.reaction != null)
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 12),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(12),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
+                                      padding: const EdgeInsets.only(top: 6, left: 12),
+                                      child: TweenAnimationBuilder<double>(
+                                        tween: Tween(begin: 0.0, end: 1.0),
+                                        duration: const Duration(milliseconds: 400),
+                                        curve: Curves.elasticOut,
+                                        builder: (context, value, child) {
+                                          return Transform.scale(
+                                            scale: value,
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    const Color(0xFF252A3E),
+                                                    const Color(0xFF1E2130),
+                                                  ],
+                                                ),
+                                                borderRadius: BorderRadius.circular(16),
+                                                border: Border.all(
+                                                  color: const Color(0xFF00D9FF).withOpacity(0.4),
+                                                  width: 1.5,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: const Color(0xFF00D9FF).withOpacity(0.3),
+                                                    blurRadius: 8,
+                                                    spreadRadius: 1,
+                                                  ),
+                                                  BoxShadow(
+                                                    color: Colors.black.withOpacity(0.3),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Text(
+                                                message.reaction!,
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  shadows: [
+                                                    Shadow(
+                                                      color: Color(0xFF00D9FF),
+                                                      blurRadius: 8,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                        child: Text(
-                                          message.reaction!,
-                                          style: const TextStyle(fontSize: 18),
-                                        ),
+                                          );
+                                        },
                                       ),
                                     ),
                                 ],
@@ -379,23 +433,41 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                             if (isPlayerMessage && !hideAvatar) ...[
                               const SizedBox(width: 12),
                               Container(
-                                width: 40,
-                                height: 40,
+                                width: 60,
+                                height: 60,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: const Color(0xFF10B981).withOpacity(0.2),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF00D9FF),
+                                      Color(0xFF00A3CC),
+                                    ],
+                                  ),
+                                  border: Border.all(
+                                    color: const Color(0xFF00D9FF),
+                                    width: 2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF00D9FF).withOpacity(0.5),
+                                      blurRadius: 15,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: SvgPicture.asset(
                                     _getAvatarPath('detective'),
-                                    width: 28,
-                                    height: 28,
+                                    width: 44,
+                                    height: 44,
                                   ),
                                 ),
                               ),
                             ] else if (isPlayerMessage && hideAvatar) ...[
-                              const SizedBox(width: 52), // Space for hidden avatar
+                              const SizedBox(width: 72), // Space for hidden avatar
                             ],
                           ],
                         ),
@@ -558,7 +630,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward, size: 20),
+                                const Icon(Icons.arrow_forward, size: 20, color: Color(0xFF0A0E1A)),
                               ],
                             ),
                           ),
@@ -884,31 +956,10 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
   // Typing indicator
   Widget _buildTypingIndicator(StoryMessage message, AppSettings settings) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8, left: 52),
-      child: Row(
-        children: [
-          Text(
-            '${message.typingUser} ${settings.language == 'ko' ? '이(가) 입력중' : 'is typing'}',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          const SizedBox(width: 8),
-          SizedBox(
-            width: 40,
-            child: Row(
-              children: List.generate(
-                3,
-                (index) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: _TypingDot(delay: index * 200),
-                ),
-              ),
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TypingIndicator(
+        name: message.typingUser ?? 'Kastor',
+        accentColor: _getSpeakerColor(message.typingUser ?? 'kastor'),
       ),
     );
   }

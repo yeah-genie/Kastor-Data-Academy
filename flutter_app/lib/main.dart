@@ -9,6 +9,7 @@ import 'screens/episode/episode_selection_screen.dart';
 import 'screens/settings/settings_screen.dart';
 import 'screens/tutorial/tutorial_screen.dart';
 import 'screens/demo/episode1_demo_screen.dart';
+import 'screens/inventory/inventory_screen.dart';
 
 void main() {
   runApp(
@@ -267,6 +268,21 @@ class _HomePageState extends ConsumerState<HomePage> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => const EpisodeSelectionScreen(),
+                        ),
+                      );
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                _MenuButton(
+                  text: settings.language == 'ko' ? '📦 증거 보관함' : '📦 Evidence Vault',
+                  icon: Icons.inventory_2,
+                  isLoading: _isNavigating,
+                  onPressed: () {
+                    _navigateWithDebounce(() {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const InventoryScreen(),
                         ),
                       );
                     });
