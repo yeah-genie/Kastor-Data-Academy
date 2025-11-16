@@ -1,0 +1,17 @@
+타임스탬프,사용자,작업,대상,변경내용,IP주소,승인토큰,비고
+2025-01-25T09:15:33Z,admin03_maya,View,Shadow.stats,,192.168.1.10,APPROVED,정상업무
+2025-01-25T09:45:12Z,admin02_lucas,View,Phoenix.stats,,192.168.1.11,APPROVED,정상업무
+2025-01-25T10:05:44Z,admin02_lucas,Modify,Phoenix.cooldown,쿨다운 -2초,192.168.1.11,APPROVED,공식패치
+2025-01-25T10:30:22Z,admin02_lucas,View,Shadow.stats,승률 50.2%,192.168.1.11,APPROVED,모니터링
+2025-01-25T14:20:15Z,admin01_kaito,View,Shadow.stats,,192.168.1.12,APPROVED,정상업무
+2025-01-25T19:15:08Z,admin01_kaito,View,Shadow.community_feedback,,192.168.1.12,APPROVED,피드백조사
+2025-01-25T19:20:33Z,admin01_kaito,View,Shadow.stats,,192.168.1.12,APPROVED,정상업무
+2025-01-25T19:45:11Z,admin01_kaito,Logout,,,192.168.1.12,APPROVED,퇴근
+2025-01-25T22:30:00Z,admin02_lucas,View,All_Characters,,192.168.1.11,APPROVED,일일점검
+2025-01-25T22:30:45Z,admin02_lucas,View,Shadow.stats,승률 50.1%,192.168.1.11,APPROVED,정상확인
+2025-01-25T22:35:22Z,admin02_lucas,Logout,,,192.168.1.11,APPROVED,퇴근
+2025-01-25T23:47:22Z,admin01_kaito,Modify,Shadow.base_stats,ATK +15|DEF +10,203.0.113.45,DBG-3344,집IP_무단수정!
+2025-01-25T23:47:55Z,admin01_kaito,Logout,,,203.0.113.45,DBG-3344,
+2025-01-26T09:05:14Z,admin03_maya,View,Shadow.stats,승률 85.2%!,192.168.1.10,APPROVED,이상발견
+2025-01-26T09:30:22Z,admin03_maya,View,Community_Forum,,192.168.1.10,APPROVED,커뮤니티확인
+2025-01-26T10:45:00Z,admin03_maya,Email,Detective,,192.168.1.10,APPROVED,탐정의뢰
