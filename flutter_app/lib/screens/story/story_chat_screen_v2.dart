@@ -11,6 +11,8 @@ import '../../widgets/typing_indicator.dart';
 import '../../widgets/realistic_notification.dart';
 import '../../widgets/emoji_reaction_picker.dart';
 import '../../widgets/hologram_loading.dart';
+import '../../widgets/data_insights_panel.dart';
+import '../../widgets/suggested_questions.dart';
 import 'episode_ending_screen.dart';
 
 class StoryChatScreenV2 extends ConsumerStatefulWidget {
@@ -24,6 +26,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _inputController = TextEditingController();
   int? _showingEmojiPickerForMessageIndex;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isProcessingChoice = false;
 
   @override
   void dispose() {
@@ -141,23 +145,68 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
     return names[speaker.toLowerCase()]?[language] ?? speaker;
   }
 
+  // 로딩 최적화를 위한 debounce 함수
+  void _handleChoiceWithDebounce(String choiceId) {
+    if (_isProcessingChoice) return;
+
+    setState(() => _isProcessingChoice = true);
+    ref.read(storyProviderV2.notifier).makeChoice(choiceId);
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() => _isProcessingChoice = false);
+      }
+    });
+  }
+
+  void _handleSuggestedQuestion(String question) {
+    // 추천 질문을 탭했을 때 자동으로 처리
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(question),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // TODO: 실제로는 AI가 답변하도록 구현
+  }
+
   @override
   Widget build(BuildContext context) {
     final storyState = ref.watch(storyProviderV2);
     final settings = ref.watch(settingsProvider);
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
+    final isMobile = screenWidth < 900; // 900px 미만을 모바일로 간주
 
     // Scroll to bottom when new messages arrive
     if (storyState.messages.isNotEmpty) {
       _scrollToBottom();
     }
 
+    // 데스크톱: 2-패널 레이아웃
+    // 모바일: Drawer + 채팅
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFF1A1D2E),
+      // 모바일용 Drawer
+      drawer: isMobile
+          ? Drawer(
+              backgroundColor: Colors.transparent,
+              child: const DataInsightsPanel(),
+            )
+          : null,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1D2E),
         elevation: 0,
+        leading: isMobile
+            ? IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              )
+            : null,
+        automaticallyImplyLeading: isMobile,
         title: Text(
           settings.language == 'ko' ? 'EP1: 사라진 밸런스 패치' : 'EP1: The Missing Balance Patch',
           style: TextStyle(
@@ -167,8 +216,9 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
           ),
         ),
         actions: [
-          // Notifications
-          IconButton(
+          // Notifications (모바일에서만 간소화)
+          if (!isMobile)
+            IconButton(
             icon: const Icon(Icons.notifications_outlined),
             onPressed: () {
               // TODO: 알림 목록 화면으로 이동
@@ -182,8 +232,9 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
               );
             },
           ),
-          // Settings menu
-          PopupMenuButton<String>(
+          // Settings menu (모바일에서는 더 간소화)
+          if (!isMobile)
+            PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (String value) async {
               if (value == 'en' || value == 'ko') {
@@ -225,7 +276,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
               ),
             ],
           ),
-          // Investigation points - Responsive padding
+          // Investigation points - Responsive padding (항상 표시)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isMobile ? 8.0 : 16.0),
             child: Center(
@@ -277,11 +328,28 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                 ],
               ),
             )
-          : Column(
+          : Row(
+              children: [
+                // 데스크톱: 왼쪽 데이터 패널
+                if (!isMobile) const DataInsightsPanel(),
+
+                // 채팅 영역 (데스크톱에서는 오른쪽, 모바일에서는 전체)
+                Expanded(
+                  child: _buildChatArea(storyState, settings, isMobile),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildChatArea(dynamic storyState, dynamic settings, bool isMobile) {
+    return Column(
               children: [
                 // Message list
                 Expanded(
-                  child: ListView.builder(
+                  child: storyState.messages.isEmpty
+                      ? _buildEmptyState(settings, isMobile)
+                      : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
                     itemCount: storyState.messages.length,
@@ -615,7 +683,15 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                   ),
                 ),
 
-                // Choices section - 개선된 스크롤 가능 버전
+                // 추천 질문 (메시지가 3개 이하일 때만 표시)
+                if (storyState.messages.length <= 3 &&
+                    (storyState.currentChoices == null ||
+                        storyState.currentChoices!.isEmpty))
+                  SuggestedQuestions(
+                    onQuestionTap: _handleSuggestedQuestion,
+                  ),
+
+                // Choices section - 개선된 스크롤 가능 버전 + 로딩 최적화
                 if (storyState.currentChoices != null && storyState.currentChoices!.isNotEmpty)
                   Container(
                     constraints: const BoxConstraints(
@@ -675,8 +751,9 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: _ChoiceButton(
                                   choice: choice,
+                                  isProcessing: _isProcessingChoice,
                                   onPressed: () {
-                                    ref.read(storyProviderV2.notifier).makeChoice(choice.id);
+                                    _handleChoiceWithDebounce(choice.id);
                                   },
                                 ),
                               );
@@ -844,6 +921,60 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                   ),
               ],
             ),
+    );
+  }
+
+  // Empty state widget - 초기 화면
+  Widget _buildEmptyState(dynamic settings, bool isMobile) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(isMobile ? 24 : 48),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF6366F1).withOpacity(0.1),
+                border: Border.all(
+                  color: const Color(0xFF6366F1).withOpacity(0.3),
+                  width: 2,
+                ),
+              ),
+              child: const Icon(
+                Icons.chat_bubble_outline,
+                size: 64,
+                color: Color(0xFF6366F1),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              settings.language == 'ko' ? '대화를 시작하세요' : 'Start Conversation',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              settings.language == 'ko'
+                  ? 'Kastor가 사건 해결을 도와드립니다'
+                  : 'Kastor will help you solve the case',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white.withOpacity(0.7),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            SuggestedQuestions(
+              onQuestionTap: _handleSuggestedQuestion,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1222,10 +1353,12 @@ class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMi
 class _ChoiceButton extends StatefulWidget {
   final dynamic choice;
   final VoidCallback onPressed;
+  final bool isProcessing;
 
   const _ChoiceButton({
     required this.choice,
     required this.onPressed,
+    this.isProcessing = false,
   });
 
   @override
@@ -1245,7 +1378,7 @@ class _ChoiceButtonState extends State<_ChoiceButton> {
         scale: _isHovered ? 1.02 : 1.0,
         duration: const Duration(milliseconds: 150),
         child: ElevatedButton(
-          onPressed: _isPressed
+          onPressed: _isPressed || widget.isProcessing
               ? null
               : () {
                   setState(() => _isPressed = true);
@@ -1294,7 +1427,7 @@ class _ChoiceButtonState extends State<_ChoiceButton> {
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
-              if (_isPressed)
+              if (_isPressed || widget.isProcessing)
                 const SizedBox(
                   width: 16,
                   height: 16,
