@@ -13,7 +13,7 @@ load_dotenv()
 
 # 페이지 설정
 st.set_page_config(
-    page_title="Kastor Data Academy - Episode 1",
+    page_title="캐스터 데이터 아카데미 - 에피소드 1",
     page_icon="🔍",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -57,20 +57,18 @@ def clean_name(raw_name):
 
 # 모바일 감지 및 CSS 스타일링
 def add_mobile_styles():
-    """모바일 최적화 CSS 추가"""
+    """모바일 최적화 CSS 추가 (전역 스크롤 허용, 섹션별 스크롤)"""
     st.markdown("""
     <style>
-    /* 전체 페이지 스크롤 완전 제거 */
+    /* 전역 스크롤 허용 */
     html, body, [data-testid="stAppViewContainer"], .main {
-        overflow: hidden !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
+        overflow: auto !important;
+        height: auto !important;
+        max-height: none !important;
     }
 
     .main .block-container {
-        height: 100vh !important;
-        max-height: 100vh !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         padding: 0.5rem 1rem !important;
         padding-bottom: 0 !important;
     }
@@ -80,9 +78,9 @@ def add_mobile_styles():
         padding-top: 0.5rem !important;
     }
 
-    /* 컨테이너 높이 viewport 기준으로 제한 */
+    /* 주요 컨테이너들은 자체 스크롤 사용 */
     [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {
-        max-height: calc(100vh - 80px) !important;
+        max-height: none !important;
     }
 
     /* 탭 컨텐츠 높이 제한 */
@@ -96,6 +94,7 @@ def add_mobile_styles():
         display: flex !important;
         flex-direction: column !important;
         overflow-y: auto !important;
+        max-height: 70vh;
     }
 
     /* 모바일 최적화 */
@@ -287,6 +286,13 @@ def add_mobile_styles():
         max-height: 400px;
         overflow-y: auto;
     }
+
+    /* 모션 축소 환경 대응 */
+    @media (prefers-reduced-motion: reduce) {
+        .badge, .evidence-card.found, .patch-card.suspicious, .score-animation {
+            animation: none !important;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -335,7 +341,9 @@ BADGE_EMOJIS = {
     "📋 문서 분석가": "hypothesis_1 완료",
     "🖥️ 로그 헌터": "hypothesis_2 완료",
     "🎯 진실 추적자": "hypothesis_3 완료",
-    "⭐ 마스터 탐정": "사건 해결 완료"
+    "⭐ 마스터 탐정": "사건 해결 완료",
+    "🔍 타임라인 마스터": "타임라인 퍼즐 완료",
+    "💾 로그 헌터": "로그 필터링 완료"
 }
 
 def award_badge(badge_name):
@@ -481,7 +489,7 @@ STAGE_CONTEXTS = {
 }
 
 # 헤더 (축소)
-st.markdown("### 🔍 Kastor Data Academy - Episode 1: 사라진 밸런스 패치")
+st.markdown("### 🔍 캐스터 데이터 아카데미 - 에피소드 1: 사라진 밸런스 패치")
 
 # Scene 0: 아침의 알람 - 마크다운 스크립트대로
 if st.session_state.episode_stage == "scene_0" and len(st.session_state.messages) == 0:
@@ -491,8 +499,8 @@ if st.session_state.episode_stage == "scene_0" and len(st.session_state.messages
    "일어나! 탐정 첫 출근이잖아!"
 
 *[알람 소리 - 띠리리링!]*""",
-        "띠링~ 주인님 기상 시간!",
-        "나? 카스터! 네 파트너!",
+        "띠링~ 탐정님 기상 시간!",
+        "나? 캐스터! 네 파트너!",
         "혼자? 나랑 둘이잖아!",
         "오~ 눈치 빠르네! 정답! 최신형 탐정 조수 AI!",
         "뭐야, 실망했어? 나 엄청 똑똑한데!",
@@ -513,7 +521,19 @@ col_data, col_chat = st.columns([3, 2])
 
 # 채팅 열 (오른쪽)
 with col_chat:
-    st.subheader("💬 탐정 파트너 캐스터")
+        st.subheader("💬 탐정 파트너 캐스터")
+
+        # 진행 상태 표시
+        scene_order = [
+            "scene_0", "scene_1_hypothesis", "exploration", "scene_3_graph",
+            "minigame_1_1", "choice_2_investigation", "scene_4_patch_notes",
+            "minigame_1_2", "scene_5_server_logs", "minigame_1_3",
+            "scene_6_player_profile", "scene_7_timeline", "conclusion"
+        ]
+        if st.session_state.episode_stage in scene_order:
+            idx = scene_order.index(st.session_state.episode_stage) + 1
+            total = len(scene_order)
+            st.caption(f"진행 상태: {idx}/{total}")
 
     # 대화 표시 - 자동 스크롤 JavaScript 추가
     st.markdown("""
@@ -545,7 +565,7 @@ with col_chat:
     """, unsafe_allow_html=True)
 
     # 대화 표시
-    chat_container = st.container(height=800)
+    chat_container = st.container()
     with chat_container:
         # 이전 메시지는 일반 표시
         for i, message in enumerate(st.session_state.messages[:-1]):
@@ -576,7 +596,7 @@ with col_chat:
             # 탐정의 이름 입력 메시지
             add_message("user", user_name)
 
-            # 카스터의 반응 (마크다운 스크립트대로)
+            # 캐스터의 반응 (마크다운 스크립트대로)
             kastor_reactions = [
                 f"오, {cleaned_name}! 멋진데? 근데 철자 맞아?",
                 f"완벽! 저장 완료~ 이제 {cleaned_name} 탐정님!",
@@ -607,7 +627,7 @@ with col_chat:
 > 제발 도와주세요!"""
             add_message("assistant", email_content)
 
-            # 카스터 반응
+            # 캐스터 반응
             add_message("assistant", "오! 게임 사건! 내가 제일 좋아하는 거!")
             add_message("assistant", "35% 점프! 미친 수치지!")
             add_message("assistant", "음식으로 비유하면... 라면 한 개 먹다가 갑자기 짬뽕 세 그릇 먹는 거?")
@@ -620,7 +640,7 @@ with col_chat:
         # 가설 선택 버튼 표시
         st.markdown("---")
         st.markdown("### 🔍 Scene 1: 초기 가설 선택")
-        st.markdown("**카스터**: 자! 가능성이 세 개야. 어떤 게 진짜 같아?")
+        st.markdown("**캐스터**: 자! 가능성이 세 개야. 어떤 게 진짜 같아?")
 
         col1, col2, col3 = st.columns(3)
 
@@ -726,15 +746,14 @@ with col_chat:
                 add_message("assistant", "25일이 바로 셰도우 승률이 폭발한 날이야!")
                 add_message("assistant", "하루 만에 50%에서 85%로...")
                 add_message("assistant", "그게 바로 **이상치 탐지**! 데이터에서 이상한 거 찾아내는 거지.")
-                add_message("assistant", "🏆 **+25점** — 이상치 탐정 배지 획득! ⭐")
+                add_message("assistant", "🏆 **+25점** — 이상치 탐정 배지 획득! 🔍")
                 add_message("assistant", """📊 **데이터 배움 타임 #1: 트렌드 읽기**
 ✓ 점진적 변화 = 자연스러움 (연습, 학습)
 ✓ 급격한 급등 = 의심스러움 (외부 개입)
 ✓ 항상 다른 데이터와 비교하기""")
 
                 st.session_state.detective_score += 25
-                if award_badge("⭐ 이상치 탐정"):
-                    pass
+                award_badge("🔍 이상치 탐정")
 
                 st.session_state.episode_stage = "choice_2_investigation"
                 st.rerun()
@@ -906,8 +925,7 @@ IP 주소: 203.0.113.45 (집 IP!)
 ✓ 정확한 조합 찾기 = 탐정 기술!""")
 
             st.session_state.detective_score += 35
-            if award_badge("💾 로그 헌터"):
-                pass
+            award_badge("💾 로그 헌터")
 
             st.session_state.episode_stage = "scene_6_player_profile"
             st.rerun()
@@ -924,7 +942,7 @@ IP 주소: 203.0.113.45 (집 IP!)
 👤 **플레이어 프로필: 녹티스**
 
 계정 나이: 3년
-주 캐릭터: 셀도우 (게임의 95%)
+주 캐릭터: 셰도우 (게임의 95%)
 랭크: 다이아몬드 II
 최근 성적:
 - 1~24일: 48% 승률 (평범)
@@ -1022,7 +1040,7 @@ with col_data:
     st.subheader("📊 사건 증거 데이터")
 
     # 데이터 영역을 스크롤 가능한 컨테이너로 감싸기
-    data_container = st.container(height=800)
+    data_container = st.container()
     with data_container:
         # 데이터 영역 (스테이지별 순차 공개)
         if st.session_state.episode_stage in ["scene_0", "scene_1_hypothesis"]:
