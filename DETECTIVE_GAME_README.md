@@ -30,13 +30,13 @@ Kastor와 함께 데이터를 분석하며 원인을 찾아보세요!
 ### 💬 혼합형 대화 시스템
 - **선택지 버튼**: 추천 행동으로 빠르게 진행
 - **자유 채팅**: Kastor에게 자유롭게 질문
-- **OpenAI API**: GPT-3.5로 자연스러운 대화
+- **Claude API**: Claude 3.5 Haiku로 자연스러운 대화
 
 ## 🚀 빠른 시작
 
 ### 1. 필수 요구사항
 - Python 3.8 이상
-- OpenAI API 키 ([발급 받기](https://platform.openai.com/api-keys))
+- Anthropic API 키 ([발급 받기](https://console.anthropic.com/settings/keys))
 
 ### 2. 설치
 
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 cp .env.example .env
 
 # .env 파일 편집하여 API 키 입력
-# OPENAI_API_KEY=your-actual-api-key-here
+# ANTHROPIC_API_KEY=your-actual-api-key-here
 ```
 
 ### 4. 실행
@@ -116,7 +116,7 @@ Kastor-Data-Academy/
 ## 🛠️ 기술 스택
 
 - **Streamlit**: 웹 애플리케이션 프레임워크
-- **OpenAI API**: GPT-3.5 기반 대화형 AI
+- **Anthropic Claude API**: Claude 3.5 Haiku 기반 대화형 AI
 - **Pandas**: 데이터 처리 및 분석
 - **Plotly**: 인터랙티브 데이터 시각화
 - **Python-dotenv**: 환경 변수 관리
@@ -125,7 +125,7 @@ Kastor-Data-Academy/
 
 ### API 키 오류
 ```
-Error: OpenAI API key not found
+Error: Anthropic API key not found
 ```
 → `.env` 파일에 올바른 API 키를 입력했는지 확인하세요.
 
