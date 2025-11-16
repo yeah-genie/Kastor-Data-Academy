@@ -60,17 +60,37 @@ def add_mobile_styles():
     """모바일 최적화 CSS 추가"""
     st.markdown("""
     <style>
-    /* 전체 화면 높이 최적화 - viewport 100% */
+    /* 전체 페이지 스크롤 완전 제거 */
+    html, body, [data-testid="stAppViewContainer"], .main {
+        overflow: hidden !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+    }
+
     .main .block-container {
-        max-height: 100vh;
-        overflow: hidden;
-        padding: 1rem;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: hidden !important;
+        padding: 0.5rem 1rem !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* 헤더 영역 축소 */
+    .main .block-container > div:first-child {
+        padding-top: 0.5rem !important;
     }
 
     /* 탭 컨텐츠 높이 제한 */
     .stTabs [data-baseweb="tab-panel"] {
         max-height: 75vh;
         overflow-y: auto;
+    }
+
+    /* 채팅 컨테이너 자동 스크롤 */
+    [data-testid="stVerticalBlock"] > div:has(.stChatMessage) {
+        display: flex !important;
+        flex-direction: column !important;
+        overflow-y: auto !important;
     }
 
     /* 모바일 최적화 */
@@ -88,9 +108,9 @@ def add_mobile_styles():
         }
     }
 
-    /* 채팅 자동 스크롤 */
+    /* 채팅 입력창 위치 */
     .stChatFloatingInputContainer {
-        bottom: 20px;
+        bottom: 0px;
     }
 
     /* 메시지 간격 조정 */
@@ -479,15 +499,29 @@ with col_chat:
     # 대화 표시 - 자동 스크롤 JavaScript 추가
     st.markdown("""
     <script>
-    // 채팅 자동 스크롤
-    function scrollToBottom() {
-        const chatContainer = window.parent.document.querySelector('[data-testid="stVerticalBlock"]');
-        if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+    // 채팅 자동 스크롤 - 새 메시지 감지 및 스크롤
+    function scrollChatToBottom() {
+        const containers = window.parent.document.querySelectorAll('[data-testid="stVerticalBlock"]');
+        containers.forEach(container => {
+            const chatMessages = container.querySelectorAll('.stChatMessage');
+            if (chatMessages.length > 0) {
+                container.scrollTop = container.scrollHeight;
+            }
+        });
     }
-    // 페이지 로드 시 및 메시지 추가 시 자동 스크롤
-    setTimeout(scrollToBottom, 100);
+
+    // 초기 로드 및 주기적 체크
+    setTimeout(scrollChatToBottom, 100);
+    setInterval(scrollChatToBottom, 500);
+
+    // MutationObserver로 DOM 변경 감지
+    const observer = new MutationObserver(scrollChatToBottom);
+    setTimeout(() => {
+        const appView = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
+        if (appView) {
+            observer.observe(appView, { childList: true, subtree: true });
+        }
+    }, 1000);
     </script>
     """, unsafe_allow_html=True)
 
