@@ -379,22 +379,16 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2>
                         const DataInsightsPanel(),
                       ],
                     )
-                  // 데스크톱: 7:3 비율 Row
+                  // 데스크톱: 3:2 비율 Row (Streamlit 스타일: 데이터 60%, 채팅 40%)
                   : Row(
                       children: [
-                        // 채팅 영역 (왼쪽 70%)
-                        Expanded(
-                          flex: 7,
-                          child: _buildChatArea(storyState, settings, isMobile),
-                        ),
-
-                        // 데이터 패널 (오른쪽 30%)
+                        // 데이터 패널 (왼쪽 60%)
                         Expanded(
                           flex: 3,
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border(
-                                left: BorderSide(
+                                right: BorderSide(
                                   color: const Color(0xFF6366F1).withOpacity(0.2),
                                   width: 1,
                                 ),
@@ -402,6 +396,12 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2>
                             ),
                             child: const DataInsightsPanel(),
                           ),
+                        ),
+
+                        // 채팅 영역 (오른쪽 40%)
+                        Expanded(
+                          flex: 2,
+                          child: _buildChatArea(storyState, settings, isMobile),
                         ),
                       ],
                     ),
@@ -797,7 +797,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2>
                 if (storyState.currentChoices != null && storyState.currentChoices!.isNotEmpty)
                   Container(
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * (isMobile ? 0.4 : 0.35), // 화면 비율로 조정
+                      maxHeight: MediaQuery.of(context).size.height * (isMobile ? 0.3 : 0.25), // Streamlit 스타일: 더 컴팩트하게
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF6366F1).withOpacity(0.1),
