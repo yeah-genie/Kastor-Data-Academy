@@ -60,6 +60,12 @@ def add_mobile_styles():
     """모바일 최적화 CSS 추가"""
     st.markdown("""
     <style>
+    /* 전체 화면 높이 고정 */
+    .main .block-container {
+        max-height: 100vh;
+        overflow: hidden;
+    }
+
     /* 모바일 최적화 */
     @media (max-width: 768px) {
         .block-container {
@@ -98,6 +104,13 @@ def add_mobile_styles():
         font-size: 0.9rem;
         font-weight: bold;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        animation: badgePop 0.3s ease-out;
+    }
+
+    @keyframes badgePop {
+        0% { transform: scale(0); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
     }
 
     .badge-gold {
@@ -116,11 +129,18 @@ def add_mobile_styles():
         margin: 0.5rem 0;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
     }
 
     .evidence-card.found {
         border-left-color: #51cf66;
         background: #f1f9f4;
+        animation: evidenceFound 0.5s ease-out;
+    }
+
+    @keyframes evidenceFound {
+        0% { transform: translateX(-20px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
     }
 
     /* 패치 노트 카드 */
@@ -142,6 +162,12 @@ def add_mobile_styles():
     .patch-card.suspicious {
         border-color: #fa5252;
         background: #fff5f5;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 4px 6px rgba(250, 82, 82, 0.2); }
+        50% { box-shadow: 0 4px 12px rgba(250, 82, 82, 0.4); }
     }
 
     .patch-header {
@@ -178,6 +204,12 @@ def add_mobile_styles():
         color: #fa5252;
         font-weight: bold;
         font-size: 1.2rem;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 
     /* 탐정 느낌 */
@@ -187,6 +219,43 @@ def add_mobile_styles():
         padding: 1rem;
         border-radius: 8px;
         font-family: 'Courier New', monospace;
+    }
+
+    /* 액션 버튼 */
+    .action-button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        margin: 0.3rem;
+        background: #667eea;
+        color: white;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        border: none;
+    }
+
+    .action-button:hover {
+        background: #5568d3;
+        transform: scale(1.05);
+    }
+
+    /* 점수 카운터 애니메이션 */
+    @keyframes scoreUp {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); color: #51cf66; }
+        100% { transform: translateY(0); }
+    }
+
+    .score-animation {
+        animation: scoreUp 0.5s ease-out;
+    }
+
+    /* 데이터 컨테이너 높이 제한 */
+    .stExpander > div > div {
+        max-height: 400px;
+        overflow-y: auto;
     }
     </style>
     """, unsafe_allow_html=True)
