@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Kastor Data Academy - Investigation Screen</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #2D1B4E;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4C2AFF",
+                        "background-light": "#F5F1E8",
+                        "background-dark": "#2D1B4E",
+                        "midnight": "#1A1625",
+                        "neon-cyan": "#00F6FF",
+                        "electric-violet": "#B458FF",
+                        "hologram-green": "#39FF14",
+                        "slate": "#8B8B9F",
+                        "ghost-white": "#F7F5FF",
+                        "ai-bubble": "#7C3AED",
+                        "player-bubble": "#E5E5EA",
+                    },
+                    fontFamily: {
+                        "display": ["Playfair Display", "serif"],
+                        "heading": ["Cinzel", "serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                        "data": ["JetBrains Mono", "monospace"],
+                        "label": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-body text-ghost-white">
+    <div class="relative flex h-auto min-h-screen w-full flex-col lg:flex-row" style="background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);">
+
+        <!-- A. Left Panel - Evidence Data (40% width) -->
+        <aside class="w-full lg:w-2/5 flex flex-col bg-midnight p-4 lg:p-6 border-r border-slate/20">
+            <h1 class="font-display text-2xl mb-6 text-ghost-white">Evidence Data</h1>
+            <div class="flex flex-col gap-3">
+
+                <!-- 1. Character Stats -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group" open>
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Character Stats</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <div class="flex min-w-72 flex-1 flex-col gap-2 pt-4">
+                        <p class="font-label text-base font-medium leading-normal text-ghost-white">Total Engagements</p>
+                        <p class="font-data tracking-light text-3xl font-bold leading-tight truncate text-neon-cyan">7,820</p>
+                        <div class="flex gap-2 font-label">
+                            <p class="text-slate text-sm font-normal leading-normal">Last 30 Days</p>
+                            <p class="text-hologram-green text-sm font-medium leading-normal">+12.5%</p>
+                        </div>
+                        <div class="grid min-h-[180px] grid-flow-col gap-6 grid-rows-[1fr_auto] items-end justify-items-center px-3">
+                            <div class="bg-neon-cyan/80 w-full" style="height: 60%;"></div>
+                            <p class="font-data text-slate text-xs font-bold leading-normal tracking-widest">STR</p>
+                            <div class="bg-slate/30 w-full" style="height: 30%;"></div>
+                            <p class="font-data text-slate text-xs font-bold leading-normal tracking-widest">DEX</p>
+                            <div class="bg-slate/30 w-full" style="height: 30%;"></div>
+                            <p class="font-data text-slate text-xs font-bold leading-normal tracking-widest">INT</p>
+                            <div class="bg-slate/30 w-full" style="height: 30%;"></div>
+                            <p class="font-data text-slate text-xs font-bold leading-normal tracking-widest">CON</p>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 2. Daily Trends -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Daily Trends</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <div class="flex min-w-72 flex-1 flex-col gap-2 pt-4">
+                        <p class="font-label text-base font-medium leading-normal text-ghost-white">Anomalous Logins</p>
+                        <p class="font-data tracking-light text-3xl font-bold leading-tight truncate text-ghost-white">1,230</p>
+                        <div class="flex gap-2 font-label">
+                            <p class="text-slate text-sm font-normal leading-normal">Last 24 Hours</p>
+                            <p class="text-[#fa6c38] text-sm font-medium leading-normal">-2.1%</p>
+                        </div>
+                        <div class="flex min-h-[180px] flex-1 flex-col gap-8 py-4">
+                            <svg fill="none" height="148" preserveAspectRatio="none" viewBox="-3 0 478 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H326.769H0V109Z" fill="url(#paint0_linear_1131_5935)"></path>
+                                <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#00F6FF" stroke-linecap="round" stroke-width="3"></path>
+                                <defs>
+                                    <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_1131_5935" x1="236" x2="236" y1="1" y2="149">
+                                        <stop stop-color="#00F6FF" stop-opacity="0.3"></stop>
+                                        <stop offset="1" stop-color="#00F6FF" stop-opacity="0"></stop>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 3. Patch Notes -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Patch Notes</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="font-data text-slate text-sm font-normal leading-normal pb-2 pt-2">v2.45.1 - Balance adjustments to character STR. <br/>v2.45.0 - New map 'Cyberia' introduced. Server stability fixes.</p>
+                </details>
+
+                <!-- 4. Server Logs -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Server Logs</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <div class="py-2 space-y-3">
+                        <label class="flex flex-col min-w-40 h-11 w-full">
+                            <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                                <div class="text-slate flex border-none bg-slate/20 items-center justify-center pl-3 rounded-l-lg border-r-0">
+                                    <span class="material-symbols-outlined">search</span>
+                                </div>
+                                <input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-ghost-white focus:outline-0 focus:ring-2 focus:ring-electric-violet border-none bg-slate/20 h-full placeholder:text-slate px-4 pl-2 font-data text-sm font-normal leading-normal" placeholder="Filter server logs by IP..." value=""/>
+                            </div>
+                        </label>
+                        <p class="font-data text-slate text-sm font-normal leading-normal">[2045-10-26 23:51:10] <span class="text-neon-cyan">IP: 192.168.1.101</span> LOGIN_SUCCESS <br/>[2045-10-26 23:50:05] IP: 203.0.113.45 LOGIN_FAIL</p>
+                    </div>
+                </details>
+
+                <!-- 5. Player Profile -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Player Profile</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="font-data text-slate text-sm font-normal leading-normal pb-2 pt-2">USER: 'Nyx' <br/>Device ID: <span class="text-neon-cyan">a4-3f-8c-b1-d5-e9</span> <br/>Status: Suspicious Activity Flagged</p>
+                </details>
+
+                <!-- 6. Match History -->
+                <details class="flex flex-col rounded-lg border border-slate/30 bg-midnight px-4 py-2 group">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-2">
+                        <h2 class="font-heading text-lg font-bold text-ghost-white tracking-wider">Match History</h2>
+                        <span class="material-symbols-outlined text-electric-violet group-open:rotate-180 transition-transform">expand_more</span>
+                    </summary>
+                    <p class="font-data text-slate text-sm font-normal leading-normal pb-2 pt-2">Match #7781: Anomaly detected - unusual packet loss. <br/>Match #7780: Victory - KDA: 15/2/8</p>
+                </details>
+            </div>
+        </aside>
+
+        <!-- B. Right Panel - Conversation Interface (60% width) -->
+        <main class="w-full lg:w-3/5 flex flex-col bg-midnight/50">
+            <!-- Progress Display -->
+            <div class="p-4 lg:p-6 border-b border-slate/20">
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-4 bg-midnight">
+                        <p class="font-label text-base font-medium leading-normal text-slate">Current Stage</p>
+                        <p class="font-data tracking-light text-2xl font-bold leading-tight text-neon-cyan">5 <span class="text-slate">/ 13</span></p>
+                    </div>
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-4 bg-midnight">
+                        <p class="font-label text-base font-medium leading-normal text-slate">Accumulated Points</p>
+                        <p class="font-data tracking-light text-2xl font-bold leading-tight text-hologram-green">10,450</p>
+                    </div>
+                    <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-lg p-4 bg-midnight">
+                        <p class="font-label text-base font-medium leading-normal text-slate">Acquired Badges</p>
+                        <div class="flex items-center gap-2">
+                            <p class="font-data tracking-light text-2xl font-bold leading-tight text-electric-violet">3 <span class="text-slate">/ 7</span></p>
+                            <div class="flex items-center gap-1.5 ml-auto">
+                                <span class="material-symbols-outlined text-electric-violet text-xl">verified</span>
+                                <span class="material-symbols-outlined text-electric-violet text-xl">verified</span>
+                                <span class="material-symbols-outlined text-electric-violet text-xl">verified</span>
+                                <span class="material-symbols-outlined text-slate/50 text-xl">verified</span>
+                                <span class="material-symbols-outlined text-slate/50 text-xl">verified</span>
+                                <span class="material-symbols-outlined text-slate/50 text-xl">verified</span>
+                                <span class="material-symbols-outlined text-slate/50 text-xl">verified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat UI -->
+            <div class="flex-1 flex flex-col p-4 lg:p-6 space-y-6 overflow-y-auto">
+                <!-- AI Message -->
+                <div class="flex items-end gap-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0 border-2 border-ai-bubble" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4KbXIF9t_SGItTrBYf7cf-GebmnRQSngD_sDJrRqMPPnoAQQxNZddPfU-mthQu_UW99kkYOxpdkOk3coqWYU6QQo-SlM1MCxcLGTMXrxiIyaIoaXMklpRmuRBbZubbUectr-79J0MeNgGXWhRpxABhAUpRTq6RSwqUR34E4J_H0520dUwK1lt3jfJGnzHwXkb3nWv3vLtjl8IaGTOweqb99EzDqsZU21h_OyuR-CH4s9vqRz350X2u7xRgfM8-IuNgjfLSQbpXw");'></div>
+                    <div class="flex flex-1 flex-col gap-1 items-start">
+                        <p class="font-label text-slate text-sm font-normal leading-normal max-w-[360px]">Kastor</p>
+                        <p class="text-base font-normal leading-normal flex max-w-sm rounded-xl rounded-bl-none px-4 py-3 bg-ai-bubble text-ghost-white">
+                            It appears there's an anomaly in the server logs from yesterday. Take a closer look.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Player Message -->
+                <div class="flex items-end gap-3 justify-end">
+                    <div class="flex flex-1 flex-col gap-1 items-end">
+                        <p class="font-label text-slate text-sm font-normal leading-normal max-w-[360px]">You</p>
+                        <p class="font-body text-base font-normal leading-normal flex max-w-sm rounded-xl rounded-br-none px-4 py-3 bg-player-bubble/20 text-ghost-white">
+                            I'm on it. Filtering for suspicious IP addresses now.
+                        </p>
+                    </div>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0 border-2 border-slate" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBt3-cRbparOpCEZRwNImR10BLwmgsY0PX90w6zs92k0oLcRT0kBhWA4EZa4vOSmIGJzszMgmP5BpB8JDp9N0TEQVm2Leg_VnzuIwl_rTRuOXp8SBUsafbY0znwwYDV6SDeCEC-VOgZ4Suvfbk0AeiV09kVa-cdsSjJ7DL9vS364unollGXv7PUx9MxssvNe7DUeSPWPjcO3fhtwbxb-X7YBwNtO-JzyuHXQfn3FgD-_S3mA83YaXWfEQvYyhz2qiX_Izj_16zvLQ");'></div>
+                </div>
+
+                <!-- AI Message -->
+                <div class="flex items-end gap-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0 border-2 border-ai-bubble" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAg3EyICu74MNIWKvuJq8PKpK382tLINgzzRGlYXGivLsGHT3LKz1YRGMAziFcx_Aa8vJZfnHXZA50cqZetVQ3jBnG0dCbpZ4E8rBDWNNQl42EafyKWmmPNm3I0nHnvcQH81hxGm08fFSHlwXE7ONb6X09I13Zc8a1hc0TEmOCIF8JftnoDv5g9fIFV1mDvd3K44Xhn71DExek88eYA0AP9rHVAgIHX1rRgX-G_7cpnvBRfSGvr_LbfPuJUItuVSz-FFxVMmaq6Q");'></div>
+                    <div class="flex flex-1 flex-col gap-1 items-start">
+                        <p class="text-base font-normal leading-normal flex max-w-sm rounded-xl rounded-bl-none px-4 py-3 bg-ai-bubble text-ghost-white">
+                            Excellent. Cross-reference the flagged IP with the player profile data. Do you see a connection?
+                        </p>
+                    </div>
+                </div>
+
+                <!-- AI Typing Indicator -->
+                <div class="flex items-end gap-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0 border-2 border-ai-bubble" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAW4qKHTqrLWQdqhsc9FQHkYX8NJ6t1AYRaGdtcoVJSLHMmyGTcEpVponCBjqQhmt37oPeEIzdsnnmyRNP7pK3uDp6Fx0zPWyGcb64ObFdv7aXo8FVeMJLcbkRA9h60n0shZz3oq-En96TnI5yGM1C98R3yCw1-s6xK6BpZZ09e3JIxltNOyg_t4BX7Wezrho0VAqClR5NjJlFM1DNpkd4s-Oui85fYgdCH20di7ASChtULfl_DhSZ7JHPiFVW3Yvp0f40z7rwqVw");'></div>
+                    <div class="flex flex-1 flex-col gap-1 items-start">
+                        <div class="flex items-center space-x-1 max-w-sm rounded-xl rounded-bl-none px-4 py-3 bg-ai-bubble">
+                            <span class="w-2 h-2 bg-ghost-white/50 rounded-full animate-pulse" style="animation-delay: 0s;"></span>
+                            <span class="w-2 h-2 bg-ghost-white/50 rounded-full animate-pulse" style="animation-delay: 0.2s;"></span>
+                            <span class="w-2 h-2 bg-ghost-white/50 rounded-full animate-pulse" style="animation-delay: 0.4s;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="p-4 lg:p-6 border-t border-slate/20 mt-auto">
+                <div class="flex gap-3">
+                    <button class="flex-1 text-center font-label font-medium py-3 px-4 rounded-lg bg-primary/20 text-ghost-white hover:bg-primary transition-colors">"I see a match with user 'Nyx'."</button>
+                    <button class="flex-1 text-center font-label font-medium py-3 px-4 rounded-lg bg-primary/20 text-ghost-white hover:bg-primary transition-colors">"No connection found."</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

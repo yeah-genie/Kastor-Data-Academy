@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Game Moderation and Investigation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7C3AED",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#111827",
+                    },
+                    fontFamily: {
+                        display: ["Roboto", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 font-display">
+    <div class="flex h-screen max-w-screen-2xl mx-auto">
+        <!-- Left Panel - Evidence Data (40%) -->
+        <div class="w-2/5 p-6 flex flex-col space-y-4 bg-gray-100 dark:bg-gray-900 overflow-y-auto">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Evidence Data</h1>
+
+            <div class="space-y-2">
+                <!-- CHARACTER STATS (Expanded) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>CHARACTER STATS</span>
+                        <span class="material-symbols-outlined text-primary">expand_less</span>
+                    </button>
+                    <div class="px-4 pb-4">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Total Engagements</p>
+                        <p class="text-3xl font-bold text-cyan-500">7,820</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Last 30 Days <span class="text-green-500">+12.5%</span></p>
+                        <div class="mt-4 flex justify-between items-end space-x-4">
+                            <div class="text-center w-1/4">
+                                <div class="h-24 bg-cyan-500 rounded-sm"></div>
+                                <p class="text-xs mt-2 text-gray-500 dark:text-gray-400">STR</p>
+                            </div>
+                            <div class="text-center w-1/4">
+                                <div class="h-10 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+                                <p class="text-xs mt-2 text-gray-500 dark:text-gray-400">DEX</p>
+                            </div>
+                            <div class="text-center w-1/4">
+                                <div class="h-12 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+                                <p class="text-xs mt-2 text-gray-500 dark:text-gray-400">INT</p>
+                            </div>
+                            <div class="text-center w-1/4">
+                                <div class="h-8 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+                                <p class="text-xs mt-2 text-gray-500 dark:text-gray-400">CON</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAILY TRENDS (Collapsed) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>DAILY TRENDS</span>
+                        <span class="material-symbols-outlined text-primary">expand_more</span>
+                    </button>
+                </div>
+
+                <!-- PATCH NOTES (Collapsed) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>PATCH NOTES</span>
+                        <span class="material-symbols-outlined text-primary">expand_more</span>
+                    </button>
+                </div>
+
+                <!-- SERVER LOGS (Collapsed) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>SERVER LOGS</span>
+                        <span class="material-symbols-outlined text-primary">expand_more</span>
+                    </button>
+                </div>
+
+                <!-- PLAYER PROFILE (Collapsed) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>PLAYER PROFILE</span>
+                        <span class="material-symbols-outlined text-primary">expand_more</span>
+                    </button>
+                </div>
+
+                <!-- MATCH HISTORY (Collapsed) -->
+                <div class="rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <button class="w-full flex justify-between items-center p-4 text-left font-bold text-gray-700 dark:text-gray-300">
+                        <span>MATCH HISTORY</span>
+                        <span class="material-symbols-outlined text-primary">expand_more</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Stats -->
+            <div class="grid grid-cols-2 gap-4 pt-4">
+                <div class="p-4 rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Current Stage</p>
+                    <p class="text-2xl font-bold"><span class="text-cyan-500">5</span> / 13</p>
+                </div>
+                <div class="p-4 rounded-lg bg-gray-200 dark:bg-gray-800">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Accumulated Points</p>
+                    <p class="text-2xl font-bold text-green-500">18,450</p>
+                </div>
+            </div>
+
+            <!-- Badges -->
+            <div class="p-4 rounded-lg bg-gray-200 dark:bg-gray-800">
+                <p class="text-sm text-gray-500 dark:text-gray-400">Acquired Badges</p>
+                <div class="flex items-center mt-2">
+                    <p class="text-2xl font-bold"><span class="text-primary">3</span> / 7</p>
+                    <div class="flex ml-4 space-x-2">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">circle</span>
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">circle</span>
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">circle</span>
+                        <span class="material-symbols-outlined text-gray-500 dark:text-gray-600">circle</span>
+                        <span class="material-symbols-outlined text-gray-500 dark:text-gray-600">circle</span>
+                        <span class="material-symbols-outlined text-gray-500 dark:text-gray-600">circle</span>
+                        <span class="material-symbols-outlined text-gray-500 dark:text-gray-600">circle</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Conversation Interface (60%) -->
+        <div class="w-3/5 p-6 flex flex-col bg-gray-50 dark:bg-gray-800/50">
+            <!-- Chat Messages -->
+            <div class="flex-grow overflow-y-auto pr-4 space-y-6">
+                <!-- AI Message 1 -->
+                <div class="flex items-start gap-3">
+                    <img alt="Kastor avatar" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMzc6l7NZ2cBV2CprgRPAS3BJiTXQHZGYAMY3_lGum_lZ3tuuBqPIt8Z0CbDbIkfq6L71Rm35xeoHI_Ods43bhQZsaNOfLco_qgbYua9qDMhHh3WjQupe99Syy_fCPCM28GCQkYNKTOTlwBJhn0fEnKV2afw6aMQ2nvwfLg45JTCvMf8HmMMcZGX1TmHfm-SNcF3AFKXz-EAd0M8lEWwMX3zky63qM4P91oTQVBJefPRS0WAiA4veRq4arnVdp2GkjjU1omW66b5XH"/>
+                    <div class="flex flex-col items-start">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mb-1">Kastor</span>
+                        <div class="bg-primary p-3 rounded-lg rounded-tl-none max-w-md">
+                            <p class="text-white">It appears there's an anomaly in the server logs from yesterday. Take a closer look.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Message -->
+                <div class="flex items-start gap-3 flex-row-reverse">
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mb-1">You</span>
+                        <div class="bg-gray-300 dark:bg-gray-700 p-3 rounded-lg rounded-tr-none max-w-md">
+                            <p class="text-gray-900 dark:text-gray-100">I'm on it. Filtering for suspicious IP addresses now.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Message 2 -->
+                <div class="flex items-start gap-3">
+                    <img alt="Kastor avatar" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwbS8bb7psbgE5SYW3au9wdfei5NuiWeWxmJ-wYd9p2NUSXmwtvdxetnt5JmX7BR0pMEUBTOQwCpnXpmM_BbYABcG-FYUIjdlRZ0iFMWtcTmnYZvLnwG9fWOsjgRTQMYmKGJmYYjsbAOdTw71tHPAYWdrCSlLSxgoEJCXija75YfTvCh_lO7k2PEY8aB7kI03y5oSrCaVoB3r81M9PNl8v3qgd1OlQcSddfU8HjPUbXqyfg_vg72Lbp50Ea0A2FMt0A7uraOCHtRBu"/>
+                    <div class="flex flex-col items-start">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 mb-1">Kastor</span>
+                        <div class="bg-primary p-3 rounded-lg rounded-tl-none max-w-md">
+                            <p class="text-white">Excellent. Cross-reference the flagged IP with the player profile data. Do you see a connection?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="flex items-start gap-3">
+                    <img alt="Kastor avatar" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEchF63iTgMqHWHXGa6oIKSGfkcpmIjtY1ujT6opzUjXYEAJLgvgX5xJHbsdt_zFwku74-XVxWpL01lj0p1xvqQWCIwooB-qRlqDPIMDPBBwXDRxjMke1VqYYH8vKfk6rpZULdN2qhBz-AZH7elPGuGvGz5XT--TebRIcfgYBCsaRVxH-w4BjCWr2Ymh_VSA6Avq3B_VizsMUCUwa2kUejtp0XlpbslLBR9FX60CygTqfLofJVv8UW9ga1F63KYouRbxIowDnRbnqO"/>
+                    <div class="flex flex-col items-start mt-2">
+                        <div class="bg-primary p-3 rounded-lg rounded-tl-none">
+                            <div class="flex space-x-1.5 items-center">
+                                <span class="w-2 h-2 bg-white/50 rounded-full animate-bounce" style="animation-delay: -0.3s;"></span>
+                                <span class="w-2 h-2 bg-white/50 rounded-full animate-bounce" style="animation-delay: -0.15s;"></span>
+                                <span class="w-2 h-2 bg-white/50 rounded-full animate-bounce"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Options -->
+            <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-4">
+                <button class="w-full text-left p-4 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    <p class="text-gray-800 dark:text-gray-200">"I see a match with user 'Nyx'."</p>
+                </button>
+                <button class="w-full text-left p-4 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    <p class="text-gray-800 dark:text-gray-200">"No connection found."</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

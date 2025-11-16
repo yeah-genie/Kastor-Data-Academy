@@ -1,0 +1,254 @@
+================================================================================
+KASTOR DATA ACADEMY - STREAMLIT UI STRUCTURE DIAGRAM
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Page: "캐스터 데이터 아카데미 - 에피소드 1" | 🔍 [detective icon]        │
+│  Layout: WIDE | Sidebar: COLLAPSED                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  HEADER: 🔍 캐스터 데이터 아카데미 - 에피소드 1: 사라진 밸런스 패치         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────┬──────────────────────────────────────────┐
+│  LEFT COLUMN (40%)              │  RIGHT COLUMN (60%)                      │
+│  📊 사건 증거 데이터             │  💬 데이터 탐정 파트너 캐스터           │
+├─────────────────────────────────┼──────────────────────────────────────────┤
+│                                 │                                          │
+│ STAGE-BASED PROGRESSIVELY        │  PROGRESSION INDICATOR                  │
+│ REVEALED EVIDENCE:               │  "진행 상태: 5/13"                      │
+│                                 │                                          │
+│ ┌─ Scene 3 ──────────────────┐  │  ┌──────────────────────────────────┐  │
+│ │ 🎮 캐릭터 승률 데이터      │  │  │  CHAT MESSAGE HISTORY            │  │
+│ │ ├─ DataFrame table         │  │  │  ├─ Previous messages            │  │
+│ │ ├─ Bar chart (RdYlGn)      │  │  │  │   - Normal display            │  │
+│ │ │  Colors: Red→Yellow→Green│  │  │  │   - User (gray gradient)      │  │
+│ │ │  Reference: 50% line     │  │  │  │   - Assistant (purple)        │  │
+│ │ └────────────────────────  │  │  │  │                               │  │
+│ │                            │  │  │  ├─ Latest message (animated)   │  │
+│ ├─ Scene 3-4 ────────────────┤  │  │  │   - With typing effect        │  │
+│ │ 📅 셰도우 일별 승률 변화   │  │  │  └──────────────────────────────┘  │
+│ │ ├─ DataFrame: 16 days      │  │  │                                    │
+│ │ ├─ Line chart (Shadow)     │  │  │  INPUT AREA                        │
+│ │ │  Critical spike Jan 25   │  │  │  ├─ st.chat_input()               │
+│ │ │  Interactive zoom/hover  │  │  │  └─ Custom input if needed         │
+│ │ └────────────────────────  │  │  │                                    │
+│ │                            │  │  │  INTERACTIVE ELEMENTS              │
+│ ├─ Scene 4 ──────────────────┤  │  │  ├─ Scene 1: 3-column buttons     │
+│ │ 📄 공식 패치 노트           │  │  │  │  (A) 공식 패치                │
+│ │ ├─ CSV Table (scrollable)  │  │  │  │  (B) 희귀한 버그               │
+│ │ │  Columns: 날짜, 버전      │  │  │  │  (C) 무단 수정 [PRIMARY]      │
+│ │ │           캐릭터, 변경사항 │  │  │  │                              │
+│ │ │           승인자           │  │  │  ├─ Scene 3: Confirmation button│
+│ │ │  Height: 300px (scroll)   │  │  │  │  "🔍 그래프 확인 완료!"      │
+│ │ └────────────────────────  │  │  │  │                              │
+│ │                            │  │  │  ├─ Mini-games: Choice buttons   │
+│ ├─ Scene 5-6 ────────────────┤  │  │  │  "📅 25일 ✅"                  │
+│ │ 🖥️ 서버 로그                │  │  │  │                              │
+│ │ ├─ DataFrame: filtered     │  │  │  └─ Progression logic            │
+│ │ ├─ Key entry highlighted:  │  │  │     (st.rerun() on select)      │
+│ │ │  - admin01_kaito         │  │  └──────────────────────────────────┘  │
+│ │ │  - Modify operation      │  │                                        │
+│ │ │  - 2025-01-25T23:47:22Z │  │  VISUAL STYLING (CSS)                  │
+│ │ │  - IP: 203.0.113.45      │  │  ├─ User message: Gray right-aligned  │
+│ │ │  - Token: DBG-3344       │  │  ├─ AI message: Purple left-aligned   │
+│ │ │  [WARNING BANNER]        │  │  ├─ Gradient backgrounds              │
+│ │ └────────────────────────  │  │  ├─ Rounded corners, shadows          │
+│ │                            │  │  ├─ Typing animation (char-by-char)   │
+│ ├─ Scene 6 ──────────────────┤  │  ├─ Auto-scroll (JavaScript)          │
+│ │ 👤 플레이어 프로필 - 녹티스 │  │  └─ Mobile responsive                │
+│ │ ├─ Profile DataFrame       │  │     @media (max-width: 768px)        │
+│ │ ├─ Win rate chart (purple) │  └──────────────────────────────────────┘  │
+│ │ ├─ IP: 203.0.113.45 ⚠️    │                                          │
+│ │ │  (matches admin IP!)     │                                          │
+│ │ ├─ Device fingerprint      │                                          │
+│ │ └────────────────────────  │                                          │
+│ │                            │                                          │
+│ └─ Scene 7 ──────────────────┐  │                                        │
+│   🎮 25일 밤 매치 기록        │  │                                        │
+│   ├─ Match DataFrame (20+)  │  │                                        │
+│   ├─ All victories          │  │                                        │
+│   ├─ Timing correlation     │  │                                        │
+│   └────────────────────────  │  │                                        │
+│                              │  │                                        │
+└──────────────────────────────┴──────────────────────────────────────────┘
+
+STAGE PROGRESSION FLOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+scene_0                    → Scene 0: Wake-up call
+  (Introduction)
+
+name_input                 → Get user's name (cleaned of Korean particles)
+
+scene_1_hypothesis         → Scene 1: Choose hypothesis (3 options)
+  ├─ A) 공식 패치 [Official Patch] → -10 points, hint to try again
+  ├─ B) 희귀한 버그 [Rare Bug] → -5 points, hint to try again
+  └─ C) 무단 수정 [Unauthorized Mod] → +10 points, CORRECT PATH ✅
+
+exploration                → Exploration phase
+
+scene_3_graph              → Scene 3: Graph Analysis
+  ├─ minigame_1_1: Find spike date (Jan 25) → +25 points, badge
+
+choice_2_investigation     → Choose next investigation
+  └─ Recommend: Patch Notes first → +10 points (optimal path)
+
+scene_4_patch_notes        → Scene 4: Document Analysis
+  ├─ Check patch notes for inconsistency
+  ├─ minigame_1_2: Timeline puzzle → +30 points, badge
+
+scene_5_server_logs        → Scene 5: Server Log Analysis
+  ├─ minigame_1_3: Filter logs → +35 points, badge
+  ├─ Find smoking gun: DBG-3344 token
+  └─ Discover admin01_kaito unauthorized modification
+
+scene_6_player_profile     → Scene 6: Player Profile Analysis
+  ├─ IP address match (203.0.113.45)
+  ├─ Device fingerprint match
+  └─ +20 points
+
+scene_7_timeline           → Scene 7: Timeline Completion
+  ├─ Match sessions correlation
+  └─ Case solved! → +50 points, ⭐ Master Detective badge
+
+conclusion                 → Conclusion & Celebration
+  ├─ Final score display
+  ├─ Badge collection
+  └─ 🔄 Restart option
+
+STATE VARIABLES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+st.session_state = {
+    "messages": [...],                    # Chat history
+    "episode_stage": "scene_0",           # Current stage
+    "detective_score": 0,                 # Points tracker
+    "badges": [],                         # Achievements
+    "hints_used": 0,                      # Hint counter
+    "evidence_found": [],                 # Collected evidence
+    "user_name": None,                    # Player's name
+    "awaiting_name_input": False,         # Input flag
+    "last_message_count": 0,              # Animation control
+    "hint_shown": {},                     # Hint stage tracking
+}
+
+MINI-GAMES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Mini-game 1.1: "급등 찾기" [Anomaly Finding]
+├─ Objective: Find exact date of spike
+├─ Options: 📅 24일 | 📅 25일 ✅ | 📅 26일
+├─ Reward: +25 points, "🔍 이상치 탐정" badge
+└─ Teaches: Trend analysis & anomaly detection
+
+Mini-game 1.2: "타임라인 탐정" [Timeline Puzzle]
+├─ Objective: Match events to timeline
+├─ Observation: 공식 이벤트 없는데 급등 발생
+├─ Reward: +30 points, "🔍 타임라인 마스터" badge
+└─ Teaches: Cause-effect correlation
+
+Mini-game 1.3: "로그 필터링" [Log Filtering]
+├─ Objective: Apply 3 filters to find smoking gun
+├─ Filters:
+│  1. 날짜 (Date): 25일
+│  2. 사용자 (User): 카이토 (admin01)
+│  3. 작업 (Action): Modify
+├─ Result: admin01_kaito, 2025-01-25T23:47:22Z, DBG-3344 token
+├─ Reward: +35 points, "💾 로그 헌터" badge
+└─ Teaches: Data filtering & Boolean logic
+
+KASTOR AI PARTNER:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Claude 3.5 Haiku-powered conversational partner
+
+Personality:
+├─ Energetic & enthusiastic
+├─ Playful with detective theme
+├─ Food-obsessed (metaphors)
+├─ Uses Korean (반말 - informal speech)
+└─ Celebrates user discoveries
+
+Guidance Method:
+├─ SPECIFIC: "왼쪽 '📅 셰도우 일별 승률' 그래프를 확인해봐!"
+├─ NOT generic: "데이터를 확인해봐!" (❌ forbidden)
+├─ Hint levels: 1→2→3 (escalating)
+└─ Never gives answers before user tries
+
+API Configuration:
+├─ Model: claude-3-5-haiku-20241022
+├─ Max tokens: 200
+├─ Temperature: 0.8 (creative)
+├─ Context: Last 5 messages
+└─ System prompt: ~500 chars with personality
+
+STYLING & ANIMATIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Colors:
+├─ Assistant message: #7C3AED → #6D28D9 (purple gradient)
+├─ User message: #E5E5EA → #D1D1D6 (gray gradient)
+├─ Success: #51cf66 (green)
+├─ Warning: #fa5252 (red)
+├─ Accent: #667eea (indigo)
+└─ Chart scale: Red → Yellow → Green (RdYlGn)
+
+Animations:
+├─ badgePop: Scale 0 → 1.1 → 1 (0.3s)
+├─ evidenceFound: Slide from left (0.5s)
+├─ pulse: Box-shadow pulsing (2s infinite)
+├─ blink: Warning flag opacity (1s)
+├─ scoreUp: Jump up animation (0.5s)
+└─ Typing: Character-by-character (0.01s/char)
+
+JavaScript Effects:
+├─ Auto-scroll: Periodic + MutationObserver
+├─ Mobile detection: @media queries
+└─ Accessibility: prefers-reduced-motion support
+
+DATA FLOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Data Files (CSV) ──→ pd.read_csv() ──→ Cache (@st.cache_data)
+                                        │
+                        ┌───────────────┤
+                        ↓               ↓
+                    DataFrame      Plotly Charts
+                    Display         (interactive)
+                        │               │
+                        └───────────────┤
+                                        ↓
+                            User Analysis & Discovery
+
+Case Evidence Timeline:
+Day 15-24: Normal (50% win rate)
+Day 25:    Spike! (50% → 85% in one day) ⚠️
+Day 26-30: High rate maintained (85%)
+Day 28:    Official bug fix applied (attempt to revert)
+
+TECHNICAL STACK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Framework:
+├─ Streamlit (UI framework)
+├─ Claude 3.5 Haiku (AI partner)
+├─ Anthropic Python SDK (API)
+├─ Pandas (data manipulation)
+├─ Plotly (interactive charts)
+└─ Python-dotenv (secrets management)
+
+Deployment:
+├─ Streamlit Cloud compatible
+├─ Secrets management via st.secrets
+├─ Environment variables via .env
+└─ Single-page application (SPA)
+
+Browsers:
+├─ Chrome/Edge: Full support
+├─ Safari: Full support
+├─ Mobile browsers: Responsive design
+└─ Accessibility: WCAG 2.1 compliant
+
+================================================================================
