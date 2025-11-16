@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from openai import OpenAI
+from anthropic import Anthropic
 import os
 from dotenv import load_dotenv
 
@@ -16,8 +16,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# OpenAI 클라이언트 초기화
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Claude 클라이언트 초기화
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 # 세션 상태 초기화
 if "messages" not in st.session_state:
@@ -64,9 +64,8 @@ KASTOR_SYSTEM_PROMPT = """당신은 'Kastor'라는 AI 데이터 분석 파트너
 
 def get_kastor_response(user_message, context=""):
     """Kastor의 응답 생성"""
-    messages = [
-        {"role": "system", "content": KASTOR_SYSTEM_PROMPT + f"\n\n현재 상황: {context}"}
-    ]
+    # Claude API용 메시지 구성 (system 제외, user/assistant만)
+    messages = []
 
     # 대화 히스토리 추가 (최근 5개만)
     for msg in st.session_state.messages[-5:]:
@@ -75,13 +74,14 @@ def get_kastor_response(user_message, context=""):
     messages.append({"role": "user", "content": user_message})
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
+        response = client.messages.create(
+            model="claude-3-5-haiku-20241022",
+            max_tokens=200,
             temperature=0.8,
-            max_tokens=200
+            system=KASTOR_SYSTEM_PROMPT + f"\n\n현재 상황: {context}",
+            messages=messages
         )
-        return response.choices[0].message.content
+        return response.content[0].text
     except Exception as e:
         return f"앗, 에러 발생! {str(e)}"
 
