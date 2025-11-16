@@ -210,6 +210,25 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
               child: const DataInsightsPanel(),
             )
           : null,
+      // 모바일용 FAB - 데이터 패널 빠른 접근
+      floatingActionButton: isMobile
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                _scaffoldKey.currentState?.openDrawer();
+              },
+              backgroundColor: const Color(0xFF6366F1),
+              elevation: 4,
+              icon: const Icon(Icons.analytics, color: Colors.white, size: 20),
+              label: Text(
+                settings.language == 'ko' ? '데이터' : 'Data',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+            )
+          : null,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A1D2E),
         elevation: 0,
