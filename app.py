@@ -86,6 +86,108 @@ def add_mobile_styles():
     .stChatMessage {
         margin-bottom: 0.5rem;
     }
+
+    /* 배지 스타일 */
+    .badge {
+        display: inline-block;
+        padding: 0.3rem 0.6rem;
+        margin: 0.2rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .badge-gold {
+        background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
+    }
+
+    .badge-silver {
+        background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+    }
+
+    /* 증거 카드 */
+    .evidence-card {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .evidence-card.found {
+        border-left-color: #51cf66;
+        background: #f1f9f4;
+    }
+
+    /* 패치 노트 카드 */
+    .patch-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+    .patch-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .patch-card.suspicious {
+        border-color: #fa5252;
+        background: #fff5f5;
+    }
+
+    .patch-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .patch-date {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .patch-version {
+        background: #667eea;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+
+    .patch-item {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    .warning-flag {
+        color: #fa5252;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* 탐정 느낌 */
+    .detective-board {
+        background: #2d3436;
+        color: #dfe6e9;
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -125,6 +227,22 @@ def load_data():
     return characters, shadow_daily, patch_notes, server_logs, player_profile, match_sessions
 
 characters_df, shadow_daily_df, patch_notes_df, server_logs_df, player_profile_df, match_sessions_df = load_data()
+
+# 배지 시스템
+BADGE_EMOJIS = {
+    "🔍 이상치 탐정": "exploration 완료",
+    "📋 문서 분석가": "hypothesis_1 완료",
+    "🖥️ 로그 헌터": "hypothesis_2 완료",
+    "🎯 진실 추적자": "hypothesis_3 완료",
+    "⭐ 마스터 탐정": "사건 해결 완료"
+}
+
+def award_badge(badge_name):
+    """배지 수여"""
+    if badge_name not in st.session_state.badges:
+        st.session_state.badges.append(badge_name)
+        return True
+    return False
 
 # 캐스터 시스템 프롬프트
 KASTOR_SYSTEM_PROMPT = """당신은 '캐스터 (Caster)'라는 AI 탐정 조수이자 데이터 분석 파트너입니다.
@@ -268,8 +386,9 @@ col_score, col_progress = st.columns([1, 2])
 with col_score:
     st.metric("⭐ 탐정 점수", f"{st.session_state.detective_score}점")
     if st.session_state.badges:
-        badge_text = " ".join(st.session_state.badges[-3:])  # 최근 3개만
-        st.caption(f"획득 배지: {badge_text}")
+        st.markdown("**획득 배지:**")
+        badge_html = "".join([f'<span class="badge">{badge}</span>' for badge in st.session_state.badges])
+        st.markdown(badge_html, unsafe_allow_html=True)
 
 with col_progress:
     # 진행 상황 표시
@@ -289,7 +408,9 @@ st.divider()
 
 # 증거 체크리스트 (왼쪽 사이드바)
 with st.sidebar:
-    st.subheader("📋 증거 보드")
+    st.markdown('<div class="detective-board">', unsafe_allow_html=True)
+    st.markdown("### 🔎 증거 보드")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     evidence_checklist = {
         "25일 승률 급등 발견": "exploration" in st.session_state.evidence_found,
@@ -300,8 +421,9 @@ with st.sidebar:
     }
 
     for evidence, found in evidence_checklist.items():
+        card_class = "evidence-card found" if found else "evidence-card"
         status = "✅" if found else "⬜"
-        st.write(f"{status} {evidence}")
+        st.markdown(f'<div class="{card_class}">{status} {evidence}</div>', unsafe_allow_html=True)
 
     st.divider()
 
