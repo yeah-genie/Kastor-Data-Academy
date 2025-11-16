@@ -296,7 +296,7 @@ add_mobile_styles()
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "episode_stage" not in st.session_state:
-    st.session_state.episode_stage = "intro"
+    st.session_state.episode_stage = "scene_0"  # Scene 0부터 시작
 if "hypotheses" not in st.session_state:
     st.session_state.hypotheses = []
 if "user_name" not in st.session_state:
@@ -313,6 +313,8 @@ if "badges" not in st.session_state:
     st.session_state.badges = []
 if "hints_used" not in st.session_state:
     st.session_state.hints_used = 0
+if "awaiting_name_input" not in st.session_state:
+    st.session_state.awaiting_name_input = False
 
 # 데이터 로드
 @st.cache_data
@@ -344,7 +346,7 @@ def award_badge(badge_name):
     return False
 
 # 캐스터 시스템 프롬프트
-KASTOR_SYSTEM_PROMPT = """당신은 '캐스터 (Caster)'라는 AI 탐정 조수이자 데이터 분석 파트너입니다.
+KASTOR_SYSTEM_PROMPT = """당신은 '캐스터 (Kastor)'라는 AI 탐정 조수이자 데이터 분석 파트너입니다.
 
 # 캐릭터 프로필
 - 역할: 탐정(유저)의 든든한 파트너, 데이터 분석 전문가
@@ -467,29 +469,43 @@ def display_message_with_typing(role, content, container=None):
 
 # Episode 스테이지별 컨텍스트
 STAGE_CONTEXTS = {
-    "intro": "유저를 처음 만났습니다. 자신을 소개하고 사건을 설명해주세요.",
+    "scene_0": "Scene 0: 아침의 알람. 탐정을 깨우고 자신을 소개하세요. 유머러스하고 친근하게!",
+    "name_input": "탐정의 이름을 물어보고 있습니다. 재밌게 물어보세요.",
+    "email_received": "마야로부터 의뢰 메일이 도착했습니다. 흥미롭게 반응하세요.",
+    "scene_1_hypothesis": "Scene 1: 가설 세우기. 3가지 가설 중 하나를 선택하도록 유도하세요.",
     "exploration": "유저가 데이터를 탐색 중입니다. 셰도우의 높은 승률을 발견하도록 유도하세요.",
-    "hypothesis_1": "유저가 '패치 변경' 가설을 세웠습니다. 시간별 데이터를 확인하도록 힌트를 주세요.",
-    "hypothesis_2": "유저가 '프로 게이머' 가설을 세웠습니다. 플레이어 다양성을 확인하도록 유도하세요.",
-    "hypothesis_3": "유저가 '버그' 가설을 세웠습니다. 매치 로그의 데미지 수치를 확인하도록 힌트를 주세요.",
+    "hypothesis_1": "유저가 '공식 패치' 가설을 선택했습니다. 패치 노트를 확인하도록 안내하세요.",
+    "hypothesis_2": "유저가 '희귀한 버그' 가설을 선택했습니다. 버그라기엔 타이밍이 정확하다고 지적하세요.",
+    "hypothesis_3": "유저가 '무단 수정' 가설을 선택했습니다! 칭찬하고 데이터 증거를 찾도록 안내하세요.",
     "conclusion": "유저가 원인을 발견했습니다! 축하하고 배운 내용을 정리해주세요."
 }
 
 # 헤더 (축소)
 st.markdown("### 🔍 Kastor Data Academy - Episode 1: 사라진 밸런스 패치")
 
-# 인트로 메시지 - 한 번에 표시
-if st.session_state.episode_stage == "intro" and len(st.session_state.messages) == 0:
-    intro_message = """띠링~ 안녕! 나는 캐스터야! 🎉
+# Scene 0: 아침의 알람 - 마크다운 스크립트대로
+if st.session_state.episode_stage == "scene_0" and len(st.session_state.messages) == 0:
+    scene_0_messages = [
+        """📱 **오전 9:00 AM**
+🔔 **기상 시간!**
+   "일어나! 탐정 첫 출근이잖아!"
 
-오늘 첫 사건이 들어왔어! 게임 '레전드 아레나'의 디렉터 마야가 긴급 의뢰를 보냈거든.
+*[알람 소리 - 띠리리링!]*""",
+        "띠링~ 주인님 기상 시간!",
+        "나? 카스터! 네 파트너!",
+        "혼자? 나랑 둘이잖아!",
+        "오~ 눈치 빠르네! 정답! 최신형 탐정 조수 AI!",
+        "뭐야, 실망했어? 나 엄청 똑똑한데!",
+        "그렇지? 신기하지? 자, 그나저나! 네 이름 뭐야?",
+        "응! 저장해야지. 안 그러면 계속 '야' 라고 불러야 하는데...",
+        "그치? 자, 입력해봐!",
+    ]
 
-**문제**: 캐릭터 '셰도우'의 승률이 하루 만에 50% → 85%로 폭등! 😱
+    # Scene 0 메시지 추가
+    for msg in scene_0_messages:
+        add_message("assistant", msg)
 
-패치도 안 했는데 왜 이렇게 된 거지? 커뮤니티가 난리 났대!
-
-자, 탐정과 함께 이 사건을 해결해보자! 👀"""
-    add_message("assistant", intro_message)
+    st.session_state.awaiting_name_input = True
     st.session_state.last_message_count = len(st.session_state.messages)
 
 # 2열 레이아웃 (데이터 / 채팅) - 왼쪽에 데이터, 오른쪽에 채팅
@@ -548,24 +564,101 @@ with col_chat:
                 with st.chat_message(last_msg["role"]):
                     st.write(last_msg["content"])
 
-    # intro 단계: 시작 버튼만 표시
-    if st.session_state.episode_stage == "intro":
-        if st.button("🚀 탐정 시작!", use_container_width=True, type="primary"):
-            add_message("user", "시작하자!")
-            st.session_state.episode_stage = "exploration"
+    # Scene 0: 이름 입력 대기
+    if st.session_state.awaiting_name_input:
+        user_name = st.chat_input("네 이름을 입력해줘! (예: 지우)")
+        if user_name:
+            # 이름 정리
+            cleaned_name = clean_name(user_name)
+            st.session_state.user_name = cleaned_name
+            st.session_state.awaiting_name_input = False
 
-            # 탐색 시작 배지
-            if award_badge("🔍 이상치 탐정"):
-                add_message("assistant", "🏆 배지 획득: 🔍 이상치 탐정!")
+            # 탐정의 이름 입력 메시지
+            add_message("user", user_name)
 
-            response = get_kastor_response(
-                "시작하자!",
-                STAGE_CONTEXTS["exploration"]
-            )
-            add_message("assistant", response)
+            # 카스터의 반응 (마크다운 스크립트대로)
+            kastor_reactions = [
+                f"오, {cleaned_name}! 멋진데? 근데 철자 맞아?",
+                f"완벽! 저장 완료~ 이제 {cleaned_name} 탐정님!",
+            ]
+            for msg in kastor_reactions:
+                add_message("assistant", msg)
+
+            # 이메일 알림
+            add_message("assistant", "*[이메일 알림 — 띨링!]*")
+            add_message("assistant", "어? 벌써 메일 왔다!")
+            add_message("assistant", "첫날인데?")
+            add_message("assistant", "대박! 운 좋은데? 사건 없으면 하루 종일 심심하거든. 열어봐 열어봐!")
+
+            # 의뢰 메일 표시
+            email_content = """📧 **의뢰 메일**
+
+**발신**: 마야 장 (디렉터, 레전드 아레나)
+**제목**: 긴급! 도와주세요!
+
+> 탐정님!
+>
+> 저희 게임 캐릭터 '셰도우'의 승률이 **하루 만에 50%에서 85%로 폭등**했어요!
+>
+> 패치 안 했는데 왜 이렇게 된 건지 전혀 모르겠어요! 😰
+>
+> 커뮤니티가 난리났어요. 플레이어 신뢰 잃으면 게임 끝이에요!
+>
+> 제발 도와주세요!"""
+            add_message("assistant", email_content)
+
+            # 카스터 반응
+            add_message("assistant", "오! 게임 사건! 내가 제일 좋아하는 거!")
+            add_message("assistant", "35% 점프! 미친 수치지!")
+            add_message("assistant", "음식으로 비유하면... 라면 한 개 먹다가 갑자기 짬뽕 세 그릇 먹는 거?")
+
+            st.session_state.episode_stage = "scene_1_hypothesis"
             st.rerun()
 
-    # exploration 이후: 채팅 입력창 표시
+    # Scene 1: 가설 선택 대기
+    elif st.session_state.episode_stage == "scene_1_hypothesis":
+        # 가설 선택 버튼 표시
+        st.markdown("---")
+        st.markdown("### 🔍 Scene 1: 초기 가설 선택")
+        st.markdown("**카스터**: 자! 가능성이 세 개야. 어떤 게 진짜 같아?")
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            if st.button("🔧 A) 공식 패치\n(기록 누락)", use_container_width=True):
+                add_message("user", "A) 공식 패치 (기록 누락)")
+                add_message("assistant", "공식 패치? 음~ 가능성은... 15%?")
+                add_message("assistant", "바쁜 회사에서 기록 깜빡할 수는 있는데... 35% 승률 폭등을 '실수로'? 그건 좀...")
+                add_message("assistant", "괜찮아! 처음이니까. 다시 골라봐!")
+                st.session_state.detective_score += 5
+                st.rerun()
+
+        with col2:
+            if st.button("🐛 B) 희귀한 버그", use_container_width=True):
+                add_message("user", "B) 희귀한 버그")
+                add_message("assistant", "버그? 오~ 프로그래머스러운 발상인데!")
+                add_message("assistant", "근데 버그가 '딱 하루'만 셰도우를 35% 강하게 만들까? 그리고 그 다음날엔 또 멀쩡하고?")
+                add_message("assistant", "그치? 뭔가 수상한 냄새~ 다시 골라봐!")
+                st.session_state.detective_score += 5
+                st.rerun()
+
+        with col3:
+            if st.button("⚠️ C) 무단 수정", use_container_width=True, type="primary"):
+                add_message("user", "C) 무단 수정")
+                add_message("assistant", "오! 범죄 냄새! 역시 탐정이네?")
+                add_message("assistant", "좋아좋아! 그 느낌 중요해!")
+                add_message("assistant", "근데 느낌만으론 부족하거든~ **데이터**가 필요해!")
+                add_message("assistant", "숫자는 거짓말 안 하거든!")
+                add_message("assistant", "자, 마야한테 전화해서 데이터 받자!")
+
+                st.session_state.detective_score += 10
+                if award_badge("🔍 이상치 탐정"):
+                    add_message("assistant", "🏆 배지 획득: 🔍 이상치 탐정! (+10점)")
+
+                st.session_state.episode_stage = "exploration"
+                st.rerun()
+
+    # exploration 이후: 자유 채팅
     else:
         user_input = st.chat_input("캐스터에게 메시지 보내기...")
         if user_input:
@@ -585,7 +678,7 @@ with col_data:
     data_container = st.container(height=800)
     with data_container:
         # 데이터 영역 (스테이지별 순차 공개)
-        if st.session_state.episode_stage == "intro":
+        if st.session_state.episode_stage in ["scene_0", "scene_1_hypothesis"]:
             st.info("👉 오른쪽 캐스터와 대화를 시작해보세요!")
 
         # 1단계: 캐릭터 데이터 (exploration부터 공개)
@@ -743,9 +836,10 @@ with st.sidebar:
 
     if st.button("🔄 대화 초기화"):
         st.session_state.messages = []
-        st.session_state.episode_stage = "intro"
+        st.session_state.episode_stage = "scene_0"
         st.session_state.hypotheses = []
         st.session_state.user_name = None
         st.session_state.last_message_count = 0
         st.session_state.intro_step = 0
+        st.session_state.awaiting_name_input = False
         st.rerun()
