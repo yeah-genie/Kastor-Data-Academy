@@ -134,9 +134,34 @@ def add_mobile_styles():
         z-index: 999;
     }
 
-    /* 메시지 간격 조정 */
+    /* 메시지 간격 및 스타일 조정 - 카카오톡/디스코드 스타일 */
     .stChatMessage {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem !important;
+        padding: 0.5rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+    }
+
+    /* 사용자 메시지 스타일 (오른쪽, 노란색 말풍선) */
+    .stChatMessage[data-testid="user-message"] {
+        background: linear-gradient(135deg, #FFE500 0%, #FFF3A0 100%) !important;
+        margin-left: 20% !important;
+        border-bottom-right-radius: 4px !important;
+    }
+
+    /* AI 메시지 스타일 (왼쪽, 흰색 말풍선) */
+    .stChatMessage[data-testid="assistant-message"] {
+        background: white !important;
+        margin-right: 20% !important;
+        border-bottom-left-radius: 4px !important;
+        border: 1px solid #e0e0e0 !important;
+    }
+
+    /* 메시지 내용 텍스트 스타일 */
+    .stChatMessage p {
+        margin: 0 !important;
+        line-height: 1.5 !important;
+        color: #333 !important;
     }
 
     /* 스크롤바 스타일 개선 */
@@ -601,7 +626,7 @@ with layout_col2:
         st.session_state.layout_mode = "tab" if st.session_state.layout_mode == "column" else "column"
         st.rerun()
 
-# 레이아웃 렌더링 - 채팅을 먼저 배치
+# 레이아웃 렌더링 - 채팅 중심 레이아웃
 if st.session_state.layout_mode == "tab":
     # 탭 모드 (모바일 친화적) - 채팅 탭을 먼저
     tab1, tab2 = st.tabs(["💬 채팅", "📊 데이터"])
@@ -611,8 +636,10 @@ if st.session_state.layout_mode == "tab":
     with tab2:
         col_data = st.container()
 else:
-    # 2열 레이아웃 (데스크톱용) - 왼쪽 채팅, 오른쪽 데이터
-    col_chat, col_data = st.columns([2, 3])
+    # 새로운 레이아웃: 채팅 전체, 데이터는 하단 확장 가능
+    col_chat = st.container()
+    with st.expander("📊 데이터 증거 보기 (클릭하여 펼치기)", expanded=False):
+        col_data = st.container()
 
 # 채팅 열 (왼쪽 또는 첫 번째 탭)
 with col_chat:
@@ -665,32 +692,63 @@ with col_chat:
     else:
         st.caption("📍 자유 탐색 모드")
 
-    # 대화 표시 - 자동 스크롤 JavaScript 추가
+    # 대화 표시 - 강화된 자동 스크롤 JavaScript
     st.markdown("""
     <script>
-    // 채팅 자동 스크롤 - 새 메시지 감지 및 스크롤
-    function scrollChatToBottom() {
-        const containers = window.parent.document.querySelectorAll('[data-testid="stVerticalBlock"]');
-        containers.forEach(container => {
-            const chatMessages = container.querySelectorAll('.stChatMessage');
-            if (chatMessages.length > 0) {
-                container.scrollTop = container.scrollHeight;
+    // 채팅 자동 스크롤 - 카카오톡 스타일
+    (function() {
+        let lastMessageCount = 0;
+
+        function smoothScrollToBottom() {
+            const chatContainer = window.parent.document.querySelector('[data-testid="stChatMessageContainer"]');
+            if (chatContainer) {
+                chatContainer.scrollTo({
+                    top: chatContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
             }
-        });
-    }
 
-    // 초기 로드 및 주기적 체크
-    setTimeout(scrollChatToBottom, 100);
-    setInterval(scrollChatToBottom, 500);
-
-    // MutationObserver로 DOM 변경 감지
-    const observer = new MutationObserver(scrollChatToBottom);
-    setTimeout(() => {
-        const appView = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
-        if (appView) {
-            observer.observe(appView, { childList: true, subtree: true });
+            // Fallback: 모든 채팅 메시지 컨테이너 스크롤
+            const containers = window.parent.document.querySelectorAll('[data-testid="stVerticalBlock"]');
+            containers.forEach(container => {
+                const chatMessages = container.querySelectorAll('.stChatMessage');
+                if (chatMessages.length > 0) {
+                    const currentCount = chatMessages.length;
+                    if (currentCount > lastMessageCount) {
+                        container.scrollTo({
+                            top: container.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                        lastMessageCount = currentCount;
+                    }
+                }
+            });
         }
-    }, 1000);
+
+        // 초기 로드 및 빠른 체크
+        setTimeout(smoothScrollToBottom, 100);
+        setTimeout(smoothScrollToBottom, 300);
+        setTimeout(smoothScrollToBottom, 500);
+
+        // 주기적 체크 (더 빈번하게)
+        setInterval(smoothScrollToBottom, 200);
+
+        // MutationObserver로 실시간 감지
+        const observer = new MutationObserver(() => {
+            setTimeout(smoothScrollToBottom, 50);
+        });
+
+        setTimeout(() => {
+            const appView = window.parent.document.querySelector('[data-testid="stAppViewContainer"]');
+            if (appView) {
+                observer.observe(appView, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true
+                });
+            }
+        }, 500);
+    })();
     </script>
     """, unsafe_allow_html=True)
 
@@ -851,7 +909,7 @@ with col_chat:
                 st.rerun()
 
         with col3:
-            if st.button("⚠️ C) 무단 수정", use_container_width=True, type="primary", key="scene1_hypo_unauthorized"):
+            if st.button("⚠️ C) 무단 수정", use_container_width=True, key="scene1_hypo_unauthorized"):
                 add_message("user", "C) 무단 수정")
                 add_message("assistant", "오! 범죄 냄새! 예리하네!")
                 add_message("assistant", "좋아좋아! 그 직감 중요해!")
@@ -919,7 +977,7 @@ with col_chat:
                     st.error("❌ 다시 그래프를 확인해봐!")
                     st.rerun()
 
-        elif st.session_state.graph_verified and st.button("✅ 다음으로", use_container_width=True, type="primary"):
+        elif st.session_state.graph_verified and st.button("다음으로 →", use_container_width=True, key="btn_next_scene3"):
             add_message("user", "그래프 확인했어! 25일에 수직으로 솟았어!")
             add_message("assistant", f"{st.session_state.user_name} 탐정, 봐봐! 우주 가는 로켓 같지? 붕~ 하고!")
             add_message("assistant", "피닉스(파란 선)도 조금 올라가는데 그건 계단 오르는 것처럼 완만해. 셰도우는? 엘리베이터!")
@@ -947,7 +1005,7 @@ with col_chat:
                 st.rerun()
 
         with col2:
-            if st.button("📅 25일 ✅", use_container_width=True, type="primary", key="btn_15___25___"):
+            if st.button("📅 25일", use_container_width=True, key="btn_15___25___"):
                 add_message("user", "25일!")
                 add_message("assistant", "**우와! 정답!**")
                 add_message("assistant", f"{st.session_state.user_name} 탐정, 완벽해! 그것도 엄청 빨리 찾았어!")
@@ -980,7 +1038,7 @@ with col_chat:
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            if st.button("📄 A) 공식 패치 노트", use_container_width=True, type="primary"):
+            if st.button("📄 A) 공식 패치 노트", use_container_width=True, key="choice2_patch"):
                 add_message("user", "A) 공식 패치 노트 확인")
                 add_message("assistant", "오! 현명한 선택!")
                 add_message("assistant", "항상 **공식 기록**부터 확인해야 해. 기계 분해하기 전에 설명서 읽는 것처럼!")
