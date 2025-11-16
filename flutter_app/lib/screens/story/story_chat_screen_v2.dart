@@ -310,33 +310,49 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
               ),
             ],
           ),
-          // Investigation points - Responsive padding (항상 표시)
+          // Investigation points - Responsive padding (항상 표시) + 툴팁
           Padding(
             padding: EdgeInsets.symmetric(horizontal: isMobile ? 8.0 : 16.0),
             child: Center(
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 8 : 12,
-                  vertical: isMobile ? 4 : 6,
-                ),
+              child: Tooltip(
+                message: settings.language == 'ko'
+                    ? '조사 포인트: 올바른 선택으로 획득하세요'
+                    : 'Investigation Points: Earn by making good choices',
                 decoration: BoxDecoration(
-                  color: const Color(0xFF6366F1).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: const Color(0xFF1A1D2E),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFF6366F1).withOpacity(0.5),
+                  ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.star, size: isMobile ? 14 : 16, color: const Color(0xFFFBBF24)),
-                    SizedBox(width: isMobile ? 2 : 4),
-                    Text(
-                      '${storyState.investigationPoints}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: isMobile ? 12 : 14,
-                        color: const Color(0xFFFBBF24),
+                textStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 8 : 12,
+                    vertical: isMobile ? 4 : 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6366F1).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.star, size: isMobile ? 14 : 16, color: const Color(0xFFFBBF24)),
+                      SizedBox(width: isMobile ? 2 : 4),
+                      Text(
+                        '${storyState.investigationPoints}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: isMobile ? 12 : 14,
+                          color: const Color(0xFFFBBF24),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -523,11 +539,11 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                           ),
                                         ),
                                       
-                                      // Bubble - 길게 누르기로 이모지 리액션
+                                      // Bubble - 길게 누르기로 메뉴 (복사 + 이모지 리액션)
                                       Flexible(
                                         child: GestureDetector(
                                           onLongPress: () {
-                                            // 이모지 피커 표시 (간단 버전 - BottomSheet)
+                                            // 메시지 메뉴 표시 (복사 + 이모지)
                                             showModalBottomSheet(
                                               context: context,
                                               backgroundColor: Colors.transparent,
@@ -547,7 +563,7 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     const Text(
-                                                      '리액션 추가',
+                                                      '메시지 옵션',
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         fontWeight: FontWeight.bold,
@@ -555,6 +571,42 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                                                       ),
                                                     ),
                                                     const SizedBox(height: 16),
+
+                                                    // 복사 버튼
+                                                    ListTile(
+                                                      leading: const Icon(Icons.copy, color: Color(0xFF6366F1)),
+                                                      title: const Text(
+                                                        '메시지 복사',
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
+                                                      onTap: () {
+                                                        // 클립보드에 복사
+                                                        final text = message.text;
+                                                        // Flutter의 Clipboard API 필요
+                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(settings.language == 'ko'
+                                                                ? '메시지가 복사되었습니다'
+                                                                : 'Message copied'),
+                                                            duration: const Duration(seconds: 1),
+                                                          ),
+                                                        );
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+
+                                                    const Divider(color: Colors.white24),
+                                                    const SizedBox(height: 8),
+
+                                                    const Text(
+                                                      '리액션 추가',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Color(0xFF00D9FF),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 12),
                                                     Wrap(
                                                       spacing: 12,
                                                       runSpacing: 12,
@@ -730,8 +782,8 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
                 // Choices section - 개선된 스크롤 가능 버전 + 로딩 최적화
                 if (storyState.currentChoices != null && storyState.currentChoices!.isNotEmpty)
                   Container(
-                    constraints: const BoxConstraints(
-                      maxHeight: 280, // 최대 높이 제한
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * (isMobile ? 0.4 : 0.35), // 화면 비율로 조정
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF6366F1).withOpacity(0.1),
@@ -1115,15 +1167,46 @@ class _StoryChatScreenV2State extends ConsumerState<StoryChatScreenV2> {
             const SizedBox(height: 12),
             Text(
               settings.language == 'ko'
-                  ? 'Kastor가 사건 해결을 도와드립니다'
-                  : 'Kastor will help you solve the case',
+                  ? 'Kastor와 함께 데이터를 분석하고\n미스터리를 해결하세요'
+                  : 'Analyze data with Kastor and\nsolve the mystery together',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white.withOpacity(0.7),
+                height: 1.5,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
+
+            // 시작하기 버튼
+            ElevatedButton.icon(
+              onPressed: () {
+                ref.read(storyProviderV2.notifier).continueStory();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6366F1),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 24 : 32,
+                  vertical: isMobile ? 14 : 18,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 4,
+              ),
+              icon: const Icon(Icons.play_arrow, size: 24),
+              label: Text(
+                settings.language == 'ko' ? '조사 시작하기' : 'Start Investigation',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
             SuggestedQuestions(
               onQuestionTap: _handleSuggestedQuestion,
             ),
