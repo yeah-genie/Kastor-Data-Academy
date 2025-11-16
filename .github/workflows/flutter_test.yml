@@ -6,8 +6,13 @@ on:
     branches:
       - main
       - 'claude/**'
+    paths:
+      - 'flutter_app/**'
+      - '.github/workflows/flutter_test.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'flutter_app/**'
   workflow_dispatch:
 
 jobs:
